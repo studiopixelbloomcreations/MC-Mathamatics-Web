@@ -10,6 +10,7 @@ import {
   FileSpreadsheet,
   Bell,
   ShieldAlert,
+  BarChart3,
 } from "lucide-react";
 
 interface NavLinksProps {
@@ -36,6 +37,14 @@ export function DashboardNavLinks({
       label: "Paper Results",
       icon: FileText,
       badge: null,
+      exact: false,
+    },
+    {
+      href: "/dashboard/analysis",
+      label: "Smart Analysis",
+      icon: BarChart3,
+      badge: "AI",
+      badgeVariant: "accent",
       exact: false,
     },
     {

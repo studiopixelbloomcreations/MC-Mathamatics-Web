@@ -14,6 +14,7 @@ import {
   FileSpreadsheet,
   ShieldAlert,
   LogOut,
+  BarChart3,
 } from "lucide-react";
 import Link from "next/link";
 import { DashboardNavLinks } from "@/components/dashboard/nav-links";
@@ -200,6 +201,14 @@ export default async function DashboardLayout({
         >
           <FileText className="w-5 h-5" />
           <span>Papers</span>
+        </Link>
+
+        <Link
+          href="/dashboard/analysis"
+          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1"
+        >
+          <BarChart3 className="w-5 h-5" />
+          <span>Analysis</span>
         </Link>
 
         <Link
