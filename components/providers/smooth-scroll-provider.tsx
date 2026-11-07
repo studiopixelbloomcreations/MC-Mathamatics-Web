@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -17,8 +18,25 @@ const SmoothScrollContext = createContext<SmoothScrollContextType>({
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
+  // Strip Lenis on dashboard, admin, login, and signup routes for native responsiveness & zero lag
+  const isDashboardOrAdmin =
+    pathname?.includes("/dashboard") ||
+    pathname?.includes("/admin") ||
+    pathname?.includes("/login") ||
+    pathname?.includes("/signup");
 
   useEffect(() => {
+    if (isDashboardOrAdmin) {
+      // Clean up if navigating into dashboard
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+        lenisRef.current = null;
+      }
+      return;
+    }
+
     // Respect prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -53,9 +71,10 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     return () => {
       gsap.ticker.remove(updateTicker);
       lenis.destroy();
+      lenisRef.current = null;
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
-  }, []);
+  }, [isDashboardOrAdmin]);
 
   return (
     <SmoothScrollContext.Provider value={{ lenis: lenisRef.current }}>
