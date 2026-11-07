@@ -100,6 +100,25 @@ export async function setParentChatEnabled(enabled: boolean) {
 /**
  * Updates Paid Templates toggle in system settings.
  */
+export async function setAdminWhatsapp(phone: string) {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("system_settings")
+    .update({ admin_whatsapp: phone, updated_at: new Date().toISOString() })
+    .eq("id", 1);
+
+  if (error) {
+    throw new Error(`Failed to update Sir's WhatsApp: ${error.message}`);
+  }
+
+  revalidatePath("/admin/ai-mode");
+  revalidatePath("/admin");
+  return { success: true, adminWhatsapp: phone };
+}
+
+/**
+ * Updates Paid Templates toggle in system settings.
+ */
 export async function setPaidTemplatesEnabled(enabled: boolean) {
   const supabase = createAdminClient();
   const { error } = await supabase

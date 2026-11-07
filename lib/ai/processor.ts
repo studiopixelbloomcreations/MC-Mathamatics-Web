@@ -164,9 +164,14 @@ export async function processPendingInboundMessages(): Promise<number> {
         continue;
       }
 
-      // If no write tools or read-only/question: Answer directly or proceed
-      if (!hasWriteTools && toolCalls.length === 0) {
-        const textAnswer = await aiProvider.generateText(rawText);
+      // If no write tools or read-only/question/greeting: Answer directly or proceed
+      const isClarification = toolCalls.length === 1 && toolCalls[0].tool === "ask_clarification";
+      if (!hasWriteTools && (toolCalls.length === 0 || isClarification)) {
+        const conversationalSystemPrompt = `You are the friendly, intelligent WhatsApp AI Assistant for MC Mathematics (Sir Malinga C Dissanayake).
+You help Sir (and parents) manage mathematics classes, explain marks, answer student progress questions, and provide helpful guidance in natural English or Sinhala.
+Be helpful, respectful, concise, and professional. If the user is Sir saying hi or asking questions, greet him warmly and let him know you are ready to record marks, notes, attendance, or announcements.`;
+
+        const textAnswer = await aiProvider.generateText(rawText, conversationalSystemPrompt);
         await whatsapp.sendText(senderNumber, textAnswer);
         await supabase
           .from("inbound_messages")

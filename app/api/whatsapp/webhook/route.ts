@@ -112,12 +112,19 @@ export async function POST(req: NextRequest) {
     .eq("id", 1)
     .single();
 
+  const configuredAdmin = settings?.admin_whatsapp || "+94771234567";
   const adminNumber =
-    normalizeSriLankanPhone(settings?.admin_whatsapp || "+94771234567") || "+94771234567";
+    normalizeSriLankanPhone(configuredAdmin) ||
+    normalizeAnyPhone(configuredAdmin) ||
+    configuredAdmin;
+
+  const isSir =
+    fromNumber === adminNumber ||
+    fromNumber.replace("+", "") === adminNumber.replace("+", "");
 
   try {
-    if (fromNumber === adminNumber) {
-      // Sir's number -> Process AI commands straight away!
+    if (isSir) {
+      // Sir's number -> Process AI commands & conversational chatbot straight away!
       await processPendingInboundMessages();
     } else {
       // Parent number -> Process parent bot rule execution straight away!
