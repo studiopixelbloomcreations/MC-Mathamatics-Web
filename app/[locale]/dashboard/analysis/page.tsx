@@ -31,8 +31,8 @@ export default async function AnalysisDashboardPage() {
   if (hideResults) {
     return (
       <div className="py-12 max-w-xl mx-auto text-center space-y-4">
-        <GlassCard className="p-8 border-amber-500/30 text-center space-y-4">
-          <EyeOff className="w-10 h-10 text-amber-400 mx-auto" />
+        <GlassCard className="p-8 border-blue-500/30 text-center space-y-4">
+          <EyeOff className="w-10 h-10 text-blue-500 mx-auto" />
           <h2 className="text-xl font-bold text-foreground">
             Analysis Temporarily Restricted
           </h2>
@@ -53,8 +53,8 @@ export default async function AnalysisDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/10">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-amber-400" />
-            <span className="text-xs uppercase font-mono tracking-widest text-amber-400 font-semibold">
+            <BarChart3 className="w-4 h-4 text-blue-500" />
+            <span className="text-xs uppercase font-mono tracking-widest text-blue-500 font-semibold">
               Diagnostic Analytics
             </span>
           </div>
@@ -63,7 +63,7 @@ export default async function AnalysisDashboardPage() {
           </h1>
           <p className="text-xs text-muted-foreground font-mono">
             {student.fullName} • ID:{" "}
-            <span className="text-amber-400 font-bold">{student.uniqueId}</span> • Grade{" "}
+            <span className="text-blue-500 font-bold">{student.uniqueId}</span> • Grade{" "}
             {student.grade} ({student.classType === "TP" ? "Theory + Paper" : "Theory Only"})
           </p>
         </div>
@@ -88,7 +88,7 @@ export default async function AnalysisDashboardPage() {
             are ever disclosed.
           </span>
         </div>
-        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 font-mono text-[11px] text-amber-400">
+        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0 font-mono text-[11px] text-blue-500">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Deterministic Code Engine</span>
         </div>

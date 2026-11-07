@@ -259,7 +259,7 @@ export function FloatingHeader({
                     max={95}
                     value={glassTint}
                     onChange={handleTintChange}
-                    className="w-full accent-amber-500 cursor-pointer h-1.5 rounded-lg bg-black/10 dark:bg-white/10"
+                    className="w-full accent-blue-600 cursor-pointer h-1.5 rounded-lg bg-black/10 dark:bg-white/10"
                   />
                   <p className="text-[10px] text-[var(--text-tertiary)]">
                     Adjusts surface refraction and opacity.
@@ -289,9 +289,9 @@ export function FloatingHeader({
             aria-label="Toggle theme"
           >
             {isDark ? (
-              <Sun size={18} weight="regular" className="text-amber-400" />
+              <Sun size={18} weight="regular" className="text-blue-500" />
             ) : (
-              <Moon size={18} weight="regular" className="text-amber-600" />
+              <Moon size={18} weight="regular" className="text-blue-600" />
             )}
           </button>
 

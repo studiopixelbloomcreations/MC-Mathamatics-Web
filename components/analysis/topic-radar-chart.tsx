@@ -66,15 +66,15 @@ export function TopicRadarChart({ data, isSmallClass }: TopicRadarProps) {
               if (active && payload && payload.length) {
                 const item = payload[0].payload;
                 return (
-                  <div className="bg-neutral-900/95 border border-amber-500/30 backdrop-blur-md p-3 rounded-lg shadow-xl text-xs space-y-1">
-                    <p className="font-bold text-amber-400">{item.topic}</p>
+                  <div className="bg-neutral-900/95 border border-blue-500/30 backdrop-blur-md p-3 rounded-lg shadow-xl text-xs space-y-1">
+                    <p className="font-bold text-blue-500">{item.topic}</p>
                     <p className="text-emerald-400 font-semibold">
                       Your Score: {item.student}%
                     </p>
                     {!isSmallClass && item.classAvg > 0 && (
                       <p className="text-sky-400">Class Avg: {item.classAvg}%</p>
                     )}
-                    <p className="text-amber-300">Topper (Top 1): {item.topper}%</p>
+                    <p className="text-blue-400">Topper (Top 1): {item.topper}%</p>
                   </div>
                 );
               }

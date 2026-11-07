@@ -169,7 +169,7 @@ export default async function DashboardMainPage() {
             <div className="text-3xl font-extrabold text-[var(--text)] font-mono [font-feature-settings:'tnum'_1]">
               <StatCounter value={metrics?.attendancePercentage || 95} suffix="%" />
             </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[var(--brand)] text-xs font-semibold [font-feature-settings:'tnum'_1]">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[var(--brand)] text-xs font-semibold [font-feature-settings:'tnum'_1]">
               <Fire size={14} weight="fill" />
               <span>{metrics?.attendanceStreak || 4} streak</span>
             </div>

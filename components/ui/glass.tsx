@@ -57,7 +57,7 @@ export const Glass = React.forwardRef<HTMLDivElement, GlassProps>(
     const tintStyles = {
       clear: "",
       subtle: "bg-opacity-80 dark:bg-opacity-70",
-      accent: "border-amber-500/30 shadow-amber-500/5",
+      accent: "border-blue-500/30 shadow-blue-500/5",
     }[tint];
 
     return (

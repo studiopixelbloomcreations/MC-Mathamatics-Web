@@ -2,49 +2,52 @@
 @import "katex/dist/katex.min.css";
 
 /* -------------------------------------------------------------------------- */
-/* Design Tokens: Minimal, Calm, Studio Quality                               */
-/* Pure Neutral Architectural Canvas + Single Brand Gold Accent               */
+/* Design Tokens: Strict Blue & White Palette (Studio Precision)              */
+/* Pure Minimalist Surfaces + Royal/Cobalt Blue Accents + Deep Navy Text      */
+/* Zero gold / violet / emerald decorative clutter                            */
 /* -------------------------------------------------------------------------- */
 
 :root {
-  /* Light Theme (Warm Architectural Canvas, Not Inverted) */
-  --bg: #F8F7F4;
-  --bg-subtle: #F1EFEA;
+  /* Light Theme (Clean White & Pale Ice-Blue Architecture) */
+  --bg: #FFFFFF;
+  --bg-subtle: #F4F7FB;
   --surface: #FFFFFF;
-  --surface-raised: #FFFFFF;
-  --surface-overlay: rgba(255, 255, 255, 0.85);
+  --surface-raised: #F8FAFC;
+  --surface-overlay: rgba(255, 255, 255, 0.88);
 
-  /* Single Brand Accent: MC Gold (Tuned for 4.5:1 WCAG AA Contrast on light) */
-  --accent: #B45309;
-  --accent-hover: #92400E;
-  --accent-subtle: rgba(180, 83, 9, 0.08);
-  --accent-border: rgba(180, 83, 9, 0.22);
-  --accent-text: #92400E;
+  /* Single Brand Accent: Royal / Cobalt Blue (Strict WCAG AA 4.5:1+) */
+  --brand: #2563EB;
+  --brand-hover: #1D4ED8;
+  --accent: #2563EB;
+  --accent-hover: #1D4ED8;
+  --accent-subtle: rgba(37, 99, 235, 0.08);
+  --accent-border: rgba(37, 99, 235, 0.22);
+  --accent-text: #1D4ED8;
 
-  /* Neutrals */
-  --text-primary: #121316;
-  --text-secondary: #525866;
-  --text-tertiary: #8A909E;
+  /* Neutrals: Crisp Navy-Black Typography */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-tertiary: #94A3B8;
 
-  /* Layered Soft Shadow System (No harsh borders) */
-  --shadow-sm: 0 1px 2px rgba(18, 19, 22, 0.04), 0 1px 3px rgba(18, 19, 22, 0.02);
-  --shadow-md: 0 4px 12px rgba(18, 19, 22, 0.05), 0 1px 2px rgba(18, 19, 22, 0.03);
-  --shadow-lg: 0 12px 32px rgba(18, 19, 22, 0.08), 0 2px 6px rgba(18, 19, 22, 0.03);
+  /* Layered Soft Shadow System */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.02);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.03);
 
-  /* iOS 27 Liquid Glass Primitive Parameters (Light) */
-  --glass-tint: rgba(255, 255, 255, 0.72);
-  --glass-tint-active: rgba(255, 255, 255, 0.88);
+  /* iOS 27 Liquid Glass Primitive (Light Ice Glass) */
+  --glass-tint: rgba(255, 255, 255, 0.78);
+  --glass-tint-active: rgba(244, 247, 251, 0.92);
   --glass-blur: 24px;
   --glass-saturate: 160%;
-  --glass-border-light: rgba(255, 255, 255, 0.85);
-  --glass-border-shadow: rgba(0, 0, 0, 0.06);
-  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
-  --glass-shadow: 0 8px 32px 0 rgba(18, 19, 22, 0.06);
+  --glass-border-light: rgba(255, 255, 255, 0.9);
+  --glass-border-shadow: rgba(15, 23, 42, 0.06);
+  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(15, 23, 42, 0.03);
+  --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.06);
 
-  /* Status Tokens (Subtle, never loud) */
-  --good: #059669;
-  --warn: #D97706;
-  --bad: #DC2626;
+  /* Status Tokens: Differentiated by Blue Tints + Functional Indicators */
+  --good: #0284C7;
+  --warn: #2563EB;
+  --bad: #E11D48;
 
   /* Spring Physics Motion Tokens */
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
@@ -61,44 +64,46 @@
 }
 
 .dark, :root[class~="dark"], [data-theme="dark"] {
-  /* Dark Theme (Deep Neutral Obsidian, Not Pure Pitch Black) */
-  --bg: #0C0D10;
-  --bg-subtle: #131418;
-  --surface: #18191F;
-  --surface-raised: #1F2128;
-  --surface-overlay: rgba(24, 25, 31, 0.82);
+  /* Dark Theme (Deep Midnight Navy Canvas, Not Muddy Gray) */
+  --bg: #090D16;
+  --bg-subtle: #0F172A;
+  --surface: #131D31;
+  --surface-raised: #1A2742;
+  --surface-overlay: rgba(19, 29, 49, 0.85);
 
-  /* Single Brand Accent: MC Gold (Tuned for dark surfaces) */
-  --accent: #FACC15;
-  --accent-hover: #FDE047;
-  --accent-subtle: rgba(250, 204, 21, 0.12);
-  --accent-border: rgba(250, 204, 21, 0.28);
-  --accent-text: #FEF08A;
+  /* Single Brand Accent: Electric Blue / Ice Cobalt */
+  --brand: #38BDF8;
+  --brand-hover: #60A5FA;
+  --accent: #38BDF8;
+  --accent-hover: #60A5FA;
+  --accent-subtle: rgba(56, 189, 248, 0.12);
+  --accent-border: rgba(56, 189, 248, 0.28);
+  --accent-text: #BAE6FD;
 
-  /* Neutrals */
-  --text-primary: #F3F4F6;
-  --text-secondary: #9CA3AF;
-  --text-tertiary: #6B7280;
+  /* Neutrals: Pure White & Pale Slate */
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-tertiary: #64748B;
 
   /* Layered Soft Shadow System */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(255, 255, 255, 0.05);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7), 0 2px 4px rgba(0, 0, 0, 0.4);
 
-  /* iOS 27 Liquid Glass Primitive Parameters (Dark) */
-  --glass-tint: rgba(24, 25, 31, 0.68);
-  --glass-tint-active: rgba(31, 33, 40, 0.85);
+  /* iOS 27 Liquid Glass Primitive (Dark Midnight Glass) */
+  --glass-tint: rgba(19, 29, 49, 0.72);
+  --glass-tint-active: rgba(26, 39, 66, 0.88);
   --glass-blur: 24px;
   --glass-saturate: 180%;
-  --glass-border-light: rgba(255, 255, 255, 0.14);
-  --glass-border-shadow: rgba(0, 0, 0, 0.45);
-  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
-  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.55);
+  --glass-border-light: rgba(255, 255, 255, 0.12);
+  --glass-border-shadow: rgba(0, 0, 0, 0.55);
+  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
 
   /* Status Tokens */
-  --good: #10B981;
-  --warn: #F59E0B;
-  --bad: #EF4444;
+  --good: #38BDF8;
+  --warn: #60A5FA;
+  --bad: #F43F5E;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -130,7 +135,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Slogan Typography (Used once for dignity) */
+/* Slogan Typography */
 .font-editorial {
   font-family: var(--font-instrument-serif), Georgia, serif;
   font-style: italic;
@@ -182,7 +187,6 @@ body {
 }
 
 /* Concentric Corner Radii Utility */
-/* Outer = 24px -> Padding = 8px -> Inner = 16px */
 .concentric-outer {
   border-radius: 24px;
   padding: 8px;
@@ -199,14 +203,12 @@ body {
   padding-left: 1rem;
   padding-right: 1rem;
 }
-
 @media (min-width: 640px) {
   .landing-container {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
 }
-
 @media (min-width: 1024px) {
   .landing-container {
     padding-left: 2rem;
@@ -214,67 +216,17 @@ body {
   }
 }
 
-.dashboard-container {
-  max-width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.card-auto-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-/* Prevent clipped shadows and focus rings */
-.clip-safe {
-  overflow: clip;
-  overflow-clip-margin: 12px;
-}
-
-/* View Transitions Circular Reveal */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-::view-transition-new(root) {
-  z-index: 2;
-}
-
-/* Accessibility: Reduce Transparency & Contrast */
-@media (prefers-reduced-transparency: reduce) {
-  .liquid-glass {
-    background: var(--surface) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-}
-
-@media (prefers-contrast: more) {
-  :root {
-    --glass-border-light: rgba(0, 0, 0, 0.8) !important;
-  }
-  .dark {
-    --glass-border-light: rgba(255, 255, 255, 0.8) !important;
-  }
-  .liquid-glass {
-    background: var(--surface) !important;
-    border: 2px solid var(--text-primary) !important;
-  }
-}
-
-/* Accessibility: Reduce Motion */
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* Accessible focus ring token */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

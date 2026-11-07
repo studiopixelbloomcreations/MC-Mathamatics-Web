@@ -59,7 +59,7 @@ export function LockedScreen({
     <div className="min-h-[85vh] flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6 animate-in fade-in zoom-in-95 duration-500">
         <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 via-amber-500/20 to-red-600/20 rounded-3xl blur-xl opacity-75" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 via-blue-500/20 to-red-600/20 rounded-3xl blur-xl opacity-75" />
           <GlassCard className="relative p-8 border-red-500/30 bg-zinc-950/90 text-center space-y-6">
             {/* Glowing Icon */}
             <div className="w-16 h-16 mx-auto rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)] animate-pulse">
@@ -89,7 +89,7 @@ export function LockedScreen({
             {/* Student ID Chip */}
             <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-xs flex items-center justify-between font-mono">
               <span className="text-muted-foreground">{studentName}</span>
-              <span className="text-amber-400 font-bold">
+              <span className="text-blue-500 font-bold">
                 {uniqueId} (G{grade})
               </span>
             </div>

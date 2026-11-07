@@ -108,7 +108,7 @@ export default function AdminSpecialNotesPage() {
               Select Recipient Student
             </label>
             <select
-              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
               required
@@ -127,7 +127,7 @@ export default function AdminSpecialNotesPage() {
               Sir&apos;s Note Content
             </label>
             <textarea
-              className="w-full mt-1 p-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-amber-500 outline-none h-28"
+              className="w-full mt-1 p-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-blue-500 outline-none h-28"
               placeholder="e.g. Excellent progress in yesterday&apos;s paper, especially quadratic questions! Keep revising circle theorems for this Saturday."
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
@@ -140,7 +140,7 @@ export default function AdminSpecialNotesPage() {
               type="submit"
               variant="primary"
               disabled={loading || !selectedStudentId}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs h-9 px-6 gap-1.5"
+              className="bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs h-9 px-6 gap-1.5"
             >
               <Send className="w-3.5 h-3.5" />
               {loading ? "Dispatching..." : "Send Private Note"}
@@ -162,7 +162,7 @@ export default function AdminSpecialNotesPage() {
               <GlassCard key={n.id} className="p-4 space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-amber-400 font-bold">
+                    <span className="font-mono text-blue-500 font-bold">
                       {n.students?.unique_id || "Student"}
                     </span>
                     <span className="text-muted-foreground">• {n.students?.full_name}</span>
@@ -172,7 +172,7 @@ export default function AdminSpecialNotesPage() {
                       className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
                         n.read
                           ? "bg-white/10 text-muted-foreground"
-                          : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                          : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
                       }`}
                     >
                       {n.read ? "Read by student" : "Unread"}

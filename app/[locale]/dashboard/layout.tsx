@@ -36,7 +36,7 @@ export default async function DashboardLayout({
       <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
         <header className="p-6 border-b border-white/10 flex items-center justify-between max-w-5xl mx-auto w-full">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-serif font-black text-xl">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500 font-serif font-black text-xl">
               MC
             </div>
             <div>
@@ -84,14 +84,14 @@ export default async function DashboardLayout({
         <div className="space-y-6">
           {/* Header Brand */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400/20 to-yellow-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400 font-serif font-black text-xl group-hover:scale-105 transition-transform shadow-[0_0_20px_rgba(250,204,21,0.15)]">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-sky-500/10 border border-blue-400/30 flex items-center justify-center text-blue-500 font-serif font-black text-xl group-hover:scale-105 transition-transform shadow-[0_0_20px_rgba(56,189,248,0.15)]">
               MC
             </div>
             <div>
               <div className="font-extrabold text-foreground tracking-tight text-base leading-none">
                 MC Mathematics
               </div>
-              <span className="text-[11px] text-amber-500/80 font-mono">
+              <span className="text-[11px] text-blue-400/80 font-mono">
                 Student Portal
               </span>
             </div>
@@ -160,7 +160,7 @@ export default async function DashboardLayout({
       {/* ========================================================================= */}
       <header className="lg:hidden flex items-center justify-between p-4 border-b border-white/10 bg-zinc-950/80 backdrop-blur-xl sticky top-0 z-30">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-serif font-black text-sm">
+          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500 font-serif font-black text-sm">
             MC
           </div>
           <span className="font-bold text-sm text-foreground">MC Maths</span>

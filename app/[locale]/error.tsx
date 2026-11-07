@@ -16,7 +16,7 @@ export default function ErrorBoundary({
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center space-y-4">
-      <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-xl">
+      <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500 font-bold text-xl">
         !
       </div>
       <h2 className="text-xl font-bold tracking-tight text-[var(--text)]">

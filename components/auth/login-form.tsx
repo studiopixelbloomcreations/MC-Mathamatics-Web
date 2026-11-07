@@ -116,7 +116,7 @@ export function LoginForm() {
           <div
             className={`p-4 rounded-xl border text-sm mb-6 animate-in fade-in ${
               errorType === "locked"
-                ? "border-amber-500/40 bg-amber-500/10 text-amber-200"
+                ? "border-blue-500/40 bg-blue-500/10 text-blue-200"
                 : "border-red-500/40 bg-red-500/10 text-red-200"
             }`}
           >
@@ -127,7 +127,7 @@ export function LoginForm() {
                 {/* Friendly button to /signup if ID is unknown */}
                 {errorType === "unknown_id" && (
                   <Link href="/signup" className="inline-block mt-2">
-                    <Button size="sm" variant="outline" className="gap-2 border-amber-500/50 text-amber-300">
+                    <Button size="sm" variant="outline" className="gap-2 border-blue-500/50 text-blue-400">
                       <UserPlus className="w-4 h-4" />
                       <span>{t("signUpHere")}</span>
                     </Button>
@@ -142,7 +142,7 @@ export function LoginForm() {
           {/* Student ID */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-              <UserCheck className="w-4 h-4 text-amber-400" />
+              <UserCheck className="w-4 h-4 text-blue-500" />
               {t("studentId")}
             </label>
             <Input
@@ -162,13 +162,13 @@ export function LoginForm() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-amber-400" />
+                <Lock className="w-4 h-4 text-blue-500" />
                 {t("pin")}
               </label>
               <button
                 type="button"
                 onClick={() => setShowForgotPin(!showForgotPin)}
-                className="text-xs text-amber-400 hover:underline cursor-pointer"
+                className="text-xs text-blue-500 hover:underline cursor-pointer"
               >
                 {t("forgotPin")}
               </button>
@@ -194,7 +194,7 @@ export function LoginForm() {
             type="submit"
             size="lg"
             disabled={isSubmitting}
-            className="w-full text-base font-bold shadow-lg shadow-amber-500/10 cursor-pointer"
+            className="w-full text-base font-bold shadow-lg shadow-blue-500/10 cursor-pointer"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
@@ -215,7 +215,7 @@ export function LoginForm() {
               {t("noAccount")}{" "}
               <Link
                 href="/signup"
-                className="text-amber-400 hover:underline font-semibold"
+                className="text-blue-500 hover:underline font-semibold"
               >
                 {t("signUpHere")}
               </Link>
@@ -227,7 +227,7 @@ export function LoginForm() {
         {showForgotPin && (
           <div className="mt-6 pt-6 border-t border-white/10 space-y-4 animate-in fade-in">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <HelpCircle className="w-4 h-4 text-amber-400" />
+              <HelpCircle className="w-4 h-4 text-blue-500" />
               <span>{t("forgotPinTitle")}</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">

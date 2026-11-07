@@ -40,7 +40,7 @@ export function InsightsPanel({
       {/* 1. Header with Badge */}
       <div className="flex items-center justify-between pb-3 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-amber-400" />
+          <Sparkles className="w-4 h-4 text-blue-500" />
           <h3 className="text-base font-bold text-foreground">
             Deterministic Diagnostic Assessment
           </h3>
@@ -97,8 +97,8 @@ export function InsightsPanel({
         </div>
 
         {/* Weaknesses */}
-        <div className="p-4 rounded-xl bg-amber-500/[0.04] border border-amber-500/20 space-y-2">
-          <div className="flex items-center gap-2 text-amber-400">
+        <div className="p-4 rounded-xl bg-blue-500/[0.04] border border-blue-500/20 space-y-2">
+          <div className="flex items-center gap-2 text-blue-500">
             <AlertTriangle className="w-4 h-4" />
             <h4 className="text-xs font-bold uppercase tracking-wider">
               Priority Weaknesses
@@ -112,7 +112,7 @@ export function InsightsPanel({
               {focusAreas.map((fa, i) => (
                 <span
                   key={i}
-                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20"
+                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20"
                 >
                   {fa.topic}: {Math.round(fa.percentage)}%
                 </span>
@@ -137,7 +137,7 @@ export function InsightsPanel({
               key={idx}
               className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-all text-xs"
             >
-              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-mono font-bold flex items-center justify-center shrink-0 text-[11px] border border-amber-500/30">
+              <span className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-500 font-mono font-bold flex items-center justify-center shrink-0 text-[11px] border border-blue-500/30">
                 {idx + 1}
               </span>
               <p className="text-muted-foreground pt-0.5 leading-relaxed">

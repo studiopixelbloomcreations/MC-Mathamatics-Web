@@ -12,8 +12,8 @@ export default async function AttendancePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <CalendarCheck className="w-4 h-4 text-amber-400" />
-            <span className="text-xs uppercase font-mono tracking-widest text-amber-400 font-semibold">
+            <CalendarCheck className="w-4 h-4 text-blue-500" />
+            <span className="text-xs uppercase font-mono tracking-widest text-blue-500 font-semibold">
               Participation Logs
             </span>
           </div>

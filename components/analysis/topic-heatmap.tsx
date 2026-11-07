@@ -42,7 +42,7 @@ export function TopicHeatmap({ paperHistory }: TopicHeatmapProps) {
       return "bg-sky-500/20 text-sky-300 border-sky-500/40 hover:bg-sky-500/30";
     }
     if (score >= 50) {
-      return "bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30";
+      return "bg-blue-500/20 text-blue-400 border-blue-500/40 hover:bg-blue-500/30";
     }
     return "bg-rose-500/25 text-rose-300 border-rose-500/40 hover:bg-rose-500/35";
   };
@@ -110,7 +110,7 @@ export function TopicHeatmap({ paperHistory }: TopicHeatmapProps) {
           <span>65-79% (Proficient)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded bg-amber-500/40 border border-amber-500" />
+          <span className="w-2.5 h-2.5 rounded bg-blue-500/40 border border-blue-500" />
           <span>50-64% (Developing)</span>
         </div>
         <div className="flex items-center gap-1.5">

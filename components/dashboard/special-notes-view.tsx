@@ -52,13 +52,13 @@ export function SpecialNotesView({ notes: initialNotes }: SpecialNotesViewProps)
           key={note.id}
           className={`p-6 border-white/10 transition-all ${
             !note.isRead
-              ? "border-amber-500/40 bg-amber-500/5 shadow-md shadow-amber-500/5"
+              ? "border-blue-500/40 bg-blue-500/5 shadow-md shadow-blue-500/5"
               : "opacity-85"
           }`}
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
@@ -101,7 +101,7 @@ export function SpecialNotesView({ notes: initialNotes }: SpecialNotesViewProps)
                   variant="outline"
                   size="sm"
                   onClick={() => handleMarkAsRead(note.id)}
-                  className="text-xs gap-1.5 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 cursor-pointer"
+                  className="text-xs gap-1.5 border-blue-500/30 text-blue-400 hover:bg-blue-500/10 cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>Mark as read</span>

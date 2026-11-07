@@ -60,13 +60,13 @@ export function AiModeGuardModal({ aiMode, onDisableAiMode }: AiModeGuardModalPr
     <>
       {/* 1. Global AI Mode Active Floating Banner */}
       {aiMode && (
-        <div className="sticky top-0 z-40 bg-amber-500/10 border-b border-amber-500/30 backdrop-blur-md px-4 py-2 flex items-center justify-between text-xs">
+        <div className="sticky top-0 z-40 bg-blue-500/10 border-b border-blue-500/30 backdrop-blur-md px-4 py-2 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
             </span>
-            <span className="font-semibold text-amber-300">
+            <span className="font-semibold text-blue-400">
               AI Mode is currently active
             </span>
             <span className="hidden sm:inline text-muted-foreground">
@@ -78,7 +78,7 @@ export function AiModeGuardModal({ aiMode, onDisableAiMode }: AiModeGuardModalPr
             size="sm"
             variant="ghost"
             onClick={() => setIsOpen(true)}
-            className="ai-modal-btn h-7 text-xs text-amber-400 hover:bg-amber-500/20"
+            className="ai-modal-btn h-7 text-xs text-blue-500 hover:bg-blue-500/20"
           >
             Switch to Manual Control
           </Button>
@@ -88,8 +88,8 @@ export function AiModeGuardModal({ aiMode, onDisableAiMode }: AiModeGuardModalPr
       {/* 2. Blueprint A5 Exact Modal Flow */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-2xl bg-zinc-950 border border-amber-500/40 p-6 shadow-2xl shadow-amber-500/10 space-y-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
+          <div className="w-full max-w-md rounded-2xl bg-zinc-950 border border-blue-500/40 p-6 shadow-2xl shadow-blue-500/10 space-y-6 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center mx-auto text-blue-500">
               <Bot className="w-8 h-8" />
             </div>
 
@@ -116,7 +116,7 @@ export function AiModeGuardModal({ aiMode, onDisableAiMode }: AiModeGuardModalPr
               </Button>
               <Button
                 variant="primary"
-                className="ai-modal-btn w-28 bg-amber-500 hover:bg-amber-400 text-black font-bold"
+                className="ai-modal-btn w-28 bg-blue-600 hover:bg-blue-500 text-black font-bold"
                 onClick={handleConfirmEnableManual}
                 disabled={loading}
               >

@@ -122,7 +122,7 @@ export function SignUpForm() {
           {/* Full Name */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground">
-              {t("fullName")} <span className="text-amber-400">*</span>
+              {t("fullName")} <span className="text-blue-500">*</span>
             </label>
             <Input
               {...register("fullName")}
@@ -135,8 +135,8 @@ export function SignUpForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <GraduationCap className="w-4 h-4 text-amber-400" />
-                {t("grade")} <span className="text-amber-400">*</span>
+                <GraduationCap className="w-4 h-4 text-blue-500" />
+                {t("grade")} <span className="text-blue-500">*</span>
               </label>
               <select
                 {...register("grade", { valueAsNumber: true })}
@@ -155,7 +155,7 @@ export function SignUpForm() {
 
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-amber-400" />
+                <Calendar className="w-4 h-4 text-blue-500" />
                 {t("age")}
               </label>
               <Input
@@ -170,7 +170,7 @@ export function SignUpForm() {
           {/* Class Type Toggle (Theory + Paper vs Theory Only) */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">
-              {t("classType")} <span className="text-amber-400">*</span>
+              {t("classType")} <span className="text-blue-500">*</span>
             </label>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -178,13 +178,13 @@ export function SignUpForm() {
                 onClick={() => setValue("classType", "TP")}
                 className={`py-3 px-4 rounded-xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   selectedClassType === "TP"
-                    ? "border-amber-500 bg-amber-500/15 text-amber-400 ring-2 ring-amber-500/30"
+                    ? "border-blue-500 bg-blue-500/15 text-blue-500 ring-2 ring-blue-500/30"
                     : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"
                 }`}
               >
                 <span>{t("theoryAndPaper")}</span>
                 {selectedClassType === "TP" && (
-                  <CheckCircle2 className="w-4 h-4 text-amber-400" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-500" />
                 )}
               </button>
 
@@ -193,13 +193,13 @@ export function SignUpForm() {
                 onClick={() => setValue("classType", "T")}
                 className={`py-3 px-4 rounded-xl border text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   selectedClassType === "T"
-                    ? "border-amber-500 bg-amber-500/15 text-amber-400 ring-2 ring-amber-500/30"
+                    ? "border-blue-500 bg-blue-500/15 text-blue-500 ring-2 ring-blue-500/30"
                     : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"
                 }`}
               >
                 <span>{t("theoryOnly")}</span>
                 {selectedClassType === "T" && (
-                  <CheckCircle2 className="w-4 h-4 text-amber-400" />
+                  <CheckCircle2 className="w-4 h-4 text-blue-500" />
                 )}
               </button>
             </div>
@@ -208,7 +208,7 @@ export function SignUpForm() {
           {/* Town / Whereabouts */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-amber-400" />
+              <MapPin className="w-4 h-4 text-blue-500" />
               {t("whereabouts")}
             </label>
             <Input
@@ -223,7 +223,7 @@ export function SignUpForm() {
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                 <MessageSquare className="w-4 h-4 text-emerald-400" />
-                {t("parentWhatsapp")} <span className="text-amber-400">*</span>
+                {t("parentWhatsapp")} <span className="text-blue-500">*</span>
               </label>
               <Input
                 {...register("parentWhatsapp")}
@@ -266,8 +266,8 @@ export function SignUpForm() {
           <div className="space-y-4 pt-2 border-t border-white/10">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-amber-400" />
-                {t("choosePin")} <span className="text-amber-400">*</span>
+                <Lock className="w-4 h-4 text-blue-500" />
+                {t("choosePin")} <span className="text-blue-500">*</span>
               </label>
               <Controller
                 name="pin"
@@ -287,8 +287,8 @@ export function SignUpForm() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                <Lock className="w-4 h-4 text-amber-400" />
-                {t("confirmPin")} <span className="text-amber-400">*</span>
+                <Lock className="w-4 h-4 text-blue-500" />
+                {t("confirmPin")} <span className="text-blue-500">*</span>
               </label>
               <Controller
                 name="pinConfirm"
@@ -315,7 +315,7 @@ export function SignUpForm() {
               <input
                 type="checkbox"
                 {...register("consent")}
-                className="mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500/30"
+                className="mt-1 h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-blue-600 focus:ring-blue-500/30"
               />
               <span className="text-xs text-muted-foreground group-hover:text-zinc-300 leading-relaxed">
                 {t("consentText")}
@@ -333,7 +333,7 @@ export function SignUpForm() {
             type="submit"
             size="lg"
             disabled={isSubmitting}
-            className="w-full text-base font-bold shadow-lg shadow-amber-500/10 cursor-pointer"
+            className="w-full text-base font-bold shadow-lg shadow-blue-500/10 cursor-pointer"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
@@ -351,7 +351,7 @@ export function SignUpForm() {
               {t("alreadyRegistered")}{" "}
               <Link
                 href="/login"
-                className="text-amber-400 hover:underline font-semibold"
+                className="text-blue-500 hover:underline font-semibold"
               >
                 {t("loginHere")}
               </Link>

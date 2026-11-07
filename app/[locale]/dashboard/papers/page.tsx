@@ -11,8 +11,8 @@ export default async function PapersPage() {
   if (data.hideResults) {
     return (
       <div className="py-12 max-w-xl mx-auto text-center space-y-4">
-        <GlassCard className="p-8 border-amber-500/30 text-center space-y-4">
-          <EyeOff className="w-10 h-10 text-amber-400 mx-auto" />
+        <GlassCard className="p-8 border-blue-500/30 text-center space-y-4">
+          <EyeOff className="w-10 h-10 text-blue-500 mx-auto" />
           <h2 className="text-xl font-bold text-foreground">
             Results Temporarily Hidden
           </h2>
@@ -30,8 +30,8 @@ export default async function PapersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-amber-400" />
-            <span className="text-xs uppercase font-mono tracking-widest text-amber-400 font-semibold">
+            <FileText className="w-4 h-4 text-blue-500" />
+            <span className="text-xs uppercase font-mono tracking-widest text-blue-500 font-semibold">
               Academic Assessments
             </span>
           </div>

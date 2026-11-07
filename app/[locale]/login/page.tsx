@@ -9,7 +9,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-background py-12 px-4 sm:px-6 lg:px-8 flex flex-col justify-between">
       {/* Background radial glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-b from-amber-500/10 via-yellow-500/5 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-b from-blue-500/10 via-sky-500/5 to-transparent blur-3xl pointer-events-none" />
 
       {/* Top Bar with Back Link & Controls */}
       <div className="w-full max-w-4xl mx-auto flex items-center justify-between pb-8 relative z-10">
@@ -35,7 +35,7 @@ export default function LoginPage() {
       {/* Minimal Footer */}
       <footer className="w-full max-w-4xl mx-auto text-center pt-12 pb-4 text-xs text-muted-foreground relative z-10">
         <p>© 2026 MC Mathematics. Kurunegala, Sri Lanka.</p>
-        <p className="mt-1 font-mono text-[11px] text-amber-500/70">
+        <p className="mt-1 font-mono text-[11px] text-blue-600/70">
           Maths is the question. MC is the answer.
         </p>
       </footer>

@@ -158,7 +158,7 @@ export default function AdminMarksPage() {
               Filter Grade
             </label>
             <select
-              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
             >
@@ -175,7 +175,7 @@ export default function AdminMarksPage() {
               Select Paper
             </label>
             <select
-              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
               value={selectedPaperId}
               onChange={(e) => setSelectedPaperId(e.target.value)}
             >
@@ -197,7 +197,7 @@ export default function AdminMarksPage() {
         {/* Single Student Mark Entry */}
         <GlassCard className="p-6 space-y-4 lg:col-span-1">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-amber-400" />
+            <GraduationCap className="w-4 h-4 text-blue-500" />
             <h3 className="text-sm font-bold text-foreground">Single Student Entry</h3>
           </div>
 
@@ -207,7 +207,7 @@ export default function AdminMarksPage() {
                 Student
               </label>
               <select
-                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
                 value={selectedStudentId}
                 onChange={(e) => setSelectedStudentId(e.target.value)}
                 required
@@ -267,7 +267,7 @@ export default function AdminMarksPage() {
               type="submit"
               variant="primary"
               disabled={loading || !selectedStudentId || !selectedPaperId}
-              className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs h-9 mt-2"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs h-9 mt-2"
             >
               {loading ? "Recording..." : "Save & Recompute"}
             </Button>
@@ -287,7 +287,7 @@ export default function AdminMarksPage() {
               size="sm"
               onClick={handleBulkSubmit}
               disabled={loading || students.length === 0}
-              className="h-8 text-xs gap-1.5 border-amber-500/30 text-amber-300 hover:bg-amber-500/10"
+              className="h-8 text-xs gap-1.5 border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
             >
               <Save className="w-3.5 h-3.5" />
               Save All Marks
@@ -313,7 +313,7 @@ export default function AdminMarksPage() {
                 ) : (
                   students.map((st) => (
                     <tr key={st.id} className="hover:bg-white/[0.02]">
-                      <td className="py-2 px-3 text-amber-400 font-bold">{st.unique_id}</td>
+                      <td className="py-2 px-3 text-blue-500 font-bold">{st.unique_id}</td>
                       <td className="py-2 px-3 font-sans font-medium text-foreground">
                         {st.full_name}
                       </td>
@@ -321,7 +321,7 @@ export default function AdminMarksPage() {
                         <input
                           type="number"
                           placeholder="—"
-                          className="w-20 h-8 px-2 rounded bg-zinc-900 border border-white/15 text-xs text-right font-mono text-foreground focus:ring-1 focus:ring-amber-500 outline-none"
+                          className="w-20 h-8 px-2 rounded bg-zinc-900 border border-white/15 text-xs text-right font-mono text-foreground focus:ring-1 focus:ring-blue-500 outline-none"
                           value={bulkMarks[st.id] ?? ""}
                           onChange={(e) =>
                             setBulkMarks({

@@ -107,8 +107,8 @@ export default function AdminStudentsPage() {
 
       {/* Pending PIN Reset Requests Banner */}
       {pinRequests.filter((r) => r.status === "pending").length > 0 && (
-        <GlassCard className="p-4 border-amber-500/40 bg-amber-500/10 space-y-3">
-          <div className="flex items-center gap-2 text-amber-400">
+        <GlassCard className="p-4 border-blue-500/40 bg-blue-500/10 space-y-3">
+          <div className="flex items-center gap-2 text-blue-500">
             <ShieldAlert className="w-4 h-4" />
             <h3 className="text-xs font-bold uppercase tracking-wider">
               Pending Forgot-PIN Reset Requests
@@ -120,7 +120,7 @@ export default function AdminStudentsPage() {
               .map((r) => (
                 <div key={r.id} className="py-2 flex items-center justify-between">
                   <div>
-                    <span className="font-mono font-bold text-amber-300">{r.unique_id}</span>
+                    <span className="font-mono font-bold text-blue-400">{r.unique_id}</span>
                     <span className="text-muted-foreground ml-2">
                       {r.students?.full_name} • Parent: {r.students?.parent_whatsapp}
                     </span>
@@ -132,7 +132,7 @@ export default function AdminStudentsPage() {
                       const studentObj = students.find((s) => s.unique_id === r.unique_id);
                       if (studentObj) setSelectedStudent(studentObj);
                     }}
-                    className="h-7 text-xs border-amber-500/40 text-amber-300"
+                    className="h-7 text-xs border-blue-500/40 text-blue-400"
                   >
                     Reset PIN
                   </Button>
@@ -157,7 +157,7 @@ export default function AdminStudentsPage() {
 
           <div>
             <select
-              className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+              className="w-full h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
               value={gradeFilter}
               onChange={(e) => setGradeFilter(e.target.value)}
             >
@@ -202,7 +202,7 @@ export default function AdminStudentsPage() {
               ) : (
                 students.map((st) => (
                   <tr key={st.id} className="hover:bg-white/[0.02]">
-                    <td className="py-2.5 px-3 text-amber-400 font-bold">{st.unique_id}</td>
+                    <td className="py-2.5 px-3 text-blue-500 font-bold">{st.unique_id}</td>
                     <td className="py-2.5 px-3 font-sans font-medium text-foreground">
                       {st.full_name}
                     </td>
@@ -270,7 +270,7 @@ export default function AdminStudentsPage() {
                   type="submit"
                   variant="primary"
                   disabled={loading || newPin.length !== 6}
-                  className="bg-amber-500 hover:bg-amber-400 text-black font-bold"
+                  className="bg-blue-600 hover:bg-blue-500 text-black font-bold"
                 >
                   {loading ? "Resetting..." : "Confirm Reset"}
                 </Button>

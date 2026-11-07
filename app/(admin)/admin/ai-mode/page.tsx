@@ -105,21 +105,21 @@ export default function AdminAiModePage() {
       )}
 
       {/* Main AI Mode Toggle Card */}
-      <GlassCard className="p-6 border-amber-500/30 space-y-4">
+      <GlassCard className="p-6 border-blue-500/30 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
                 {aiMode && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
                 )}
                 <span
                   className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                    aiMode ? "bg-amber-400" : "bg-neutral-600"
+                    aiMode ? "bg-blue-500" : "bg-neutral-600"
                   }`}
                 ></span>
               </span>
-              <span className="text-xs uppercase font-mono tracking-wider text-amber-400 font-bold">
+              <span className="text-xs uppercase font-mono tracking-wider text-blue-500 font-bold">
                 Autonomous State Control
               </span>
             </div>
@@ -136,7 +136,7 @@ export default function AdminAiModePage() {
               onClick={handleToggleAiMode}
               disabled={loading}
               className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none ${
-                aiMode ? "bg-amber-500" : "bg-white/10"
+                aiMode ? "bg-blue-600" : "bg-white/10"
               }`}
             >
               <span
@@ -165,7 +165,7 @@ export default function AdminAiModePage() {
       <GlassCard className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bot className="w-4 h-4 text-amber-400" />
+            <Bot className="w-4 h-4 text-blue-500" />
             <h3 className="text-sm font-bold text-foreground">
               AI Action History & Undo Feed (24-Hour Window)
             </h3>
@@ -200,7 +200,7 @@ export default function AdminAiModePage() {
                             ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                             : act.status === "undone"
                             ? "bg-neutral-700 text-neutral-300"
-                            : "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                            : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
                         }`}
                       >
                         {act.status}
@@ -228,7 +228,7 @@ export default function AdminAiModePage() {
                     <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground block mb-1">
                       Raw WhatsApp Inbound Text:
                     </span>
-                    <p className="p-2.5 rounded bg-zinc-900 border border-white/5 font-mono text-[11px] text-amber-200 whitespace-pre-wrap">
+                    <p className="p-2.5 rounded bg-zinc-900 border border-white/5 font-mono text-[11px] text-blue-200 whitespace-pre-wrap">
                       {act.raw_text}
                     </p>
                   </div>

@@ -112,8 +112,8 @@ export function ComparisonBarChart({ metrics }: ComparisonBarChartProps) {
               if (active && payload && payload.length) {
                 const item = payload[0].payload;
                 return (
-                  <div className="bg-neutral-900/95 border border-amber-500/30 backdrop-blur-md p-3 rounded-lg shadow-xl text-xs space-y-1">
-                    <p className="font-bold text-amber-400">{item.category}</p>
+                  <div className="bg-neutral-900/95 border border-blue-500/30 backdrop-blur-md p-3 rounded-lg shadow-xl text-xs space-y-1">
+                    <p className="font-bold text-blue-500">{item.category}</p>
                     <p className="text-white font-semibold">{item.score}%</p>
                     <p className="text-muted-foreground">{item.desc}</p>
                   </div>

@@ -61,7 +61,7 @@ export default function AdminLogsPage() {
               onClick={() => setFilterSuccess(filter)}
               className={`px-3 py-1 rounded text-xs font-semibold capitalize transition-all ${
                 filterSuccess === filter
-                  ? "bg-amber-500 text-black font-bold"
+                  ? "bg-blue-600 text-black font-bold"
                   : "bg-white/5 text-muted-foreground hover:bg-white/10"
               }`}
             >

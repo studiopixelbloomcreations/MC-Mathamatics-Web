@@ -88,11 +88,11 @@ export default function AdminReportsPage() {
       )}
 
       {/* Paid Templates Authorization Setting */}
-      <GlassCard className="p-6 border-amber-500/30 space-y-4">
+      <GlassCard className="p-6 border-blue-500/30 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase font-mono tracking-wider text-amber-400 font-semibold">
+              <span className="text-xs uppercase font-mono tracking-wider text-blue-500 font-semibold">
                 Cost Guardrail Settings
               </span>
             </div>
@@ -109,7 +109,7 @@ export default function AdminReportsPage() {
               onClick={handleTogglePaidTemplates}
               disabled={loading}
               className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors focus:outline-none ${
-                paidTemplates ? "bg-amber-500" : "bg-white/10"
+                paidTemplates ? "bg-blue-600" : "bg-white/10"
               }`}
             >
               <span
@@ -125,7 +125,7 @@ export default function AdminReportsPage() {
         </div>
 
         {paidTemplates && (
-          <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-center gap-2">
+          <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 text-xs text-blue-400 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>
               Warning: Out-of-window messages will now be charged according to Meta WhatsApp Cloud API marketing/utility pricing.
@@ -174,7 +174,7 @@ export default function AdminReportsPage() {
                 deliveries.map((d) => (
                   <tr key={d.id} className="hover:bg-white/[0.02]">
                     <td className="py-2.5 px-3 text-foreground font-sans">
-                      <span className="font-mono text-amber-400 font-bold mr-1.5">
+                      <span className="font-mono text-blue-500 font-bold mr-1.5">
                         {d.students?.unique_id}
                       </span>
                       {d.students?.full_name}

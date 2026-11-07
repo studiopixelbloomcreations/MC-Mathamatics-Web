@@ -116,8 +116,8 @@ export function ParentalControlsView({
   if (!isAuthenticated) {
     return (
       <div className="max-w-md mx-auto py-12 animate-in fade-in">
-        <GlassCard className="p-8 border-amber-500/30 text-center space-y-6">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <GlassCard className="p-8 border-blue-500/30 text-center space-y-6">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500">
             <ShieldCheck className="w-7 h-7" />
           </div>
 
@@ -143,7 +143,7 @@ export function ParentalControlsView({
               <p className="text-xs text-red-400 animate-in fade-in">{pinError}</p>
             )}
             <p className="text-[11px] text-muted-foreground">
-              Default PIN is <span className="font-mono font-bold text-amber-400">123456</span>
+              Default PIN is <span className="font-mono font-bold text-blue-500">123456</span>
             </p>
           </div>
 
@@ -173,7 +173,7 @@ export function ParentalControlsView({
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-amber-400" />
+              <Lock className="w-4 h-4 text-blue-500" />
               <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
                 Portal Access Locks
               </h3>
@@ -210,7 +210,7 @@ export function ParentalControlsView({
               type="checkbox"
               checked={scheduleEnabled}
               onChange={(e) => setScheduleEnabled(e.target.checked)}
-              className="h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-amber-500"
+              className="h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-blue-600"
             />
             <span className="font-semibold text-foreground text-xs">
               Enable Scheduled Daily Lock (e.g. Bedtime Study Routine)
@@ -258,7 +258,7 @@ export function ParentalControlsView({
             <div className="space-y-1">
               <span className="text-xs font-bold text-foreground flex items-center gap-2">
                 {hideResults ? (
-                  <EyeOff className="w-4 h-4 text-amber-400" />
+                  <EyeOff className="w-4 h-4 text-blue-500" />
                 ) : (
                   <Eye className="w-4 h-4 text-emerald-400" />
                 )}
@@ -289,7 +289,7 @@ export function ParentalControlsView({
                 onClick={() => setReportFrequency("every_paper")}
                 className={`p-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
                   reportFrequency === "every_paper"
-                    ? "border-amber-500 bg-amber-500/15 text-amber-400"
+                    ? "border-blue-500 bg-blue-500/15 text-blue-500"
                     : "border-white/10 bg-white/5 text-muted-foreground"
                 }`}
               >
@@ -300,7 +300,7 @@ export function ParentalControlsView({
                 onClick={() => setReportFrequency("weekly")}
                 className={`p-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
                   reportFrequency === "weekly"
-                    ? "border-amber-500 bg-amber-500/15 text-amber-400"
+                    ? "border-blue-500 bg-blue-500/15 text-blue-500"
                     : "border-white/10 bg-white/5 text-muted-foreground"
                 }`}
               >
@@ -337,7 +337,7 @@ export function ParentalControlsView({
       {/* 3. Audit: Recent Login Activity Log */}
       <GlassCard className="p-6 border-white/10 space-y-4">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-amber-400" />
+          <Activity className="w-4 h-4 text-blue-500" />
           <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">
             Recent Student Login Activity
           </h3>

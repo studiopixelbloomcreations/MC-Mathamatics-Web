@@ -109,7 +109,7 @@ export default function AdminAttendancePage() {
           <div>
             <label className="text-xs font-semibold text-muted-foreground uppercase">Grade</label>
             <select
-              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+              className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
             >
@@ -156,7 +156,7 @@ export default function AdminAttendancePage() {
           <Button
             onClick={handleSave}
             disabled={loading || students.length === 0}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs h-8 px-4 gap-1.5"
+            className="bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs h-8 px-4 gap-1.5"
           >
             <Save className="w-3.5 h-3.5" />
             Save Attendance
@@ -184,7 +184,7 @@ export default function AdminAttendancePage() {
                   const currentStatus = attendanceMap[st.id] || "present";
                   return (
                     <tr key={st.id} className="hover:bg-white/[0.02]">
-                      <td className="py-2.5 px-3 text-amber-400 font-bold">{st.unique_id}</td>
+                      <td className="py-2.5 px-3 text-blue-500 font-bold">{st.unique_id}</td>
                       <td className="py-2.5 px-3 font-sans font-medium text-foreground">
                         {st.full_name}
                       </td>
@@ -202,7 +202,7 @@ export default function AdminAttendancePage() {
                                     : stat === "absent"
                                     ? "bg-rose-500 text-white font-bold shadow"
                                     : stat === "late"
-                                    ? "bg-amber-500 text-black font-bold shadow"
+                                    ? "bg-blue-600 text-black font-bold shadow"
                                     : "bg-sky-500 text-black font-bold shadow"
                                   : "text-muted-foreground hover:text-white"
                               }`}

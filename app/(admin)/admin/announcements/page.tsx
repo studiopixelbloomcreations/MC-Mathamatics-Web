@@ -119,7 +119,7 @@ export default function AdminAnnouncementsPage() {
             <div>
               <label className="text-xs font-semibold text-muted-foreground uppercase">Target Cohort</label>
               <select
-                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
               >
@@ -136,7 +136,7 @@ export default function AdminAnnouncementsPage() {
           <div>
             <label className="text-xs font-semibold text-muted-foreground uppercase">Bulletin Content</label>
             <textarea
-              className="w-full mt-1 p-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-amber-500 outline-none h-24"
+              className="w-full mt-1 p-3 rounded-lg bg-zinc-900 border border-white/15 text-xs text-foreground focus:ring-2 focus:ring-blue-500 outline-none h-24"
               placeholder="Write the full announcement notice here..."
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -150,9 +150,9 @@ export default function AdminAnnouncementsPage() {
                 type="checkbox"
                 checked={pinned}
                 onChange={(e) => setPinned(e.target.checked)}
-                className="rounded accent-amber-500"
+                className="rounded accent-blue-600"
               />
-              <Pin className="w-3.5 h-3.5 text-amber-400" />
+              <Pin className="w-3.5 h-3.5 text-blue-500" />
               <span>Pin this announcement to top of feed</span>
             </label>
 
@@ -160,7 +160,7 @@ export default function AdminAnnouncementsPage() {
               type="submit"
               variant="primary"
               disabled={loading}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs h-9 px-6 gap-1.5"
+              className="bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs h-9 px-6 gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               {loading ? "Posting..." : "Post Announcement"}
@@ -183,7 +183,7 @@ export default function AdminAnnouncementsPage() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     {item.pinned && (
-                      <span className="flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span className="flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
                         <Pin className="w-3 h-3" /> Pinned
                       </span>
                     )}

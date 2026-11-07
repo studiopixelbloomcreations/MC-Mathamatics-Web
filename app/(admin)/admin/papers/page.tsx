@@ -143,7 +143,7 @@ export default function AdminPapersPage() {
                 Grade (6–13)
               </label>
               <select
-                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
               >
@@ -160,7 +160,7 @@ export default function AdminPapersPage() {
                 Class Type
               </label>
               <select
-                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full mt-1 h-10 px-3 rounded-lg bg-zinc-900 border border-white/15 text-sm text-foreground focus:ring-2 focus:ring-blue-500 outline-none"
                 value={classType}
                 onChange={(e) => setClassType(e.target.value as "TP" | "T" | "both")}
               >
@@ -257,7 +257,7 @@ export default function AdminPapersPage() {
               type="submit"
               variant="primary"
               disabled={loading}
-              className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs h-9 px-6"
+              className="bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs h-9 px-6"
             >
               {loading ? "Publishing..." : "Publish Paper to Grade"}
             </Button>

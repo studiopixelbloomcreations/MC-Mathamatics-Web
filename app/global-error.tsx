@@ -19,7 +19,7 @@ export default function GlobalError({
           </p>
           <Button
             onClick={() => reset()}
-            className="bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs"
+            className="bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs"
           >
             Reload Platform
           </Button>

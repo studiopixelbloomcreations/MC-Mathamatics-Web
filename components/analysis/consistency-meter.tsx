@@ -14,7 +14,7 @@ export function ConsistencyMeter({ metrics }: ConsistencyMeterProps) {
   const getMeterColor = (score: number) => {
     if (score >= 85) return "from-emerald-500 to-teal-400";
     if (score >= 70) return "from-sky-500 to-indigo-400";
-    if (score >= 55) return "from-amber-500 to-yellow-400";
+    if (score >= 55) return "from-blue-600 to-sky-400";
     return "from-rose-500 to-orange-400";
   };
 
@@ -25,7 +25,7 @@ export function ConsistencyMeter({ metrics }: ConsistencyMeterProps) {
       case "Consistent":
         return "bg-sky-500/20 text-sky-300 border-sky-500/40";
       case "Moderate Variance":
-        return "bg-amber-500/20 text-amber-300 border-amber-500/40";
+        return "bg-blue-500/20 text-blue-400 border-blue-500/40";
       case "Volatile":
         return "bg-rose-500/20 text-rose-300 border-rose-500/40";
       default:
@@ -37,7 +37,7 @@ export function ConsistencyMeter({ metrics }: ConsistencyMeterProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Gauge className="w-4 h-4 text-amber-400" />
+          <Gauge className="w-4 h-4 text-blue-500" />
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Consistency Index
           </span>
@@ -85,7 +85,7 @@ export function ConsistencyMeter({ metrics }: ConsistencyMeterProps) {
             ) : trend.direction === "declining" ? (
               <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
             ) : (
-              <Minus className="w-3.5 h-3.5 text-amber-400" />
+              <Minus className="w-3.5 h-3.5 text-blue-500" />
             )}
             <span>Trend Slope</span>
           </div>

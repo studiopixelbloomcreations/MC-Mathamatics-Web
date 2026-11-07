@@ -101,12 +101,12 @@ export function AttendanceView({
             <span className="text-xs uppercase font-mono tracking-wider text-muted-foreground">
               Current Streak
             </span>
-            <div className="text-3xl font-extrabold font-mono text-amber-400">
+            <div className="text-3xl font-extrabold font-mono text-blue-500">
               <StatCounter value={streak} suffix=" classes" />
             </div>
             <p className="text-xs text-muted-foreground">Consecutive attendance</p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+          <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
             <Flame className="w-6 h-6 fill-current" />
           </div>
         </GlassCard>
@@ -118,7 +118,7 @@ export function AttendanceView({
             </span>
             <div className="flex items-center gap-3 pt-2 text-xs font-mono">
               <span className="text-emerald-400 font-bold">{summary.present} P</span>
-              <span className="text-amber-400 font-bold">{summary.late} L</span>
+              <span className="text-blue-500 font-bold">{summary.late} L</span>
               <span className="text-red-400 font-bold">{summary.absent} A</span>
             </div>
             <p className="text-[11px] text-muted-foreground pt-1">
@@ -135,7 +135,7 @@ export function AttendanceView({
       <GlassCard className="p-6 space-y-4 border-white/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CalendarCheck className="w-4 h-4 text-amber-400" />
+            <CalendarCheck className="w-4 h-4 text-blue-500" />
             <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">
               {currentMonth} Attendance Heatmap
             </h3>
@@ -145,7 +145,7 @@ export function AttendanceView({
               <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500" /> Present
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-sm bg-amber-500" /> Late
+              <span className="w-2.5 h-2.5 rounded-sm bg-blue-600" /> Late
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-sm bg-red-500" /> Absent
@@ -167,7 +167,7 @@ export function AttendanceView({
 
             let bgClass = "bg-white/5 border-white/10 text-muted-foreground";
             if (status === "present") bgClass = "bg-emerald-500/30 border-emerald-500/50 text-emerald-300 font-bold";
-            if (status === "late") bgClass = "bg-amber-500/30 border-amber-500/50 text-amber-300 font-bold";
+            if (status === "late") bgClass = "bg-blue-500/30 border-blue-500/50 text-blue-400 font-bold";
             if (status === "absent") bgClass = "bg-red-500/30 border-red-500/50 text-red-300 font-bold";
 
             return (
@@ -231,7 +231,7 @@ export function AttendanceView({
                         </span>
                       )}
                       {r.status === "late" && (
-                        <span className="inline-flex items-center gap-1 text-amber-400 font-bold">
+                        <span className="inline-flex items-center gap-1 text-blue-500 font-bold">
                           <Clock className="w-3.5 h-3.5" /> Late
                         </span>
                       )}

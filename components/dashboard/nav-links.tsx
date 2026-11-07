@@ -110,7 +110,7 @@ export function DashboardNavLinks({
               <span
                 className={cn(
                   "text-[10px] font-mono px-2 py-0.5 rounded-full border",
-                  link.badgeVariant === "warn" && "bg-amber-500/20 text-amber-300 border-amber-500/40",
+                  link.badgeVariant === "warn" && "bg-blue-500/20 text-blue-400 border-blue-500/40",
                   link.badgeVariant === "accent" && "bg-[var(--brand)]/20 text-[var(--brand)] border-[var(--brand)]/40",
                   link.badgeVariant === "brand" && "bg-white/10 text-[var(--text)] border-white/20",
                   link.badgeVariant === "secondary" && "bg-white/5 text-[var(--muted)] border-white/10"

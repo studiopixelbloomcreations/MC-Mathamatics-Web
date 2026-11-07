@@ -78,7 +78,7 @@ export function FloatingTabBar({ unreadNotesCount = 0 }: FloatingTabBarProps) {
                   }
                 />
                 {tab.badge && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-[var(--surface)]" />
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-[var(--surface)]" />
                 )}
               </motion.div>
 

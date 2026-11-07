@@ -22,8 +22,8 @@ export function RankMovementChart({ data, isSmallClass }: RankMovementChartProps
     switch (band) {
       case "Top 10%":
         return {
-          bg: "bg-amber-500/15 border-amber-500/40 text-amber-300",
-          dot: "bg-amber-400",
+          bg: "bg-blue-500/15 border-blue-500/40 text-blue-400",
+          dot: "bg-blue-500",
           label: "Elite Tier (Top 10%)",
         };
       case "Top 25%":
@@ -51,7 +51,7 @@ export function RankMovementChart({ data, isSmallClass }: RankMovementChartProps
     <div className="space-y-4">
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>Timeline Progression</span>
-        <span className="flex items-center gap-1.5 text-amber-400 font-medium">
+        <span className="flex items-center gap-1.5 text-blue-500 font-medium">
           <ShieldCheck className="w-3.5 h-3.5" />
           Anonymized Percentile Bands
         </span>
@@ -67,7 +67,7 @@ export function RankMovementChart({ data, isSmallClass }: RankMovementChartProps
               {/* Timeline marker */}
               <div
                 className={`absolute -left-[22px] top-1.5 w-3 h-3 rounded-full border-2 border-background transition-transform group-hover:scale-125 ${
-                  isLatest ? "bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.5)]" : style.dot
+                  isLatest ? "bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" : style.dot
                 }`}
               />
 
@@ -76,7 +76,7 @@ export function RankMovementChart({ data, isSmallClass }: RankMovementChartProps
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-foreground">{item.paperTitle}</p>
                     {isLatest && (
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
                         Latest
                       </span>
                     )}
