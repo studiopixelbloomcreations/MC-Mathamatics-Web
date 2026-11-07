@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -18,7 +18,7 @@ import {
   Radar,
   Legend,
 } from "recharts";
-import { AlertCircle, Award } from "lucide-react";
+import { Trophy, WarningCircle } from "@phosphor-icons/react";
 
 const trendData = [
   { paper: "P 08", student: 64, classAvg: 58 },
@@ -50,51 +50,55 @@ export function AnalysisPreview() {
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <Reveal direction="down">
           <Badge variant="brand" dot>
-            Live Preview · Kamal Perera (MCG10TP1001)
+            Diagnostic Preview · Student MCG10TP1001
           </Badge>
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            See Exactly Where Marks Are Won &amp; Lost
+            See exactly where marks are won &amp; lost
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="text-sm sm:text-base text-[var(--muted)]">
-            A dynamic dashboard designed to turn ambiguous math anxieties into
+            A dynamic telemetry console designed to turn ambiguous math anxieties into
             clear, measurable weekly action steps.
           </p>
         </Reveal>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Trend Line & Class Average Comparison (7 cols) */}
         <Reveal direction="up" className="lg:col-span-7">
-          <GlassCard variant="bento" spotlight className="p-6 md:p-8 space-y-6">
+          <Glass tint="subtle" className="p-6 md:p-8 space-y-6 rounded-3xl h-full flex flex-col justify-between">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-mono text-[var(--muted)] uppercase">
-                  Longitudinal Performance Trend
+                <span className="text-xs font-mono text-[var(--muted)] uppercase tracking-wider block [font-feature-settings:'tnum'_1]">
+                  Performance Telemetry
                 </span>
                 <h3 className="text-xl font-bold text-[var(--text)]">
-                  Student vs. Class Average
+                  Student vs. class average
                 </h3>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="good" dot>
-                  +27% Over 6 Papers
-                </Badge>
-              </div>
+              <Badge variant="good" dot>
+                +27% over 6 papers
+              </Badge>
             </div>
 
-            {/* Recharts Trend Line */}
+            {/* Recharts Thin Area Chart */}
             <div className="h-64 sm:h-72 w-full pt-2">
               {mounted ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
+                  <AreaChart
                     data={trendData}
                     margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.6} />
+                    <defs>
+                      <linearGradient id="previewGoldGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--brand)" stopOpacity={0.25} />
+                        <stop offset="95%" stopColor="var(--brand)" stopOpacity={0.0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                     <XAxis
                       dataKey="paper"
                       stroke="var(--muted)"
@@ -106,64 +110,65 @@ export function AnalysisPreview() {
                       stroke="var(--muted)"
                       fontSize={11}
                       tickLine={false}
+                      unit="%"
                     />
                     <Tooltip
+                      cursor={{ stroke: "var(--brand)", strokeWidth: 1, strokeDasharray: "2 2" }}
                       contentStyle={{
-                        backgroundColor: "var(--surface)",
-                        borderColor: "var(--border)",
+                        backgroundColor: "#0c0d10",
+                        borderColor: "rgba(250, 204, 21, 0.3)",
                         borderRadius: "12px",
                         fontSize: "12px",
-                        boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+                        boxShadow: "0 10px 25px rgba(0,0,0,0.5)",
                       }}
                     />
-                    <Line
+                    <Area
                       type="monotone"
                       dataKey="student"
-                      name="Kamal (Student)"
-                      stroke="var(--accent)"
-                      strokeWidth={3}
-                      dot={{ r: 4, fill: "var(--accent)" }}
-                      activeDot={{ r: 6 }}
+                      name="Student"
+                      stroke="var(--brand)"
+                      strokeWidth={1.5}
+                      fill="url(#previewGoldGradient)"
                     />
-                    <Line
+                    <Area
                       type="monotone"
                       dataKey="classAvg"
-                      name="Class Average"
-                      stroke="var(--muted)"
+                      name="Class Avg"
+                      stroke="#94a3b8"
                       strokeDasharray="4 4"
-                      strokeWidth={2}
-                      dot={false}
+                      strokeWidth={1.2}
+                      fill="none"
                     />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full w-full rounded-xl bg-[var(--surface-glass)] animate-pulse" />
+                <div className="h-full w-full rounded-2xl bg-[var(--surface-elevated)] animate-pulse" />
               )}
             </div>
 
-            <div className="flex items-center justify-between text-xs font-mono text-[var(--muted)] border-t border-[var(--border)] pt-4">
-              <span className="flex items-center gap-1 text-[var(--accent)]">
-                ● Kamal: 91% (Paper 13)
+            <div className="flex items-center justify-between text-xs font-mono text-[var(--muted)] border-t border-[var(--border)] pt-4 [font-feature-settings:'tnum'_1]">
+              <span className="flex items-center gap-1.5 text-[var(--brand)] font-semibold">
+                ● Student: 91% (P13)
               </span>
               <span>- - - Class Avg: 66%</span>
-              <span className="text-[var(--good)]">Rank Band: Top 8%</span>
+              <span className="text-emerald-400">Rank Band: Top 8%</span>
             </div>
-          </GlassCard>
+          </Glass>
         </Reveal>
 
         {/* Right: Radar Analysis Chart (5 cols) */}
         <Reveal direction="up" delay={0.15} className="lg:col-span-5">
-          <GlassCard variant="bento" spotlight className="p-6 md:p-8 space-y-6">
+          <Glass tint="subtle" className="p-6 md:p-8 space-y-6 rounded-3xl h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-mono text-[var(--muted)] uppercase">
-                  Multi-Dimensional Topics
+                <span className="text-xs font-mono text-[var(--muted)] uppercase tracking-wider block">
+                  Topic Balance
                 </span>
                 <h3 className="text-xl font-bold text-[var(--text)]">
-                  Subject Radar
+                  Subject radar
                 </h3>
               </div>
-              <Badge variant="accent">Anonymous Topper</Badge>
+              <Badge variant="accent">Top Percentile</Badge>
             </div>
 
             {/* Radar Chart */}
@@ -178,42 +183,42 @@ export function AnalysisPreview() {
                       fontSize={10}
                     />
                     <Radar
-                      name="Kamal"
+                      name="Student"
                       dataKey="student"
                       stroke="var(--brand)"
                       fill="var(--brand)"
-                      fillOpacity={0.4}
+                      fillOpacity={0.35}
                     />
                     <Radar
                       name="Topper"
                       dataKey="topper"
-                      stroke="var(--accent)"
-                      fill="var(--accent)"
-                      fillOpacity={0.15}
+                      stroke="#94a3b8"
+                      fill="#94a3b8"
+                      fillOpacity={0.1}
                     />
-                    <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+                    <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }} />
                   </RadarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full w-full rounded-xl bg-[var(--surface-glass)] animate-pulse" />
+                <div className="h-full w-full rounded-2xl bg-[var(--surface-elevated)] animate-pulse" />
               )}
             </div>
 
             <div className="space-y-2 border-t border-[var(--border)] pt-4 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-[var(--good)] flex items-center gap-1 font-medium">
-                  <Award className="h-3.5 w-3.5" /> Strongest: Matrices &amp; Algebra
+                <span className="text-emerald-400 flex items-center gap-1.5 font-medium">
+                  <Trophy size={14} weight="regular" /> Strongest: Matrices &amp; Algebra
                 </span>
-                <span className="font-mono text-[var(--muted)]">92-95%</span>
+                <span className="font-mono text-[var(--muted)] [font-feature-settings:'tnum'_1]">92–95%</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[var(--warn)] flex items-center gap-1 font-medium">
-                  <AlertCircle className="h-3.5 w-3.5" /> Focus Area: Geometry Proofs
+                <span className="text-[var(--brand)] flex items-center gap-1.5 font-medium">
+                  <WarningCircle size={14} weight="regular" /> Focus Area: Geometry Proofs
                 </span>
-                <span className="font-mono text-[var(--muted)]">74%</span>
+                <span className="font-mono text-[var(--muted)] [font-feature-settings:'tnum'_1]">74%</span>
               </div>
             </div>
-          </GlassCard>
+          </Glass>
         </Reveal>
       </div>
     </section>

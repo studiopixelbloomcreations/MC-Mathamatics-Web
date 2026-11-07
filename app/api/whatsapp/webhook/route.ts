@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
     }).catch((err) => console.error("[Webhook] Background process trigger failed:", err));
   } else {
     // Non-admin number -> Direct to Parent Bot
-    handleParentMessage(fromNumber, textBody, waMessageId).catch((err) =>
+    handleParentMessage(fromNumber, textBody).catch((err) =>
       console.error("[Parent Bot execution error]", err)
     );
   }

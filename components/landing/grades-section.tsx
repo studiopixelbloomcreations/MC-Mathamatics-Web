@@ -2,46 +2,46 @@
 
 import * as React from "react";
 import { Link } from "@/i18n/routing";
-import { GlassCard } from "@/components/ui/glass-card";
+import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock } from "@phosphor-icons/react";
 
 export function GradesSection() {
   const grades = [
     {
       grade: "Grade 6",
       tag: "Junior Foundation",
-      focus: "Arithmetic, Basic Geometry & Fractions",
+      focus: "Arithmetic, basic geometry & fractions",
       sessions: "Weekly 2.5h",
       badge: "T Stream",
     },
     {
       grade: "Grade 7",
       tag: "Junior Foundation",
-      focus: "Pre-Algebra, Measurements & Graphs",
+      focus: "Pre-algebra, measurements & graphs",
       sessions: "Weekly 2.5h",
       badge: "T Stream",
     },
     {
       grade: "Grade 8",
       tag: "Junior Foundation",
-      focus: "Linear Equations, Angles & Percentages",
+      focus: "Linear equations, angles & percentages",
       sessions: "Weekly 3.0h",
       badge: "T Stream",
     },
     {
       grade: "Grade 9",
       tag: "Junior High",
-      focus: "Simultaneous Equations, Pythagoras & Probability",
+      focus: "Simultaneous equations, pythagoras & probability",
       sessions: "Weekly 3.0h",
       badge: "T + TP Options",
     },
     {
       grade: "Grade 10",
       tag: "O/L Core Year",
-      focus: "Quadratic Equations, Circle Theorems & Logarithms",
+      focus: "Quadratic equations, circle theorems & logarithms",
       sessions: "Weekly 3.5h + Papers",
       badge: "T & TP Streams",
       highlight: true,
@@ -49,7 +49,7 @@ export function GradesSection() {
     {
       grade: "Grade 11",
       tag: "O/L Target Examination",
-      focus: "Full Syllabus Revision, Speed Drills & Model Papers",
+      focus: "Full syllabus revision, speed drills & model papers",
       sessions: "Weekly 4.0h + Intensive Papers",
       badge: "T & TP Streams",
       highlight: true,
@@ -57,17 +57,16 @@ export function GradesSection() {
     {
       grade: "Grade 12",
       tag: "A/L Combined Mathematics",
-      focus: "Pure Maths (Trigonometry, Calculus) & Applied (Vectors)",
+      focus: "Pure maths (trigonometry, calculus) & applied (vectors)",
       sessions: "Weekly 5.0h + Papers",
-      badge: "Pure & Applied",
-      highlight: true,
+      badge: "A/L Stream",
     },
     {
       grade: "Grade 13",
-      tag: "A/L Fast-Track Final",
-      focus: "Integration, Statics, Dynamics & Island-Rank Papers",
-      sessions: "Weekly 6.0h + Model Sittings",
-      badge: "Pure & Applied",
+      tag: "A/L Intensive Revision",
+      focus: "Island-rank past paper drilling & diagnostic mastery",
+      sessions: "Weekly 6.0h + Papers",
+      badge: "A/L Stream",
       highlight: true,
     },
   ];
@@ -76,64 +75,66 @@ export function GradesSection() {
     <section id="grades" className="py-24 px-6 max-w-7xl mx-auto space-y-16">
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <Reveal direction="down">
-          <Badge variant="accent" dot>
-            Class Batches (Grades 6–13)
+          <Badge variant="brand" dot>
+            Curriculum Structure
           </Badge>
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Curated Programs by Academic Grade
+            Academic pathways (grades 6–13)
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="text-sm sm:text-base text-[var(--muted)]">
-            Tailored curricula adhering to the Sri Lankan National Syllabus with
-            specialized tracks for Theory (T) and Theory + Paper (TP).
+            Every grade follows an aligned syllabus with weekly exercises,
+            first-principles derivations, and standardized model evaluations.
           </p>
         </Reveal>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {grades.map((item, idx) => (
-          <Reveal key={idx} delay={idx * 0.08} direction="up">
-            <GlassCard
-              variant="bento"
-              spotlight
-              glowColor={item.highlight ? "rgba(255, 200, 87, 0.2)" : "rgba(108, 92, 231, 0.15)"}
-              className={`h-full min-h-[290px] justify-between p-6 ${
-                item.highlight ? "border-[var(--accent)]/30" : ""
-              }`}
+          <Reveal key={idx} delay={idx * 0.05} direction="up">
+            <Glass
+              tint="subtle"
+              className="p-6 rounded-3xl h-full flex flex-col justify-between space-y-6"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-2xl font-black text-[var(--text)]">
-                    {item.grade}
-                  </span>
                   <Badge variant={item.highlight ? "accent" : "default"}>
                     {item.badge}
                   </Badge>
+                  <span className="text-xs font-mono text-[var(--muted)] flex items-center gap-1">
+                    <Clock size={12} weight="regular" />
+                    <span>{item.sessions}</span>
+                  </span>
                 </div>
-                <div className="text-xs font-semibold text-[var(--brand)]">
-                  {item.tag}
+                <div>
+                  <h3 className="text-xl font-bold text-[var(--text)]">
+                    {item.grade}
+                  </h3>
+                  <span className="text-xs font-mono text-[var(--brand)]">
+                    {item.tag}
+                  </span>
                 </div>
                 <p className="text-xs text-[var(--muted)] leading-relaxed">
                   {item.focus}
                 </p>
               </div>
 
-              <div className="space-y-3 pt-4 border-t border-[var(--border)]">
-                <div className="flex items-center gap-1.5 text-[11px] text-[var(--muted)]">
-                  <Clock className="h-3.5 w-3.5 text-[var(--accent)]" />
-                  <span>{item.sessions}</span>
-                </div>
+              <div className="pt-4 border-t border-[var(--border)]">
                 <Link href="/signup">
-                  <Button variant="outline" size="sm" className="w-full text-xs">
-                    Enroll for {item.grade}
-                    <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                  <Button
+                    variant={item.highlight ? "primary" : "ghost"}
+                    size="sm"
+                    className="w-full text-xs justify-between"
+                  >
+                    <span>Enrol in stream</span>
+                    <ArrowRight size={14} weight="bold" />
                   </Button>
                 </Link>
               </div>
-            </GlassCard>
+            </Glass>
           </Reveal>
         ))}
       </div>

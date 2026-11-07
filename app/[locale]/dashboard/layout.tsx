@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { DashboardNavLinks } from "@/components/dashboard/nav-links";
+import { FloatingTabBar } from "@/components/ui/floating-tab-bar";
 
 export const dynamic = "force-dynamic";
 
@@ -184,60 +185,9 @@ export default async function DashboardLayout({
       </div>
 
       {/* ========================================================================= */}
-      {/* 4. Mobile Bottom Tab Bar */}
+      {/* 4. Mobile Bottom Tab Bar (iOS Floating Liquid Glass Capsule) */}
       {/* ========================================================================= */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/90 backdrop-blur-2xl border-t border-white/10 px-3 py-2 flex items-center justify-around">
-        <Link
-          href="/dashboard"
-          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1"
-        >
-          <LayoutDashboard className="w-5 h-5" />
-          <span>Home</span>
-        </Link>
-
-        <Link
-          href="/dashboard/papers"
-          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1"
-        >
-          <FileText className="w-5 h-5" />
-          <span>Papers</span>
-        </Link>
-
-        <Link
-          href="/dashboard/analysis"
-          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1"
-        >
-          <BarChart3 className="w-5 h-5" />
-          <span>Analysis</span>
-        </Link>
-
-        <Link
-          href="/dashboard/attendance"
-          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1"
-        >
-          <CalendarCheck2 className="w-5 h-5" />
-          <span>Attendance</span>
-        </Link>
-
-        <Link
-          href="/dashboard/special-notes"
-          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1 relative"
-        >
-          <FileSpreadsheet className="w-5 h-5" />
-          <span>Notes</span>
-          {unreadNotesCount > 0 && (
-            <span className="absolute top-0 right-1 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-black" />
-          )}
-        </Link>
-
-        <Link
-          href="/dashboard/parental-controls"
-          className="flex flex-col items-center gap-1 text-[10px] text-muted-foreground hover:text-amber-400 active:scale-95 transition-all p-1"
-        >
-          <ShieldAlert className="w-5 h-5" />
-          <span>Parent</span>
-        </Link>
-      </nav>
+      <FloatingTabBar unreadNotesCount={unreadNotesCount} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Bell, BellRing, Loader2 } from "lucide-react";
+import { Bell, BellRinging, SpinnerGap } from "@phosphor-icons/react";
 import { savePushSubscriptionAction } from "@/app/actions/dashboard";
 
 export function PushNotificationToggle() {
@@ -47,28 +47,34 @@ export function PushNotificationToggle() {
         }
 
         const reg = await navigator.serviceWorker.ready;
-        // In dev or until VAPID public key is set, use standard registration or mock key
-        const subscription = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U",
-        });
+        const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+        let sub = await reg.pushManager.getSubscription();
 
-        const subJson = subscription.toJSON();
-        if (subJson.endpoint && subJson.keys?.p256dh && subJson.keys?.auth) {
-          await savePushSubscriptionAction({
-            endpoint: subJson.endpoint,
-            keys: {
-              p256dh: subJson.keys.p256dh,
-              auth: subJson.keys.auth,
-            },
+        if (!sub && vapidPublicKey) {
+          sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapidPublicKey,
           });
         }
-        setIsSubscribed(true);
+
+        if (sub) {
+          const rawSub = sub.toJSON();
+          if (rawSub.endpoint && rawSub.keys?.p256dh && rawSub.keys?.auth) {
+            await savePushSubscriptionAction({
+              endpoint: rawSub.endpoint,
+              keys: {
+                p256dh: rawSub.keys.p256dh,
+                auth: rawSub.keys.auth,
+              },
+            });
+          }
+          setIsSubscribed(true);
+        } else {
+          setIsSubscribed(true);
+        }
       }
     } catch (err) {
-      console.warn("Web Push registration note:", err);
-      // Still set subscribed state for demo UX
-      setIsSubscribed(!isSubscribed);
+      console.error("[Push] Toggle error:", err);
     } finally {
       setLoading(false);
     }
@@ -82,18 +88,18 @@ export function PushNotificationToggle() {
       size="sm"
       onClick={handleToggle}
       disabled={loading}
-      className={`text-xs gap-2 transition-colors ${
-        isSubscribed ? "border-amber-500/40 text-amber-300 bg-amber-500/10" : "text-muted-foreground"
+      className={`gap-1.5 text-xs rounded-xl ${
+        isSubscribed ? "border-[var(--brand)]/40 text-[var(--brand)]" : "text-[var(--muted)]"
       }`}
     >
       {loading ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+        <SpinnerGap size={14} className="animate-spin" />
       ) : isSubscribed ? (
-        <BellRing className="w-3.5 h-3.5 text-amber-400" />
+        <BellRinging size={14} weight="fill" className="text-[var(--brand)]" />
       ) : (
-        <Bell className="w-3.5 h-3.5" />
+        <Bell size={14} weight="regular" />
       )}
-      <span>{isSubscribed ? "Push Alerts Active" : "Enable Web Push"}</span>
+      <span>{isSubscribed ? "Alerts On" : "Enable Alerts"}</span>
     </Button>
   );
 }

@@ -1,5 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
-import { Navbar } from "@/components/landing/navbar";
+import { FloatingHeader } from "@/components/ui/floating-header";
 import { HeroSequence } from "@/components/landing/hero-sequence";
 import { TrustStrip } from "@/components/landing/trust-strip";
 import { MeetSir } from "@/components/landing/meet-sir";
@@ -23,7 +23,7 @@ export default async function HomePage({
   return (
     <>
       <LandingJsonLd />
-      <Navbar />
+      <FloatingHeader />
       <main className="flex min-h-screen flex-col overflow-x-hidden">
         {/* Section 1: Hero Sequence with Morphing Monogram & Slogan */}
         <HeroSequence />

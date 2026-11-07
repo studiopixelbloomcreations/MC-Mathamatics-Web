@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { geist, instrumentSerif, jetbrainsMono, notoSansSinhala } from "@/lib/fonts";
+import { satoshi, instrumentSerif, jetbrainsMono, notoSansSinhala } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { ToastProvider } from "@/components/ui/toast";
+import { AmbientBackground } from "@/components/ui/ambient-background";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -38,10 +39,11 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`dark ${geist.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} ${notoSansSinhala.variable}`}
+      className={`dark ${satoshi.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} ${notoSansSinhala.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen bg-[var(--bg)] text-[var(--text)] antialiased selection:bg-[var(--brand)]/30 selection:text-[var(--accent)]">
+      <body className="min-h-screen bg-[var(--bg)] text-[var(--text)] antialiased selection:bg-[var(--brand)]/30 selection:text-[var(--accent)] relative">
+        <AmbientBackground />
         <NextIntlClientProvider messages={messages} locale={locale}>
           <ThemeProvider>
             <ToastProvider>

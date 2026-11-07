@@ -1,16 +1,17 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MathFormula } from "@/components/ui/math-formula";
-import { ArrowRight, Sparkles, ChevronDown } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
+import {
+  ArrowRight,
+  Sparkle,
+  CaretDown,
+} from "@phosphor-icons/react";
 
 export function HeroSequence() {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -25,16 +26,16 @@ export function HeroSequence() {
   // Morphing transforms (? -> MC Monogram, and Question -> Answer reveal)
   const questionOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
   const answerOpacity = useTransform(scrollYProgress, [0.35, 0.75], [0, 1]);
-  const answerY = useTransform(scrollYProgress, [0.35, 0.75], [40, 0]);
+  const answerY = useTransform(scrollYProgress, [0.35, 0.75], [30, 0]);
 
-  // Morph symbol (? fades/scales out, MC fades/scales in)
-  const questionMarkScale = useTransform(scrollYProgress, [0, 0.45], [1, 0.4]);
+  // Morph symbol (? fades/scales out, MC emblem fades/scales in)
+  const questionMarkScale = useTransform(scrollYProgress, [0, 0.45], [1, 0.5]);
   const questionMarkOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const mcScale = useTransform(scrollYProgress, [0.4, 0.8], [0.6, 1]);
+  const mcScale = useTransform(scrollYProgress, [0.4, 0.8], [0.7, 1]);
   const mcOpacity = useTransform(scrollYProgress, [0.4, 0.75], [0, 1]);
 
   const ctaOpacity = useTransform(scrollYProgress, [0.65, 0.95], [0, 1]);
-  const ctaY = useTransform(scrollYProgress, [0.65, 0.95], [30, 0]);
+  const ctaY = useTransform(scrollYProgress, [0.65, 0.95], [20, 0]);
 
   const floatingFormulas = [
     { formula: "\\sum_{n=1}^\\infty \\frac{1}{n^2} = \\frac{\\pi^2}{6}", top: "15%", left: "8%" },
@@ -52,15 +53,10 @@ export function HeroSequence() {
     >
       {/* Sticky Hero Viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center px-6">
-        {/* Subtle Aurora Ambient Mesh (GPU cheap CSS) */}
-        <div className="pointer-events-none absolute inset-0 -z-20 opacity-30 dark:opacity-20">
-          <div className="absolute -top-[30%] left-[20%] h-[600px] w-[600px] rounded-full bg-[var(--brand)] blur-[140px]" />
-          <div className="absolute top-[40%] -right-[10%] h-[500px] w-[500px] rounded-full bg-[var(--accent)] blur-[160px]" />
-        </div>
-
         {/* Math Grid Background */}
         <div
-          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.03] dark:opacity-[0.06]"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.03] dark:opacity-[0.05]"
           style={{
             backgroundImage: `radial-gradient(var(--text) 1px, transparent 1px)`,
             backgroundSize: "32px 32px",
@@ -73,7 +69,7 @@ export function HeroSequence() {
             <motion.div
               key={idx}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.18, y: [0, -10, 0] }}
+              animate={{ opacity: 0.16, y: [0, -10, 0] }}
               transition={{
                 opacity: { duration: 1 },
                 y: { duration: 6 + idx, repeat: Infinity, ease: "easeInOut" },
@@ -93,16 +89,16 @@ export function HeroSequence() {
         {/* Central Kinetic Sequence */}
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <Badge variant="accent" dot>
               Malinga C Dissanayake · Kurunegala
             </Badge>
           </motion.div>
 
-          {/* Morphing Symbol: ? into MC Monogram */}
+          {/* Morphing Symbol: ? into Official MC Emblem */}
           <div className="relative h-28 w-28 sm:h-36 sm:w-36 flex items-center justify-center my-2">
             {/* Pulsing ? Symbol */}
             <motion.div
@@ -111,23 +107,28 @@ export function HeroSequence() {
                   ? { opacity: 1 }
                   : { opacity: questionMarkOpacity, scale: questionMarkScale }
               }
-              className="absolute inset-0 flex items-center justify-center font-serif text-7xl sm:text-8xl font-black text-[var(--brand)] drop-shadow-[0_0_35px_rgba(108,92,231,0.6)] select-none animate-pulse"
+              className="absolute inset-0 flex items-center justify-center font-editorial italic text-7xl sm:text-8xl font-normal text-[var(--brand)] drop-shadow-[0_0_35px_rgba(250,204,21,0.4)] select-none animate-pulse"
             >
               ?
             </motion.div>
 
-            {/* Glowing MC Monogram */}
+            {/* Official MC Emblem */}
             <motion.div
               style={
                 shouldReduceMotion
                   ? { opacity: 1 }
                   : { opacity: mcOpacity, scale: mcScale }
               }
-              className="absolute inset-0 flex items-center justify-center rounded-3xl border border-[var(--accent)]/40 bg-[var(--surface-glass)] shadow-[0_0_50px_rgba(255,200,87,0.35)] backdrop-blur-xl"
+              className="absolute inset-0 flex items-center justify-center rounded-full border border-[var(--brand)]/40 p-1 bg-[#0c0d10] shadow-[0_0_50px_rgba(250,204,21,0.25)]"
             >
-              <span className="font-mono text-4xl sm:text-5xl font-black tracking-tight text-[var(--accent)]">
-                MC
-              </span>
+              <div className="relative h-full w-full rounded-full overflow-hidden">
+                <Image
+                  src="/images/mc-logo.jpg"
+                  alt="MC Mathematics Monogram"
+                  fill
+                  className="object-cover"
+                />
+              </div>
             </motion.div>
           </div>
 
@@ -141,23 +142,21 @@ export function HeroSequence() {
               Maths is the <span className="text-[var(--brand)]">question.</span>
             </motion.h1>
 
-            {/* Step 2: "MC is the answer." */}
+            {/* Step 2: "MC is the answer." with Instrument Serif */}
             <motion.h1
               style={
                 shouldReduceMotion
                   ? { opacity: 1 }
                   : { opacity: answerOpacity, y: answerY }
               }
-              className="absolute text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-[var(--text)]"
+              className="absolute text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.1] text-[var(--brand)] font-editorial italic"
             >
-              <span className="text-[var(--accent)] font-serif italic">
-                MC is the answer.
-              </span>
+              MC is the answer.
             </motion.h1>
           </div>
 
           {/* Subtext description */}
-          <p className="text-sm sm:text-base md:text-lg text-[var(--muted)] max-w-xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-[var(--muted)] max-w-xl mx-auto leading-relaxed">
             Kurunegala&apos;s premier mathematics academy. Transforming O/L and A/L
             mathematics into measurable excellence with instant diagnostic feedback.
           </p>
@@ -172,15 +171,15 @@ export function HeroSequence() {
             className="flex flex-wrap items-center justify-center gap-4 pt-4"
           >
             <Link href="/signup">
-              <Button size="lg" variant="accent" magnetic>
-                Join the class
-                <Sparkles className="h-4 w-4 ml-1.5" />
+              <Button size="lg" variant="primary" magnetic className="gap-2">
+                <span>Join the class</span>
+                <Sparkle size={18} weight="fill" />
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="lg" variant="ghost" magnetic>
-                Student login
-                <ArrowRight className="h-4 w-4 ml-1.5" />
+              <Button size="lg" variant="ghost" className="gap-2">
+                <span>Student login</span>
+                <ArrowRight size={18} weight="bold" />
               </Button>
             </Link>
           </motion.div>
@@ -188,12 +187,12 @@ export function HeroSequence() {
 
         {/* Scroll Indicator Prompt */}
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-8 flex flex-col items-center gap-1.5 text-xs text-[var(--muted)] select-none pointer-events-none"
         >
           <span>Scroll to uncover the answer</span>
-          <ChevronDown className="h-4 w-4 text-[var(--accent)]" />
+          <CaretDown size={14} weight="bold" className="text-[var(--brand)]" />
         </motion.div>
       </div>
     </div>

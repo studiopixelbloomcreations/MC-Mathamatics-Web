@@ -1,12 +1,21 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { GlassCard } from "@/components/ui/glass-card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check, Copy, Download, MessageSquare, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Copy,
+  DownloadSimple,
+  WhatsappLogo,
+  ArrowRight,
+  CheckCircle,
+  ShieldCheck,
+  Sparkle,
+} from "@phosphor-icons/react";
 
 interface IdCardDisplayProps {
   uniqueId: string;
@@ -28,6 +37,34 @@ export function IdCardDisplay({
   const t = useTranslations("Auth");
   const [copied, setCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+
+  // 3D physical card tilt physics
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { stiffness: 350, damping: 25 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  const rotateX = useTransform(smoothY, [-0.5, 0.5], [10, -10]);
+  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-12, 12]);
+  const glareX = useTransform(smoothX, [-0.5, 0.5], ["0%", "100%"]);
+  const glareY = useTransform(smoothY, [-0.5, 0.5], ["0%", "100%"]);
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (shouldReduceMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+    mouseX.set(xPct);
+    mouseY.set(yPct);
+  };
+
+  const handlePointerLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
 
   const aiNumber =
     process.env.NEXT_PUBLIC_AI_NUMBER?.replace(/[^0-9]/g, "") || "94771234567";
@@ -46,82 +83,83 @@ export function IdCardDisplay({
   };
 
   const handleDownloadImage = () => {
-    // Generate an ID card via canvas
     const canvas = document.createElement("canvas");
-    canvas.width = 900;
-    canvas.height = 540;
+    canvas.width = 960;
+    canvas.height = 560;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Dark sleek background
-    const bgGradient = ctx.createLinearGradient(0, 0, 900, 540);
-    bgGradient.addColorStop(0, "#09090b");
-    bgGradient.addColorStop(1, "#18181b");
+    // Physical black acrylic finish
+    const bgGradient = ctx.createLinearGradient(0, 0, 960, 560);
+    bgGradient.addColorStop(0, "#08090b");
+    bgGradient.addColorStop(0.5, "#101116");
+    bgGradient.addColorStop(1, "#08090b");
     ctx.fillStyle = bgGradient;
-    ctx.roundRect(0, 0, 900, 540, 24);
+    ctx.roundRect(0, 0, 960, 560, 28);
     ctx.fill();
 
-    // Gold outer border
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = "#e5a93c";
-    ctx.roundRect(10, 10, 880, 520, 20);
+    // Subtle brushed rim border (Gold Foil)
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = "rgba(250, 204, 21, 0.6)";
+    ctx.roundRect(14, 14, 932, 532, 22);
+    ctx.stroke();
+
+    // Inner hairline bevel
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.roundRect(18, 18, 924, 524, 20);
     ctx.stroke();
 
     // Header strip
-    ctx.fillStyle = "#e5a93c";
-    ctx.font = "bold 28px sans-serif";
-    ctx.fillText("MC MATHEMATICS", 50, 65);
+    ctx.fillStyle = "#facc15";
+    ctx.font = "bold 26px sans-serif";
+    ctx.fillText("MC MATHEMATICS", 60, 75);
 
     ctx.fillStyle = "#a1a1aa";
-    ctx.font = "16px sans-serif";
-    ctx.fillText("Maths is the question. MC is the answer.", 50, 95);
-
-    // Subtle watermark monogram
-    ctx.fillStyle = "rgba(229, 169, 60, 0.05)";
-    ctx.font = "bold 220px serif";
-    ctx.fillText("MC", 580, 360);
+    ctx.font = "15px sans-serif";
+    ctx.fillText("Maths is the question. MC is the answer.", 60, 105);
 
     // Decorative divider line
-    ctx.strokeStyle = "rgba(229, 169, 60, 0.3)";
+    ctx.strokeStyle = "rgba(250, 204, 21, 0.25)";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(50, 125);
-    ctx.lineTo(850, 125);
+    ctx.moveTo(60, 135);
+    ctx.lineTo(900, 135);
     ctx.stroke();
 
     // Student Label
     ctx.fillStyle = "#71717a";
-    ctx.font = "14px monospace";
-    ctx.fillText("OFFICIAL STUDENT IDENTIFICATION", 50, 165);
+    ctx.font = "13px monospace";
+    ctx.fillText("OFFICIAL PERMANENT STUDENT IDENTIFIER", 60, 175);
 
     // Student ID (Huge JetBrains Mono)
     ctx.fillStyle = "#facc15";
-    ctx.font = "bold 56px monospace";
-    ctx.fillText(uniqueId, 50, 240);
+    ctx.font = "bold 52px monospace";
+    ctx.fillText(uniqueId, 60, 245);
 
     // Full Name
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 32px sans-serif";
-    ctx.fillText(fullName, 50, 310);
+    ctx.font = "bold 30px sans-serif";
+    ctx.fillText(fullName, 60, 315);
 
     // Class details
-    ctx.fillStyle = "#d4d4d8";
-    ctx.font = "20px sans-serif";
-    const typeLabel = classType === "TP" ? "Theory + Paper" : "Theory Only";
-    ctx.fillText(`Grade ${grade} • ${typeLabel}`, 50, 350);
+    ctx.fillStyle = "#cbd5e1";
+    ctx.font = "18px sans-serif";
+    const typeLabel = classType === "TP" ? "Theory + Paper Class" : "Theory Class";
+    ctx.fillText(`Grade ${grade} • ${typeLabel}`, 60, 355);
 
     // Parent WhatsApp
-    ctx.fillStyle = "#a1a1aa";
-    ctx.font = "16px monospace";
-    ctx.fillText(`Parent WhatsApp: ${parentWhatsapp}`, 50, 420);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "15px monospace";
+    ctx.fillText(`Parent WhatsApp: ${parentWhatsapp}`, 60, 420);
 
     // Teacher signature & Location
-    ctx.fillStyle = "#e5a93c";
+    ctx.fillStyle = "#facc15";
     ctx.font = "italic 22px serif";
-    ctx.fillText("Malinga C Dissanayake", 600, 470);
+    ctx.fillText("Malinga C Dissanayake", 640, 470);
     ctx.fillStyle = "#71717a";
     ctx.font = "14px sans-serif";
-    ctx.fillText("Kurunegala, Sri Lanka", 600, 495);
+    ctx.fillText("Kurunegala, Sri Lanka", 640, 498);
 
     // Trigger download
     const link = document.createElement("a");
@@ -131,7 +169,7 @@ export function IdCardDisplay({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-8 animate-in fade-in zoom-in-95 duration-500">
+    <div className="w-full max-w-2xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Hidden browser credential saver form */}
       <form
         id="browser-credential-saver"
@@ -157,65 +195,101 @@ export function IdCardDisplay({
         />
       </form>
 
-      {/* Main Glowing Digital ID Card */}
-      <div ref={cardRef} className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-yellow-400/30 to-amber-600/20 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition duration-700" />
-        <GlassCard className="relative p-8 md:p-10 border-amber-500/30 bg-zinc-950/85 overflow-hidden">
-          {/* Watermark Monogram */}
-          <div
-            className="absolute -right-8 -bottom-10 text-[180px] font-serif font-black select-none pointer-events-none opacity-[0.04] text-amber-400"
+      {/* 3D Physical Acrylic Gold Foil Card */}
+      <div
+        ref={cardRef}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+        style={{ perspective: 1000 }}
+        className="relative group cursor-default select-none"
+      >
+        <motion.div
+          style={
+            shouldReduceMotion
+              ? undefined
+              : {
+                  rotateX,
+                  rotateY,
+                  transformStyle: "preserve-3d",
+                }
+          }
+          className="relative rounded-3xl p-8 md:p-10 bg-[#0a0b0e] border border-[var(--brand)]/35 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.7)] overflow-hidden transition-shadow duration-300 group-hover:shadow-[0_32px_64px_-16px_rgba(250,204,21,0.15)]"
+        >
+          {/* Specular glare reflection moving across acrylic */}
+          <motion.div
             aria-hidden="true"
-          >
-            MC
-          </div>
+            className="pointer-events-none absolute -inset-full opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+            style={{
+              background: `radial-gradient(circle at ${glareX} ${glareY}, rgba(255, 255, 255, 0.4) 0%, transparent 60%)`,
+            }}
+          />
 
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-400 animate-pulse" />
-              <span className="text-xs uppercase tracking-widest text-amber-400 font-mono font-medium">
-                Official Student ID
-              </span>
+          {/* Inner hairline bevel rim */}
+          <div className="pointer-events-none absolute inset-[1px] rounded-[23px] border border-white/[0.08]" />
+
+          {/* Header row with official emblem */}
+          <div className="flex items-center justify-between gap-4 mb-6 relative z-10">
+            <div className="flex items-center gap-3">
+              <div className="relative h-10 w-10 rounded-full overflow-hidden border border-[var(--brand)]/40 shadow-sm shrink-0">
+                <Image
+                  src="/images/mc-logo.jpg"
+                  alt="MC Mathematics Logo"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <span className="text-xs uppercase tracking-widest text-[var(--brand)] font-mono font-medium block">
+                  MC Mathematics
+                </span>
+                <span className="text-[11px] text-[var(--muted)] block">
+                  Kurunegala, Sri Lanka
+                </span>
+              </div>
             </div>
-            <Badge variant="accent">Grade {grade} • {classType === "TP" ? "Theory + Paper" : "Theory"}</Badge>
+            <Badge variant="accent">
+              Grade {grade} • {classType === "TP" ? "Theory + Paper" : "Theory"}
+            </Badge>
           </div>
 
-          {/* Student ID in JetBrains Mono 48px+ */}
-          <div className="space-y-1 mb-6">
-            <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
+          {/* Student ID in JetBrains Mono 48px */}
+          <div className="space-y-1 mb-6 relative z-10">
+            <span className="text-xs text-[var(--muted)] uppercase font-mono tracking-wider block">
               Permanent Student Identifier
             </span>
-            <div className="text-4xl md:text-5xl font-mono font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 drop-shadow-[0_0_25px_rgba(234,179,8,0.35)] select-all">
+            <div className="text-4xl md:text-5xl font-mono font-black tracking-wider text-[var(--brand)] drop-shadow-[0_0_20px_rgba(250,204,21,0.25)] select-all [font-feature-settings:'tnum'_1,'cv05'_1]">
               {uniqueId}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10 text-sm">
+          {/* Student meta info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10 text-sm relative z-10">
             <div>
-              <p className="text-xs text-muted-foreground">Student Name</p>
-              <p className="font-semibold text-foreground text-lg">{fullName}</p>
+              <p className="text-xs text-[var(--muted)]">Student Name</p>
+              <p className="font-semibold text-white text-lg tracking-normal">{fullName}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Parent WhatsApp</p>
-              <p className="font-mono text-zinc-300">{parentWhatsapp}</p>
+              <p className="text-xs text-[var(--muted)]">Parent WhatsApp</p>
+              <p className="font-mono text-zinc-300 [font-feature-settings:'tnum'_1]">{parentWhatsapp}</p>
             </div>
           </div>
 
-          {/* Action Row inside Card: Copy & Download */}
-          <div className="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-white/10">
+          {/* Action Row: Copy & Download */}
+          <div className="flex flex-wrap items-center gap-3 mt-8 pt-6 border-t border-white/10 relative z-10">
             <Button
               variant="outline"
               size="sm"
               onClick={handleCopy}
-              className="gap-2 border-amber-500/40 hover:bg-amber-500/10"
+              className="gap-2 border-[var(--brand)]/40 hover:bg-[var(--brand)]/10 text-[var(--text)]"
             >
               {copied ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle size={16} weight="bold" className="text-emerald-400" />
                   <span className="text-emerald-400">{t("copied")}</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 text-amber-400" />
+                  <Copy size={16} weight="regular" className="text-[var(--brand)]" />
                   <span>{t("copyId")}</span>
                 </>
               )}
@@ -227,36 +301,38 @@ export function IdCardDisplay({
               onClick={handleDownloadImage}
               className="gap-2"
             >
-              <Download className="w-4 h-4 text-zinc-300" />
+              <DownloadSimple size={16} weight="regular" className="text-zinc-300" />
               <span>{t("downloadIdCard")}</span>
             </Button>
           </div>
-        </GlassCard>
+        </motion.div>
       </div>
 
-      {/* Warning Alert */}
-      <div className="flex items-start gap-3 p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 text-amber-200/90 text-sm">
-        <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-        <p>{t("warningSave")}</p>
+      {/* Safety Callout */}
+      <div className="flex items-start gap-3 p-4 rounded-2xl border border-[var(--brand)]/20 bg-[var(--surface-elevated)] text-[var(--text)] text-sm">
+        <ShieldCheck size={20} weight="regular" className="text-[var(--brand)] shrink-0 mt-0.5" />
+        <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+          {t("warningSave")}
+        </p>
       </div>
 
       {/* WhatsApp Activation Block */}
-      <GlassCard className="p-6 border-emerald-500/30 bg-emerald-950/20 space-y-4">
+      <div className="p-6 rounded-3xl border border-emerald-500/20 bg-emerald-950/15 backdrop-blur-xl space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-            <MessageSquare className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+            <WhatsappLogo size={22} weight="fill" />
           </div>
           <div>
-            <h4 className="font-bold text-foreground">
+            <h4 className="font-bold text-[var(--text)]">
               {t("startWhatsAppReports")}
             </h4>
-            <p className="text-xs text-muted-foreground">
-              Direct connection to Sir&apos;s automated progress service
+            <p className="text-xs text-[var(--muted)]">
+              Automated score and attendance progress dispatched directly to parents.
             </p>
           </div>
         </div>
 
-        <p className="text-sm text-zinc-300 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
           {t("whatsAppExplanation")}
         </p>
 
@@ -268,20 +344,20 @@ export function IdCardDisplay({
         >
           <Button
             size="lg"
-            className="w-full bg-[#25D366] hover:bg-[#20ba59] text-black font-bold shadow-lg shadow-[#25D366]/20 gap-2 text-base"
+            className="w-full bg-[#25D366] hover:bg-[#20ba59] text-black font-semibold shadow-lg shadow-[#25D366]/20 gap-2 text-sm sm:text-base"
           >
-            <MessageSquare className="w-5 h-5 fill-current" />
+            <WhatsappLogo size={20} weight="fill" />
             <span>Connect WhatsApp Now (Free)</span>
           </Button>
         </a>
-      </GlassCard>
+      </div>
 
       {/* Continue to Login Button */}
       <div className="pt-2">
         <Link href="/login" className="block w-full">
-          <Button variant="primary" size="lg" className="w-full gap-2 text-base">
+          <Button variant="primary" size="lg" className="w-full gap-2 text-sm sm:text-base">
             <span>{t("continueToLogin")}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight size={18} weight="bold" />
           </Button>
         </Link>
       </div>

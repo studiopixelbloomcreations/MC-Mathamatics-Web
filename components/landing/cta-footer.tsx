@@ -1,11 +1,19 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { Glass } from "@/components/ui/glass";
 import { Reveal } from "@/components/ui/reveal";
-import { ArrowRight, Sparkles, MessageCircle, MapPin, Phone, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Sparkle,
+  WhatsappLogo,
+  MapPin,
+  PhoneCall,
+  ShieldCheck,
+} from "@phosphor-icons/react";
 
 export function CTAFooter() {
   return (
@@ -13,52 +21,56 @@ export function CTAFooter() {
       <div className="max-w-7xl mx-auto space-y-20">
         {/* Final CTA Band */}
         <Reveal direction="up">
-          <GlassCard
-            spotlight
-            glowColor="rgba(255, 200, 87, 0.3)"
-            className="p-8 sm:p-14 rounded-3xl border border-[var(--border)] text-center relative overflow-hidden bg-gradient-to-b from-[var(--surface-glass)] to-[var(--surface)]"
+          <Glass
+            tint="subtle"
+            className="p-8 sm:p-14 rounded-3xl text-center relative overflow-hidden"
           >
             <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-              <span className="text-xs uppercase font-mono tracking-widest text-[var(--accent)] font-bold">
+              <span className="text-xs uppercase font-mono tracking-widest text-[var(--brand)] font-semibold">
                 Begin Your Journey Today
               </span>
-              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-[var(--text)]">
+              <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[var(--text)]">
                 Maths is the question.{" "}
-                <span className="font-serif italic text-[var(--accent)]">
+                <span className="font-editorial italic font-normal text-[var(--brand)]">
                   MC is the answer.
                 </span>
               </h2>
-              <p className="text-sm sm:text-base text-[var(--muted)]">
+              <p className="text-sm sm:text-base text-[var(--muted)] leading-relaxed">
                 Join hundreds of Kurunegala students mastering pure mathematical
                 logic. Generate your atomic Student ID and start tracking your progress now.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
                 <Link href="/signup">
-                  <Button size="lg" variant="accent" magnetic>
-                    Join the class
-                    <Sparkles className="h-4 w-4 ml-1.5" />
+                  <Button size="lg" variant="primary" magnetic className="gap-2">
+                    <span>Join the class</span>
+                    <Sparkle size={18} weight="fill" />
                   </Button>
                 </Link>
                 <Link href="/login">
-                  <Button size="lg" variant="outline" magnetic>
-                    Student portal login
-                    <ArrowRight className="h-4 w-4 ml-1.5" />
+                  <Button size="lg" variant="secondary" className="gap-2">
+                    <span>Student portal login</span>
+                    <ArrowRight size={18} weight="bold" />
                   </Button>
                 </Link>
               </div>
             </div>
-          </GlassCard>
+          </Glass>
         </Reveal>
 
         {/* Footer Content Columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 text-xs text-[var(--muted)]">
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface-glass)] border border-[var(--border)] font-mono font-bold text-base text-[var(--accent)]">
-                MC
+            <div className="flex items-center gap-3">
+              <div className="relative h-9 w-9 rounded-full overflow-hidden border border-[var(--brand)]/40 shadow-sm shrink-0">
+                <Image
+                  src="/images/mc-logo.jpg"
+                  alt="MC Logo"
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <span className="text-base font-bold text-[var(--text)]">
+              <span className="text-base font-bold text-[var(--text)] tracking-tight">
                 MC Mathematics
               </span>
             </div>
@@ -67,8 +79,8 @@ export function CTAFooter() {
               Malinga C Dissanayake. Delivering zero-hallucination analysis and free-first
               WhatsApp progress reports.
             </p>
-            <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--good)]">
-              <ShieldCheck className="h-4 w-4" />
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
+              <ShieldCheck size={16} weight="regular" />
               <span>Sri Lanka PDPA (No. 9 of 2022) Privacy Adherent</span>
             </div>
           </div>
@@ -122,33 +134,29 @@ export function CTAFooter() {
             <h4 className="font-semibold text-sm text-[var(--text)]">Class Locations</h4>
             <ul className="space-y-2.5">
               <li className="flex items-start gap-2">
-                <MapPin className="h-4 w-4 text-[var(--accent)] flex-shrink-0 mt-0.5" />
-                <span>
-                  {/* TODO: Sir can specify exact hall address in Kurunegala */}
-                  Kurunegala Town Centers, North Western Province, Sri Lanka
-                </span>
+                <MapPin size={16} weight="regular" className="text-[var(--brand)] shrink-0 mt-0.5" />
+                <span>Kurunegala Town Centers, North Western Province, Sri Lanka</span>
               </li>
               <li className="flex items-center gap-2">
-                <MessageCircle className="h-4 w-4 text-[var(--good)] flex-shrink-0" />
+                <WhatsappLogo size={16} weight="fill" className="text-emerald-400 shrink-0" />
                 <a
                   href="https://wa.me/94771234567"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-[var(--text)] transition-colors"
                 >
-                  {/* TODO: Sir can replace with official WhatsApp inquiry number */}
                   +94 77 123 4567 (Inquiries)
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-[var(--brand)] flex-shrink-0" />
+                <PhoneCall size={16} weight="regular" className="text-[var(--brand)] shrink-0" />
                 <span>+94 37 222 3456 (Office)</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Copyright & Subdomain Admin link */}
+        {/* Copyright */}
         <div className="border-t border-[var(--border)] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[var(--muted)]">
           <p>© {new Date().getFullYear()} MC Mathematics — Malinga C Dissanayake. All rights reserved.</p>
           <div className="flex items-center gap-4">
@@ -160,7 +168,7 @@ export function CTAFooter() {
               href="https://admin.mcmaths.lk"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--accent)] hover:underline"
+              className="text-[var(--brand)] hover:underline"
             >
               Admin Cockpit ↗
             </a>

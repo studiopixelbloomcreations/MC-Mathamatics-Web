@@ -1,82 +1,231 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
 
-:root {
-  /* Light Theme (Default fallback) */
-  --bg: #F7F8FC;
-  --surface: #FFFFFF;
-  --surface-glass: rgba(255, 255, 255, 0.7);
-  --border: rgba(10, 15, 40, 0.08);
-  --text: #0B1020;
-  --muted: #5B6379;
-  --accent: #E6A100;
-  --brand: #5B4BDB;
-  --good: #2DD4A0;
-  --warn: #FFB020;
-  --bad: #FF5C7A;
+/* -------------------------------------------------------------------------- */
+/* Design Tokens: Minimal, Calm, Studio Quality                               */
+/* Pure Neutral Architectural Canvas + Single Brand Gold Accent               */
+/* -------------------------------------------------------------------------- */
 
-  /* Motion tokens */
+:root {
+  /* Light Theme (Warm Architectural Canvas, Not Inverted) */
+  --bg: #F8F7F4;
+  --bg-subtle: #F1EFEA;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-overlay: rgba(255, 255, 255, 0.85);
+
+  /* Single Brand Accent: MC Gold (Tuned for 4.5:1 WCAG AA Contrast on light) */
+  --accent: #B45309;
+  --accent-hover: #92400E;
+  --accent-subtle: rgba(180, 83, 9, 0.08);
+  --accent-border: rgba(180, 83, 9, 0.22);
+  --accent-text: #92400E;
+
+  /* Neutrals */
+  --text-primary: #121316;
+  --text-secondary: #525866;
+  --text-tertiary: #8A909E;
+
+  /* Layered Soft Shadow System (No harsh borders) */
+  --shadow-sm: 0 1px 2px rgba(18, 19, 22, 0.04), 0 1px 3px rgba(18, 19, 22, 0.02);
+  --shadow-md: 0 4px 12px rgba(18, 19, 22, 0.05), 0 1px 2px rgba(18, 19, 22, 0.03);
+  --shadow-lg: 0 12px 32px rgba(18, 19, 22, 0.08), 0 2px 6px rgba(18, 19, 22, 0.03);
+
+  /* iOS 27 Liquid Glass Primitive Parameters (Light) */
+  --glass-tint: rgba(255, 255, 255, 0.72);
+  --glass-tint-active: rgba(255, 255, 255, 0.88);
+  --glass-blur: 24px;
+  --glass-saturate: 160%;
+  --glass-border-light: rgba(255, 255, 255, 0.85);
+  --glass-border-shadow: rgba(0, 0, 0, 0.06);
+  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
+  --glass-shadow: 0 8px 32px 0 rgba(18, 19, 22, 0.06);
+
+  /* Status Tokens (Subtle, never loud) */
+  --good: #059669;
+  --warn: #D97706;
+  --bad: #DC2626;
+
+  /* Spring Physics Motion Tokens */
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
-  --duration-fast: 300ms;
-  --duration-normal: 500ms;
-  --duration-slow: 700ms;
+  --ease-squish: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 350ms;
+  --duration-slow: 600ms;
 }
 
 .dark, :root[class~="dark"], [data-theme="dark"] {
-  /* Dark Theme (Default) */
-  --bg: #070A13;
-  --surface: #0E1424;
-  --surface-glass: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.09);
-  --text: #F2F4FA;
-  --muted: #8B93A8;
-  --accent: #FFC857;
-  --brand: #6C5CE7;
-  --good: #2DD4A0;
-  --warn: #FFB020;
-  --bad: #FF5C7A;
+  /* Dark Theme (Deep Neutral Obsidian, Not Pure Pitch Black) */
+  --bg: #0C0D10;
+  --bg-subtle: #131418;
+  --surface: #18191F;
+  --surface-raised: #1F2128;
+  --surface-overlay: rgba(24, 25, 31, 0.82);
+
+  /* Single Brand Accent: MC Gold (Tuned for dark surfaces) */
+  --accent: #FACC15;
+  --accent-hover: #FDE047;
+  --accent-subtle: rgba(250, 204, 21, 0.12);
+  --accent-border: rgba(250, 204, 21, 0.28);
+  --accent-text: #FEF08A;
+
+  /* Neutrals */
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --text-tertiary: #6B7280;
+
+  /* Layered Soft Shadow System */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+
+  /* iOS 27 Liquid Glass Primitive Parameters (Dark) */
+  --glass-tint: rgba(24, 25, 31, 0.68);
+  --glass-tint-active: rgba(31, 33, 40, 0.85);
+  --glass-blur: 24px;
+  --glass-saturate: 180%;
+  --glass-border-light: rgba(255, 255, 255, 0.14);
+  --glass-border-shadow: rgba(0, 0, 0, 0.45);
+  --glass-inner-highlight: inset 0 1px 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.55);
+
+  /* Status Tokens */
+  --good: #10B981;
+  --warn: #F59E0B;
+  --bad: #EF4444;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Base Typography & Layout                                                   */
+/* -------------------------------------------------------------------------- */
+
+html {
+  font-family: var(--font-satoshi), system-ui, -apple-system, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   background-color: var(--bg);
-  color: var(--text);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-primary);
+  min-height: 100vh;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color var(--duration-normal) var(--ease-spring),
+              color var(--duration-normal) var(--ease-spring);
 }
 
-/* Glass card styling */
-.glass-panel {
-  background-color: var(--surface-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
+/* Tabular Figures for All Mathematical Numbers, Marks, and Student IDs */
+.tnum,
+[data-tnum="true"],
+.font-mono {
+  font-feature-settings: "tnum" 1, "cv05" 1;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Infinite Marquee */
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
+/* Slogan Typography (Used once for dignity) */
+.font-editorial {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Liquid Glass Specular Shaders & Refraction                                 */
+/* -------------------------------------------------------------------------- */
+
+.liquid-glass {
+  background: var(--glass-tint);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow), var(--glass-inner-highlight);
+  border: 1px solid var(--glass-border-light);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--duration-fast) var(--ease-squish),
+              box-shadow var(--duration-normal) var(--ease-spring),
+              background var(--duration-normal) var(--ease-spring);
+}
+
+/* Specular Highlight that blooms and tracks pointer (--mx, --my) */
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.08),
+    transparent 60%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-spring);
+}
+
+.liquid-glass:hover::before {
+  opacity: 1;
+}
+
+/* Dynamic Lensing Shader for Chromium Browsers */
+@supports (backdrop-filter: url("#lens-distortion")) {
+  .liquid-glass-refract {
+    backdrop-filter: url("#lens-distortion") blur(var(--glass-blur)) saturate(var(--glass-saturate));
   }
-  100% {
-    transform: translateX(-50%);
+}
+
+/* Concentric Corner Radii Utility */
+/* Outer = 24px -> Padding = 8px -> Inner = 16px */
+.concentric-outer {
+  border-radius: 24px;
+  padding: 8px;
+}
+.concentric-inner {
+  border-radius: 16px;
+}
+
+/* View Transitions Circular Reveal */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Accessibility: Reduce Transparency & Contrast */
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-glass {
+    background: var(--surface) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 
-.animate-marquee {
-  animation: marquee 35s linear infinite;
+@media (prefers-contrast: more) {
+  :root {
+    --glass-border-light: rgba(0, 0, 0, 0.8) !important;
+  }
+  .dark {
+    --glass-border-light: rgba(255, 255, 255, 0.8) !important;
+  }
+  .liquid-glass {
+    background: var(--surface) !important;
+    border: 2px solid var(--text-primary) !important;
+  }
 }
 
-/* Reduced motion respect */
+/* Accessibility: Reduce Motion */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  .animate-marquee {
-    animation: none !important;
-    overflow-x: auto !important;
   }
 }

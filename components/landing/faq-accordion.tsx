@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { motion, AnimatePresence } from "framer-motion";
+import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
-import { ChevronDown } from "lucide-react";
+import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export function FAQAccordion() {
@@ -47,7 +48,7 @@ export function FAQAccordion() {
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Clear Answers to Every Question
+            Clear answers to every question
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
@@ -61,31 +62,44 @@ export function FAQAccordion() {
         {faqs.map((faq, idx) => {
           const isOpen = openIndex === idx;
           return (
-            <Reveal key={idx} delay={idx * 0.06} direction="up">
-              <GlassCard
-                variant="bento"
-                className="p-6 transition-all duration-200 cursor-pointer"
-                onClick={() => setOpenIndex(isOpen ? null : idx)}
+            <Reveal key={idx} delay={idx * 0.05} direction="up">
+              <Glass
+                tint="subtle"
+                interactive={false}
+                className="rounded-2xl transition-all duration-200 overflow-hidden"
               >
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="text-base sm:text-lg font-bold text-[var(--text)]">
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : idx)}
+                  className="w-full p-6 text-left flex items-center justify-between gap-4 cursor-pointer select-none"
+                >
+                  <span className="font-semibold text-base sm:text-lg text-[var(--text)]">
                     {faq.q}
-                  </h3>
+                  </span>
                   <div
                     className={cn(
-                      "p-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-glass)] text-[var(--muted)] transition-transform duration-200",
-                      isOpen && "rotate-180 text-[var(--accent)]"
+                      "p-1.5 rounded-full bg-[var(--surface-elevated)] text-[var(--muted)] transition-transform duration-300",
+                      isOpen && "rotate-180 text-[var(--brand)]"
                     )}
                   >
-                    <ChevronDown className="h-4 w-4" />
+                    <CaretDown size={18} weight="bold" />
                   </div>
-                </div>
-                {isOpen && (
-                  <p className="pt-4 text-xs sm:text-sm text-[var(--muted)] leading-relaxed border-t border-[var(--border)] mt-4 animate-in fade-in-50">
-                    {faq.a}
-                  </p>
-                )}
-              </GlassCard>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <div className="px-6 pb-6 pt-1 text-sm text-[var(--muted)] leading-relaxed border-t border-[var(--border)] mt-1">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </Glass>
             </Reveal>
           );
         })}

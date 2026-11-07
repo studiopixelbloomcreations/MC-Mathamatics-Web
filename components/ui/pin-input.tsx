@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export interface PinInputProps {
@@ -22,6 +23,7 @@ export const PinInput: React.FC<PinInputProps> = ({
   error = false,
   className,
 }) => {
+  const shouldReduceMotion = useReducedMotion();
   const [digits, setDigits] = React.useState<string[]>(() => {
     const arr = value.split("").slice(0, length);
     while (arr.length < length) arr.push("");
@@ -83,39 +85,56 @@ export const PinInput: React.FC<PinInputProps> = ({
     const combined = newDigits.join("");
     onChange?.(combined);
 
-    const focusIdx = Math.min(pasted.length, length - 1);
-    inputRefs.current[focusIdx]?.focus();
-
-    if (combined.length === length && !newDigits.includes("")) {
+    const nextEmptyIndex = newDigits.findIndex((d) => !d);
+    if (nextEmptyIndex !== -1) {
+      inputRefs.current[nextEmptyIndex]?.focus();
+    } else {
+      inputRefs.current[length - 1]?.focus();
       onComplete?.(combined);
     }
   };
 
   return (
-    <div className={cn("flex items-center gap-2 sm:gap-3", className)}>
-      {Array.from({ length }).map((_, index) => (
-        <input
-          key={index}
-          ref={(el) => {
-            inputRefs.current[index] = el;
-          }}
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          maxLength={1}
-          autoComplete="one-time-code"
-          value={digits[index] || ""}
-          disabled={disabled}
-          onChange={(e) => handleChange(index, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(index, e)}
-          onPaste={handlePaste}
-          className={cn(
-            "h-12 w-11 sm:h-14 sm:w-12 rounded-xl border border-[var(--border)] bg-[var(--surface-glass)] text-center text-lg sm:text-xl font-bold font-mono text-[var(--accent)] shadow-inner backdrop-blur-md focus:border-[var(--brand)] focus:outline-none focus:ring-2 focus:ring-[var(--brand)]/30 disabled:opacity-50 transition-all duration-150",
-            error && "border-[var(--bad)] text-[var(--bad)] focus:ring-[var(--bad)]/30",
-            digits[index] && "border-[var(--brand)]/50 bg-[var(--surface)]"
-          )}
-        />
-      ))}
+    <div className={cn("flex items-center justify-center gap-2 sm:gap-3", className)}>
+      {digits.map((digit, index) => {
+        const isFilled = Boolean(digit);
+        return (
+          <motion.div
+            key={index}
+            animate={
+              shouldReduceMotion || !isFilled
+                ? { scale: 1 }
+                : { scale: [1, 1.08, 1] }
+            }
+            transition={{
+              type: "spring",
+              stiffness: 400,
+              damping: 28,
+            }}
+            className="relative"
+          >
+            <input
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              type="password"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={1}
+              value={digit}
+              disabled={disabled}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={handlePaste}
+              className={cn(
+                "h-12 w-10 sm:h-14 sm:w-12 text-center text-xl font-bold font-mono rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] text-[var(--text)] transition-all duration-150 focus:outline-none focus:border-[var(--brand)] focus:ring-2 focus:ring-[var(--brand)]/20",
+                error && "border-[var(--bad)] text-[var(--bad)] focus:ring-[var(--bad)]/20",
+                isFilled && "border-[var(--brand)]/60 bg-[var(--surface-elevated)] text-[var(--brand)]"
+              )}
+            />
+          </motion.div>
+        );
+      })}
     </div>
   );
 };
