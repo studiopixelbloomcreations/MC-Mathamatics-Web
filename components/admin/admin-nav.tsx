@@ -17,6 +17,7 @@ import {
   PaperPlaneTilt,
   TerminalWindow,
   SignOut,
+  Pulse,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +26,13 @@ export function AdminNav({ aiMode }: { aiMode: boolean }) {
 
   const links = [
     { href: "/admin", label: "Overview", icon: House, exact: true },
+    {
+      href: "/admin/diagnostics",
+      label: "Diagnostics",
+      icon: Pulse,
+      badge: "Live",
+      badgeClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+    },
     { href: "/admin/papers", label: "Paper Upload", icon: FileArrowUp },
     { href: "/admin/marks", label: "Mark Entry", icon: GraduationCap },
     { href: "/admin/attendance", label: "Attendance", icon: CalendarCheck },

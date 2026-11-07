@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { normalizeSriLankanPhone } from "@/lib/whatsapp/phone";
 import { handleParentMessage } from "@/lib/whatsapp/parent-bot";
+import { processPendingInboundMessages } from "@/lib/ai/processor";
 import crypto from "crypto";
 
 /**
@@ -24,60 +25,59 @@ export async function GET(req: NextRequest) {
 
 /**
  * Meta Webhook Inbound Ingestion (POST)
+ * Processes all inbound messages straight away (Immediate Processing).
  */
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const signature = req.headers.get("x-hub-signature-256") || "";
-
-  // 1. Verify X-Hub-Signature-256 if WHATSAPP_APP_SECRET is set
   const appSecret = process.env.WHATSAPP_APP_SECRET;
+
+  // 1. Signature Verification (if secret configured)
   if (appSecret) {
-    const hmac = crypto.createHmac("sha256", appSecret);
-    const expected = `sha256=${hmac.update(rawBody).digest("hex")}`;
-    if (signature !== expected) {
+    const expectedSig = `sha256=${crypto
+      .createHmac("sha256", appSecret)
+      .update(rawBody)
+      .digest("hex")}`;
+
+    if (signature !== expectedSig) {
       console.warn("[Webhook] Invalid HMAC signature");
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
   }
 
-  let payload;
+  let payload: Record<string, unknown>;
   try {
     payload = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  // Handle status delivery updates (sent, delivered, read)
-  const entry = payload?.entry?.[0];
-  const changes = entry?.changes?.[0]?.value;
+  const entry = (payload.entry as Array<{ changes: Array<{ value: Record<string, unknown> }> }>)?.[0];
+  const value = entry?.changes?.[0]?.value;
+  const message = (value?.messages as Array<Record<string, unknown>>)?.[0];
 
-  if (changes?.statuses && Array.isArray(changes.statuses)) {
-    const statusObj = changes.statuses[0];
-    const waMessageId = statusObj.id;
-    const deliveryStatus = statusObj.status; // delivered, read, failed
-
-    const supabase = createAdminClient();
-    await supabase
-      .from("report_deliveries")
-      .update({ status: deliveryStatus })
-      .eq("wa_message_id", waMessageId);
-
-    return NextResponse.json({ received: true });
-  }
-
-  // Handle inbound incoming message
-  const message = changes?.messages?.[0];
   if (!message) {
-    return NextResponse.json({ received: true });
+    // Delivery receipts, statuses, or read events -> return 200 immediately
+    return NextResponse.json({ status: "acknowledged" });
   }
 
-  const fromNumber = normalizeSriLankanPhone(message.from) || message.from;
-  const waMessageId = message.id;
+  const fromNumber = normalizeSriLankanPhone(String(message.from || ""));
+  if (!fromNumber) {
+    return NextResponse.json({ error: "Invalid sender phone" }, { status: 400 });
+  }
+
+  const waMessageId = String(message.id || "");
+  const msgType = String(message.type || "text");
+
+  // Extract body text or interactive button reply
   const textBody =
-    message.text?.body ||
-    message.interactive?.button_reply?.id ||
-    message.interactive?.list_reply?.id ||
-    "";
+    msgType === "text"
+      ? String((message.text as Record<string, unknown>)?.body || "")
+      : msgType === "interactive"
+      ? String(
+          ((message.interactive as Record<string, unknown>)?.button_reply as Record<string, unknown>)?.id || ""
+        )
+      : "";
 
   const supabase = createAdminClient();
 
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     status: "received",
   });
 
-  // 3. Routing: Sir's Number vs Parent Bot
+  // 3. Routing & Immediate In-Process Execution
   const { data: settings } = await supabase
     .from("system_settings")
     .select("ai_mode, admin_whatsapp")
@@ -111,27 +111,18 @@ export async function POST(req: NextRequest) {
   const adminNumber =
     normalizeSriLankanPhone(settings?.admin_whatsapp || "+94771234567") || "+94771234567";
 
-  if (fromNumber === adminNumber) {
-    // Sir's number -> Asynchronously trigger /api/ai/process
-    const internalSecret = process.env.INTERNAL_PROCESS_SECRET || "internal_secret_key";
-    const host = req.headers.get("host") || "localhost:3000";
-    const protocol = req.headers.get("x-forwarded-proto") || "http";
-
-    fetch(`${protocol}://${host}/api/ai/process`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-internal-secret": internalSecret,
-      },
-      body: JSON.stringify({ waMessageId }),
-    }).catch((err) => console.error("[Webhook] Background process trigger failed:", err));
-  } else {
-    // Non-admin number -> Direct to Parent Bot
-    handleParentMessage(fromNumber, textBody).catch((err) =>
-      console.error("[Parent Bot execution error]", err)
-    );
+  try {
+    if (fromNumber === adminNumber) {
+      // Sir's number -> Process AI commands straight away!
+      await processPendingInboundMessages();
+    } else {
+      // Parent number -> Process parent bot rule execution straight away!
+      await handleParentMessage(fromNumber, textBody);
+    }
+  } catch (err: unknown) {
+    console.error("[Webhook] Immediate processing error:", err);
   }
 
-  // Return HTTP 200 immediately to Meta
-  return NextResponse.json({ received: true });
+  // Return HTTP 200 immediately to Meta with confirmation
+  return NextResponse.json({ received: true, processedImmediately: true });
 }
