@@ -36,7 +36,7 @@ export function FloatingTabBar({ unreadNotesCount = 0 }: FloatingTabBarProps) {
   ];
 
   return (
-    <div className="lg:hidden fixed bottom-4 inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
+    <div className="lg:hidden fixed bottom-[calc(1rem+env(safe-area-inset-bottom,0px))] inset-x-0 z-40 flex justify-center px-4 pointer-events-none">
       <Glass
         variant="capsule"
         className="pointer-events-auto p-1.5 flex items-center gap-1 shadow-2xl border border-[var(--glass-border-light)]"

@@ -16,7 +16,7 @@ import {
 
 export function MeetSir() {
   return (
-    <section id="meet-sir" className="py-24 px-6 max-w-7xl mx-auto">
+    <section id="meet-sir" className="py-[clamp(64px,8vw,128px)] px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Photo Card Column */}
         <div className="lg:col-span-5">

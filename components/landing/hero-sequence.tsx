@@ -7,35 +7,41 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MathFormula } from "@/components/ui/math-formula";
-import {
-  ArrowRight,
-  Sparkle,
-  CaretDown,
-} from "@phosphor-icons/react";
+import { ArrowRight, Sparkle, CaretDown } from "@phosphor-icons/react";
 
 export function HeroSequence() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = React.useState(false);
 
-  // Scroll animation hooks
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Desktop scroll progress (target container)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Morphing transforms (? -> MC Monogram, and Question -> Answer reveal)
-  const questionOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0]);
+  // Smooth transforms across the scroll range [0, 0.9]
+  const questionOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
   const answerOpacity = useTransform(scrollYProgress, [0.35, 0.75], [0, 1]);
-  const answerY = useTransform(scrollYProgress, [0.35, 0.75], [30, 0]);
+  const answerY = useTransform(scrollYProgress, [0.35, 0.75], [20, 0]);
 
-  // Morph symbol (? fades/scales out, MC emblem fades/scales in)
-  const questionMarkScale = useTransform(scrollYProgress, [0, 0.45], [1, 0.5]);
-  const questionMarkOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-  const mcScale = useTransform(scrollYProgress, [0.4, 0.8], [0.7, 1]);
-  const mcOpacity = useTransform(scrollYProgress, [0.4, 0.75], [0, 1]);
+  const questionMarkScale = useTransform(scrollYProgress, [0, 0.35], [1, 0.6]);
+  const questionMarkOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
+  const mcScale = useTransform(scrollYProgress, [0.35, 0.75], [0.75, 1]);
+  const mcOpacity = useTransform(scrollYProgress, [0.35, 0.7], [0, 1]);
 
-  const ctaOpacity = useTransform(scrollYProgress, [0.65, 0.95], [0, 1]);
-  const ctaY = useTransform(scrollYProgress, [0.65, 0.95], [20, 0]);
+  const ctaOpacity = useTransform(scrollYProgress, [0.55, 0.85], [0, 1]);
+  const ctaY = useTransform(scrollYProgress, [0.55, 0.85], [16, 0]);
+  const promptOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
   const floatingFormulas = [
     { formula: "\\sum_{n=1}^\\infty \\frac{1}{n^2} = \\frac{\\pi^2}{6}", top: "15%", left: "8%" },
@@ -46,13 +52,79 @@ export function HeroSequence() {
     { formula: "\\nabla \\times \\vec{B} = \\mu_0 \\vec{J}", top: "40%", right: "5%" },
   ];
 
+  // Mobile / Reduced-Motion layout: Single clean view without pinning traps
+  if (isMobile || shouldReduceMotion) {
+    return (
+      <div className="relative w-full min-h-[90svh] flex flex-col items-center justify-center px-4 sm:px-6 py-16 sm:py-20 bg-[var(--bg)] overflow-hidden">
+        {/* Math Grid Background */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.03] dark:opacity-[0.05]"
+          style={{
+            backgroundImage: `radial-gradient(var(--text) 1px, transparent 1px)`,
+            backgroundSize: "32px 32px",
+          }}
+        />
+
+        <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto space-y-6">
+          <Badge variant="accent" dot>
+            Malinga C Dissanayake · Kurunegala
+          </Badge>
+
+          {/* MC Emblem */}
+          <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-full border border-[var(--brand)]/40 p-1 bg-[#0c0d10] shadow-[0_0_35px_rgba(250,204,21,0.25)]">
+            <div className="relative h-full w-full rounded-full overflow-hidden">
+              <Image
+                src="/images/mc-logo.jpg"
+                alt="MC Mathematics Monogram"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Slogan */}
+          <div className="space-y-2">
+            <p className="text-xl sm:text-2xl font-medium tracking-tight text-[var(--muted)]">
+              Maths is the question.
+            </p>
+            <h1 className="text-4xl sm:text-5xl font-normal tracking-tight text-[var(--brand)] font-editorial italic">
+              MC is the answer.
+            </h1>
+          </div>
+
+          <p className="text-sm sm:text-base text-[var(--muted)] max-w-lg mx-auto leading-relaxed">
+            Kurunegala&apos;s premier mathematics academy. Transforming O/L and A/L
+            mathematics into measurable excellence with instant diagnostic feedback.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <Link href="/signup">
+              <Button size="lg" variant="primary" className="gap-2">
+                <span>Join the class</span>
+                <Sparkle size={18} weight="fill" />
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button size="lg" variant="ghost" className="gap-2">
+                <span>Student login</span>
+                <ArrowRight size={18} weight="bold" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop pinned sequence (tight 140vh scroll space with zero dead gap)
   return (
     <div
       ref={containerRef}
-      className="relative h-[220vh] w-full bg-[var(--bg)]"
+      className="relative h-[140vh] w-full bg-[var(--bg)]"
     >
-      {/* Sticky Hero Viewport */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center px-6">
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col items-center justify-center px-6">
         {/* Math Grid Background */}
         <div
           aria-hidden="true"
@@ -87,9 +159,9 @@ export function HeroSequence() {
         </div>
 
         {/* Central Kinetic Sequence */}
-        <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-8">
+        <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-6">
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
@@ -99,14 +171,10 @@ export function HeroSequence() {
           </motion.div>
 
           {/* Morphing Symbol: ? into Official MC Emblem */}
-          <div className="relative h-28 w-28 sm:h-36 sm:w-36 flex items-center justify-center my-2">
+          <div className="relative h-32 w-32 sm:h-36 sm:w-36 flex items-center justify-center my-1">
             {/* Pulsing ? Symbol */}
             <motion.div
-              style={
-                shouldReduceMotion
-                  ? { opacity: 1 }
-                  : { opacity: questionMarkOpacity, scale: questionMarkScale }
-              }
+              style={{ opacity: questionMarkOpacity, scale: questionMarkScale }}
               className="absolute inset-0 flex items-center justify-center font-editorial italic text-7xl sm:text-8xl font-normal text-[var(--brand)] drop-shadow-[0_0_35px_rgba(250,204,21,0.4)] select-none animate-pulse"
             >
               ?
@@ -114,11 +182,7 @@ export function HeroSequence() {
 
             {/* Official MC Emblem */}
             <motion.div
-              style={
-                shouldReduceMotion
-                  ? { opacity: 1 }
-                  : { opacity: mcOpacity, scale: mcScale }
-              }
+              style={{ opacity: mcOpacity, scale: mcScale }}
               className="absolute inset-0 flex items-center justify-center rounded-full border border-[var(--brand)]/40 p-1 bg-[#0c0d10] shadow-[0_0_50px_rgba(250,204,21,0.25)]"
             >
               <div className="relative h-full w-full rounded-full overflow-hidden">
@@ -126,6 +190,7 @@ export function HeroSequence() {
                   src="/images/mc-logo.jpg"
                   alt="MC Mathematics Monogram"
                   fill
+                  priority
                   className="object-cover"
                 />
               </div>
@@ -133,10 +198,10 @@ export function HeroSequence() {
           </div>
 
           {/* Slogan Text Transformation */}
-          <div className="relative min-h-[140px] sm:min-h-[160px] flex items-center justify-center">
+          <div className="relative min-h-[120px] sm:min-h-[140px] flex items-center justify-center">
             {/* Step 1: "Maths is the question." */}
             <motion.h1
-              style={shouldReduceMotion ? { opacity: 1 } : { opacity: questionOpacity }}
+              style={{ opacity: questionOpacity }}
               className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-[var(--text)]"
             >
               Maths is the <span className="text-[var(--brand)]">question.</span>
@@ -144,11 +209,7 @@ export function HeroSequence() {
 
             {/* Step 2: "MC is the answer." with Instrument Serif */}
             <motion.h1
-              style={
-                shouldReduceMotion
-                  ? { opacity: 1 }
-                  : { opacity: answerOpacity, y: answerY }
-              }
+              style={{ opacity: answerOpacity, y: answerY }}
               className="absolute text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.1] text-[var(--brand)] font-editorial italic"
             >
               MC is the answer.
@@ -163,12 +224,8 @@ export function HeroSequence() {
 
           {/* CTAs */}
           <motion.div
-            style={
-              shouldReduceMotion
-                ? { opacity: 1 }
-                : { opacity: ctaOpacity, y: ctaY }
-            }
-            className="flex flex-wrap items-center justify-center gap-4 pt-4"
+            style={{ opacity: ctaOpacity, y: ctaY }}
+            className="flex flex-wrap items-center justify-center gap-4 pt-2"
           >
             <Link href="/signup">
               <Button size="lg" variant="primary" magnetic className="gap-2">
@@ -185,11 +242,12 @@ export function HeroSequence() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator Prompt */}
+        {/* Scroll Indicator Prompt (fades out immediately when scroll starts) */}
         <motion.div
+          style={{ opacity: promptOpacity }}
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-8 flex flex-col items-center gap-1.5 text-xs text-[var(--muted)] select-none pointer-events-none"
+          className="absolute bottom-6 flex flex-col items-center gap-1.5 text-xs text-[var(--muted)] select-none pointer-events-none"
         >
           <span>Scroll to uncover the answer</span>
           <CaretDown size={14} weight="bold" className="text-[var(--brand)]" />

@@ -33,6 +33,30 @@ export function FloatingHeader({
   const [isDark, setIsDark] = useState(true);
   const [glassTint, setGlassTint] = useState(70); // 0 = clear, 100 = full tint
   const [showSettings, setShowSettings] = useState(false);
+  const headerRef = React.useRef<HTMLElement>(null);
+
+  // Measure rendered header height and expose as CSS variable --header-h
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const h = headerRef.current.getBoundingClientRect().height;
+        // Total offset including top spacing (16px)
+        const totalHeight = Math.round(h + 24);
+        document.documentElement.style.setProperty("--header-h", `${totalHeight}px`);
+      }
+    };
+
+    updateHeaderHeight();
+    const ro = new ResizeObserver(updateHeaderHeight);
+    ro.observe(headerRef.current);
+    window.addEventListener("resize", updateHeaderHeight);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", updateHeaderHeight);
+    };
+  }, []);
 
   useEffect(() => {
     const isDarkTheme = document.documentElement.classList.contains("dark");
@@ -134,6 +158,7 @@ export function FloatingHeader({
 
   return (
     <motion.header
+      ref={headerRef}
       variants={{
         visible: { y: 0, opacity: 1 },
         hidden: { y: -90, opacity: 0 },

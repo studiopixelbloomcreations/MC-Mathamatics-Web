@@ -23,7 +23,7 @@ export class NvidiaNimProvider implements AIProvider {
   constructor() {
     this.apiKey = process.env.NVIDIA_NIM_API_KEY || process.env.NVIDIA_API_KEY || process.env.AI_API_KEY;
     this.baseURL = process.env.NVIDIA_BASE_URL || process.env.AI_BASE_URL || "https://integrate.api.nvidia.com/v1";
-    this.model = process.env.NVIDIA_MODEL || process.env.AI_MODEL || "deepseek-ai/deepseek-r1";
+    this.model = process.env.NVIDIA_MODEL || process.env.AI_MODEL || "nvidia/nemotron-3.5-bolt-e4b";
   }
 
   async generateText(prompt: string, systemPrompt?: string): Promise<string> {

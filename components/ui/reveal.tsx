@@ -22,9 +22,18 @@ export const Reveal: React.FC<RevealProps> = ({
   className,
 }) => {
   const shouldReduceMotion = useReducedMotion();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted || shouldReduceMotion) {
+    return <div className={cn(className)}>{children}</div>;
+  }
 
   const getInitialPosition = () => {
-    if (shouldReduceMotion || direction === "none") return { x: 0, y: 0 };
+    if (direction === "none") return { x: 0, y: 0 };
     switch (direction) {
       case "up":
         return { x: 0, y: distance };
@@ -43,10 +52,10 @@ export const Reveal: React.FC<RevealProps> = ({
     <motion.div
       initial={{ opacity: 0, x: initialPos.x, y: initialPos.y }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
+      viewport={{ once: true, amount: "some" }}
       transition={{
-        duration: shouldReduceMotion ? 0.01 : duration,
-        delay: shouldReduceMotion ? 0 : delay,
+        duration,
+        delay,
         ease: [0.22, 1, 0.36, 1],
       }}
       className={cn(className)}

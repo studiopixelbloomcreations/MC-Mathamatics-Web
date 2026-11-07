@@ -46,7 +46,7 @@ export function AnalysisPreview() {
   }, []);
 
   return (
-    <section id="analysis" className="py-24 px-6 max-w-7xl mx-auto space-y-16">
+    <section id="analysis" className="py-[clamp(64px,8vw,128px)] px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto space-y-16">
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <Reveal direction="down">
           <Badge variant="brand" dot>

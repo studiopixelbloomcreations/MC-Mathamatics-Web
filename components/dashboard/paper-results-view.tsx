@@ -84,7 +84,7 @@ export function PaperResultsView({
                 className="p-5 border-white/10 hover:border-amber-500/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group cursor-pointer"
                 onClick={() => setSelectedPaperDetail(item)}
               >
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <Badge variant="accent" className="text-[10px]">
                       Grade {studentGrade}
@@ -201,7 +201,7 @@ export function PaperResultsView({
                 key={paper.id}
                 className="p-5 border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
-                <div className="space-y-1">
+                <div className="space-y-1 min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <Badge variant="default" className="text-[10px]">
                       Finished

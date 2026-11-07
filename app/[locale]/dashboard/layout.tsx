@@ -178,8 +178,8 @@ export default async function DashboardLayout({
       {/* ========================================================================= */}
       {/* 3. Main Dashboard Content Area */}
       {/* ========================================================================= */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-8">
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <div className="flex-1 flex flex-col min-w-0 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
           {children}
         </main>
       </div>

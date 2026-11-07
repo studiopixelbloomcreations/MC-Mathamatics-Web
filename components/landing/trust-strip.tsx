@@ -41,7 +41,7 @@ export function TrustStrip() {
   ];
 
   return (
-    <section className="relative z-10 py-16 px-6 max-w-7xl mx-auto">
+    <section className="relative z-10 py-[clamp(64px,7vw,112px)] px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto">
       <Reveal direction="up">
         <div className="text-center space-y-2 mb-10">
           <p className="text-xs uppercase tracking-widest font-mono text-[var(--brand)]">

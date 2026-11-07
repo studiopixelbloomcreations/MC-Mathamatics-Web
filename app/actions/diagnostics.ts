@@ -106,7 +106,7 @@ export async function runDiagnosticsAction(): Promise<DiagnosticsReport> {
   } else {
     try {
       // Lightweight reachability or verification ping
-      const modelName = process.env.NVIDIA_MODEL_NAME || "meta/llama-3.1-70b-instruct";
+      const modelName = process.env.NVIDIA_MODEL_NAME || process.env.NVIDIA_MODEL || "nvidia/nemotron-3.5-bolt-e4b";
       const latency = Math.round(performance.now() - aiStart);
 
       aiItem = {

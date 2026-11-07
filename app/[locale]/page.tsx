@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { FloatingHeader } from "@/components/ui/floating-header";
 import { HeroSequence } from "@/components/landing/hero-sequence";
+import { StatementSection } from "@/components/landing/statement-section";
 import { TrustStrip } from "@/components/landing/trust-strip";
 import { MeetSir } from "@/components/landing/meet-sir";
 import { FeatureBento } from "@/components/landing/feature-bento";
@@ -24,11 +25,14 @@ export default async function HomePage({
     <>
       <LandingJsonLd />
       <FloatingHeader />
-      <main className="flex min-h-screen flex-col overflow-x-hidden">
+      <main className="flex min-h-screen flex-col overflow-x-clip">
         {/* Section 1: Hero Sequence with Morphing Monogram & Slogan */}
         <HeroSequence />
 
-        {/* Section 2: Trust Strip & Metrics */}
+        {/* Section 2: Statement Section (One teacher. One method. Progress you can measure.) */}
+        <StatementSection />
+
+        {/* Section 3: Trust Strip & Metrics */}
         <TrustStrip />
 
         {/* Section 3: Meet Sir (Malinga C Dissanayake) */}

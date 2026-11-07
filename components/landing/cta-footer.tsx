@@ -17,8 +17,8 @@ import {
 
 export function CTAFooter() {
   return (
-    <footer className="relative z-10 border-t border-[var(--border)] bg-[var(--surface)] pt-20 pb-12 px-6">
-      <div className="max-w-7xl mx-auto space-y-20">
+    <footer className="relative z-10 border-t border-[var(--border)] bg-[var(--surface)] pt-20 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1280px] mx-auto space-y-20">
         {/* Final CTA Band */}
         <Reveal direction="up">
           <Glass

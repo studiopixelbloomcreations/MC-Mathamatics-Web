@@ -39,7 +39,7 @@ export function FAQAccordion() {
   ];
 
   return (
-    <section id="faq" className="py-24 px-6 max-w-4xl mx-auto space-y-16">
+    <section id="faq" className="py-[clamp(64px,8vw,128px)] px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-16">
       <div className="text-center space-y-4">
         <Reveal direction="down">
           <Badge variant="accent" dot>
