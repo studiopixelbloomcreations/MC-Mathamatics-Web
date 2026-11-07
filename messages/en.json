@@ -1,0 +1,26 @@
+{
+  "Common": {
+    "title": "MC Mathematics",
+    "slogan": "Maths is the question. MC is the answer.",
+    "login": "Student Login",
+    "signup": "Join Class",
+    "admin": "Admin Portal",
+    "themeToggle": "Toggle theme",
+    "language": "Language",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "DesignSystem": {
+    "title": "Design System & UI Kit",
+    "description": "Component showcase with 2026 dark-first agency design tokens.",
+    "buttons": "Buttons & Actions",
+    "cards": "Glass Cards & Bento Surfaces",
+    "inputs": "Form Inputs & PIN Input",
+    "badges": "Badges & Indicators",
+    "motion": "Scroll Reveal & Stat Counters",
+    "modalTitle": "Example System Modal",
+    "modalDescription": "This modal demonstrates glass backdrop blur and spring animation."
+  }
+}

@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  /* Light Theme (Default fallback) */
+  --bg: #F7F8FC;
+  --surface: #FFFFFF;
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  --border: rgba(10, 15, 40, 0.08);
+  --text: #0B1020;
+  --muted: #5B6379;
+  --accent: #E6A100;
+  --brand: #5B4BDB;
+  --good: #2DD4A0;
+  --warn: #FFB020;
+  --bad: #FF5C7A;
+
+  /* Motion tokens */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 300ms;
+  --duration-normal: 500ms;
+  --duration-slow: 700ms;
+}
+
+.dark, :root[class~="dark"], [data-theme="dark"] {
+  /* Dark Theme (Default) */
+  --bg: #070A13;
+  --surface: #0E1424;
+  --surface-glass: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #F2F4FA;
+  --muted: #8B93A8;
+  --accent: #FFC857;
+  --brand: #6C5CE7;
+  --good: #2DD4A0;
+  --warn: #FFB020;
+  --bad: #FF5C7A;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glass card styling */
+.glass-panel {
+  background-color: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
