@@ -19,7 +19,51 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminOverviewPage() {
   const data = await getAdminOverviewData();
-  const { stats, systemSettings, recentLogins } = data;
+  const { stats, systemSettings, aiStatus, recentLogins } = data;
+
+  // Blue-shade status badge helper without color-only meaning
+  const getStatusBadge = () => {
+    switch (aiStatus.status) {
+      case "ok":
+        return {
+          label: "AI: Active & Healthy",
+          badgeClass: "bg-blue-600/20 text-blue-400 border-blue-500/40",
+          desc: "Online",
+        };
+      case "ai_mode_off":
+        return {
+          label: "AI: Writes Paused (Mode Off)",
+          badgeClass: "bg-blue-500/10 text-blue-300 border-blue-500/20",
+          desc: aiStatus.reason || "AI Mode Off",
+        };
+      case "parent_chat_disabled":
+        return {
+          label: "AI: Parent Chat Paused",
+          badgeClass: "bg-blue-500/10 text-blue-300 border-blue-500/20",
+          desc: "Parent chat off",
+        };
+      case "rate_limited":
+        return {
+          label: "AI: Busy (Rate Limit)",
+          badgeClass: "bg-blue-500/20 text-blue-200 border-blue-400/30",
+          desc: "HTTP 429",
+        };
+      case "not_configured":
+        return {
+          label: "AI: Not Configured",
+          badgeClass: "bg-white/5 text-[var(--muted)] border-white/10",
+          desc: "Keys missing",
+        };
+      default:
+        return {
+          label: "AI: Offline / Unavailable",
+          badgeClass: "bg-blue-950 text-blue-200 border-blue-800/60",
+          desc: aiStatus.reason || "Offline",
+        };
+    }
+  };
+
+  const statusBadge = getStatusBadge();
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -33,7 +77,7 @@ export default async function AdminOverviewPage() {
             <span className="text-xs uppercase font-mono tracking-widest text-[var(--brand)] font-semibold">
               Master Admin Cockpit
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text)]">
             Overview &amp; pulse
@@ -43,7 +87,17 @@ export default async function AdminOverviewPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* AI Status Badge */}
+          <Link
+            href="/admin/diagnostics"
+            title={aiStatus.reason || "AI Health Status"}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${statusBadge.badgeClass}`}
+          >
+            <Robot size={15} weight="regular" />
+            <span>{statusBadge.label}</span>
+          </Link>
+
           <Link
             href="/admin/ai-mode"
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
@@ -52,8 +106,8 @@ export default async function AdminOverviewPage() {
                 : "bg-white/5 border-white/10 text-[var(--muted)] hover:bg-white/10"
             }`}
           >
-            <Robot size={16} weight="regular" />
-            <span>AI Mode: {systemSettings.aiMode ? "ACTIVE" : "OFF"}</span>
+            <ShieldCheck size={16} weight="regular" />
+            <span>Mode: {systemSettings.aiMode ? "ON" : "OFF"}</span>
           </Link>
         </div>
       </Glass>

@@ -3,10 +3,16 @@ import { NvidiaNimProvider } from "@/lib/ai/nvidia-nim";
 import { validateToolCall } from "@/lib/ai/validator";
 import { executeToolCall } from "@/lib/ai/executor";
 import { whatsapp } from "@/lib/whatsapp/client";
+import {
+  getAIStatus,
+  recordFallbackEvent,
+  shouldSendSirOutageNotice,
+} from "@/lib/ai/status";
 
 /**
  * Processes pending inbound messages from Sir immediately.
  * Executes tool calls, sends previews or confirmation messages via WhatsApp.
+ * Implements strict status-based feedback and handles offline/error states gracefully.
  */
 export async function processPendingInboundMessages(): Promise<number> {
   const supabase = createAdminClient();
@@ -14,7 +20,7 @@ export async function processPendingInboundMessages(): Promise<number> {
   // 1. Fetch system settings
   const { data: settings } = await supabase
     .from("system_settings")
-    .select("ai_mode, ai_confirm_required, admin_whatsapp")
+    .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp")
     .eq("id", 1)
     .single();
 
@@ -32,62 +38,53 @@ export async function processPendingInboundMessages(): Promise<number> {
     return 0;
   }
 
-  const aiProvider = new NvidiaNimProvider();
+  const aiStatus = await getAIStatus();
   let processedCount = 0;
 
   for (const msg of pendingMessages) {
     const rawText = msg.body?.trim() || "";
     const senderNumber = msg.from_number || adminPhone;
 
-    // If AI Mode is OFF
-    if (!settings?.ai_mode) {
-      await whatsapp.sendText(
-        senderNumber,
-        "⚠️ AI Mode is currently OFF. Turn it on in the admin panel to use WhatsApp autonomous control."
-      );
-      await supabase
-        .from("inbound_messages")
-        .update({ status: "processed" })
-        .eq("wa_message_id", msg.wa_message_id);
-      processedCount++;
-      continue;
-    }
+    try {
+      // Check status: If AI is not configured, rate limited, or unavailable
+      if (aiStatus.status === "not_configured") {
+        await whatsapp.sendText(
+          senderNumber,
+          "NVIDIA_API_KEY is missing in the server settings."
+        );
+        recordFallbackEvent(senderNumber, "Sir message: NVIDIA_API_KEY missing", "not_configured");
+        await supabase
+          .from("inbound_messages")
+          .update({ status: "processed" })
+          .eq("wa_message_id", msg.wa_message_id);
+        processedCount++;
+        continue;
+      }
 
-    // Check if message is a confirmation "1" or cancel "2"
-    if (rawText === "1" || rawText === "2") {
-      const { data: pendingAction } = await supabase
-        .from("ai_actions")
-        .select("*")
-        .eq("status", "previewed")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      if (aiStatus.status === "rate_limited") {
+        await whatsapp.sendText(
+          senderNumber,
+          "The AI is busy (rate limit). Try again in a minute."
+        );
+        recordFallbackEvent(senderNumber, "Sir message: Rate limit (429)", "rate_limited");
+        await supabase
+          .from("inbound_messages")
+          .update({ status: "processed" })
+          .eq("wa_message_id", msg.wa_message_id);
+        processedCount++;
+        continue;
+      }
 
-      if (pendingAction) {
-        if (rawText === "1") {
-          // Confirm & execute
-          const toolCalls = pendingAction.tool_calls || [];
-          const results: string[] = [];
-          for (const tc of toolCalls) {
-            const plan = await validateToolCall(tc);
-            const execRes = await executeToolCall(plan, pendingAction.raw_text, msg.wa_message_id);
-            results.push(execRes.summary);
-          }
+      if (aiStatus.status === "ai_unavailable") {
+        await whatsapp.sendText(
+          senderNumber,
+          "The AI service is not responding (model error). Check /admin/diagnostics."
+        );
+        recordFallbackEvent(senderNumber, "Sir message: AI unavailable", "ai_unavailable");
 
-          await supabase
-            .from("ai_actions")
-            .update({ status: "executed" })
-            .eq("id", pendingAction.id);
-
-          await whatsapp.sendText(senderNumber, `✅ Confirmed & Executed:\n${results.join("\n")}`);
-        } else {
-          // Cancel
-          await supabase
-            .from("ai_actions")
-            .update({ status: "cancelled" })
-            .eq("id", pendingAction.id);
-
-          await whatsapp.sendText(senderNumber, "🚫 In-flight action was cancelled.");
+        // If Sir's free window is open, send outage notification at most once per hour
+        if (shouldSendSirOutageNotice()) {
+          console.warn("[AI Processor] Dispatched Sir outage notice.");
         }
 
         await supabase
@@ -97,11 +94,87 @@ export async function processPendingInboundMessages(): Promise<number> {
         processedCount++;
         continue;
       }
-    }
 
-    // 3. Parse tool calls using AI Provider
-    try {
+      const aiProvider = new NvidiaNimProvider();
+
+      // Check if message is a confirmation "1" or cancel "2"
+      if (rawText === "1" || rawText === "2") {
+        const { data: pendingAction } = await supabase
+          .from("ai_actions")
+          .select("*")
+          .eq("status", "previewed")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (pendingAction) {
+          if (rawText === "1") {
+            const toolCalls = pendingAction.tool_calls || [];
+            const results: string[] = [];
+            for (const tc of toolCalls) {
+              const plan = await validateToolCall(tc);
+              const execRes = await executeToolCall(plan, pendingAction.raw_text, msg.wa_message_id);
+              results.push(execRes.summary);
+            }
+
+            await supabase
+              .from("ai_actions")
+              .update({ status: "executed" })
+              .eq("id", pendingAction.id);
+
+            await whatsapp.sendText(senderNumber, `✅ Confirmed & Executed:\n${results.join("\n")}`);
+          } else {
+            await supabase
+              .from("ai_actions")
+              .update({ status: "cancelled" })
+              .eq("id", pendingAction.id);
+
+            await whatsapp.sendText(senderNumber, "🚫 In-flight action was cancelled.");
+          }
+
+          await supabase
+            .from("inbound_messages")
+            .update({ status: "processed" })
+            .eq("wa_message_id", msg.wa_message_id);
+          processedCount++;
+          continue;
+        }
+      }
+
+      // 3. Parse tool calls using AI Provider
       const toolCalls = await aiProvider.generateToolCalls(rawText);
+
+      // Check if this command contains write actions (marks, notes, announcements, attendance)
+      const hasWriteTools = toolCalls.some((tc) =>
+        ["record_marks", "add_special_note", "post_announcement", "mark_attendance"].includes(tc.tool)
+      );
+
+      // When AI Mode is OFF:
+      if (!settings?.ai_mode && hasWriteTools) {
+        await whatsapp.sendText(
+          senderNumber,
+          "AI Mode is off, so I can't change marks, notes or announcements. Turn it on in the admin panel. I can still answer questions."
+        );
+        recordFallbackEvent(senderNumber, "Sir write command refused (AI Mode OFF)", "ai_mode_off");
+        await supabase
+          .from("inbound_messages")
+          .update({ status: "processed" })
+          .eq("wa_message_id", msg.wa_message_id);
+        processedCount++;
+        continue;
+      }
+
+      // If no write tools or read-only/question: Answer directly or proceed
+      if (!hasWriteTools && toolCalls.length === 0) {
+        const textAnswer = await aiProvider.generateText(rawText);
+        await whatsapp.sendText(senderNumber, textAnswer);
+        await supabase
+          .from("inbound_messages")
+          .update({ status: "processed" })
+          .eq("wa_message_id", msg.wa_message_id);
+        processedCount++;
+        continue;
+      }
 
       // 4. Validate tool calls
       const validationPlans = await Promise.all(
@@ -129,7 +202,7 @@ export async function processPendingInboundMessages(): Promise<number> {
       }
 
       // 5. If confirmation is required, send preview
-      if (settings.ai_confirm_required) {
+      if (settings?.ai_confirm_required) {
         const previews = validationPlans.map((p, i) => `${i + 1}. ${p.previewSummary}`).join("\n");
 
         await supabase.from("ai_actions").insert({
@@ -176,13 +249,16 @@ export async function processPendingInboundMessages(): Promise<number> {
         .eq("wa_message_id", msg.wa_message_id);
       processedCount++;
     } catch (err: unknown) {
+      // NEVER GO SILENT: Send polite apology and log error
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error("[AI Processor] Processing error:", errorMsg);
 
       await whatsapp.sendText(
         senderNumber,
-        `⚠️ AI Processing Notice:\n${errorMsg}`
+        "Sorry, I encountered an internal error while processing that instruction. Sir's administration console has logged the event."
       );
+
+      recordFallbackEvent(senderNumber, `Internal processing exception: ${errorMsg}`, "ai_unavailable");
 
       await supabase
         .from("inbound_messages")

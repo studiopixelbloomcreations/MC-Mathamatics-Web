@@ -202,6 +202,7 @@ create table system_settings (
   ai_confirm_required boolean not null default true,
   admin_whatsapp text not null default '+94771234567', -- Sir's verified number
   paid_templates_enabled boolean not null default false, -- OFF = zero message cost
+  parent_chat_enabled boolean not null default true,     -- ON = parents can chat with AI assistant
   updated_at timestamptz default now()
 );
 

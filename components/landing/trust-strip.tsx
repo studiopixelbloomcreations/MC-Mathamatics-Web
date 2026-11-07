@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { Glass } from "@/components/ui/glass";
 import { StatCounter } from "@/components/ui/stat-counter";
 import { Reveal } from "@/components/ui/reveal";
@@ -13,6 +14,7 @@ export function TrustStrip({
   studentCount?: number;
   teachingYears?: number;
 }) {
+  const t = useTranslations("Trust");
   // Only show stats if they represent real verified figures
   const stats: Array<{
     icon: React.ReactNode;
@@ -27,8 +29,8 @@ export function TrustStrip({
       icon: <Medal size={20} weight="regular" className="text-[var(--brand)]" />,
       value: teachingYears,
       suffix: "+",
-      label: "Years of teaching",
-      description: "Pure & applied mathematics in Kurunegala",
+      label: t("teachingYears"),
+      description: t("teachingDesc"),
     },
     ...(studentCount >= 10
       ? [
@@ -36,8 +38,8 @@ export function TrustStrip({
             icon: <Users size={20} weight="regular" className="text-[var(--text)]" />,
             value: studentCount,
             suffix: "+",
-            label: "Enrolled students",
-            description: "Active mathematics candidates",
+            label: t("enrolledStudents"),
+            description: t("enrolledDesc"),
           },
         ]
       : []),
@@ -45,8 +47,8 @@ export function TrustStrip({
       icon: <WhatsappLogo size={20} weight="fill" className="text-emerald-400" />,
       value: 0,
       prefix: "Rs. ",
-      label: "Zero message fee",
-      description: "Direct WhatsApp parent reports",
+      label: t("zeroFee"),
+      description: t("zeroFeeDesc"),
     },
   ];
 

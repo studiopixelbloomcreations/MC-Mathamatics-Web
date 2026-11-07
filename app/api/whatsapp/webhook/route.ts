@@ -122,13 +122,23 @@ export async function POST(req: NextRequest) {
     } else {
       // Parent number -> Process parent bot rule execution straight away!
       const parentResult = await handleParentMessage(fromNumber, textBody);
-      // If not recognized as a registered parent or if AI mode is enabled, run AI processor
-      if (settings?.ai_mode && (!parentResult.handled || parentResult.logStatus === "blocked_unregistered")) {
+      // If message requires conversational AI handling and parent chat is enabled, run AI processor
+      if (!parentResult.handled) {
         await processPendingInboundMessages();
       }
     }
   } catch (err: unknown) {
     console.error("[Webhook] Immediate processing error:", err);
+    // Never go silent: send apology to sender
+    try {
+      const { whatsapp } = await import("@/lib/whatsapp/client");
+      await whatsapp.sendText(
+        fromNumber,
+        "We experienced a temporary processing delay. Sir's administrative team has been notified."
+      );
+    } catch {
+      // ignore secondary failure
+    }
   }
 
   // Return HTTP 200 immediately to Meta with confirmation

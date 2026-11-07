@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,62 +10,63 @@ import { Reveal } from "@/components/ui/reveal";
 import { ArrowRight, Clock } from "@phosphor-icons/react";
 
 export function GradesSection() {
+  const t = useTranslations("Grades");
   const grades = [
     {
-      grade: "Grade 6",
-      tag: "Junior Foundation",
-      focus: "Arithmetic, basic geometry & fractions",
+      grade: t("g6"),
+      tag: t("g6Tag"),
+      focus: t("g6Focus"),
       sessions: "Weekly 2.5h",
       badge: "T Stream",
     },
     {
-      grade: "Grade 7",
-      tag: "Junior Foundation",
-      focus: "Pre-algebra, measurements & graphs",
+      grade: t("g7"),
+      tag: t("g7Tag"),
+      focus: t("g7Focus"),
       sessions: "Weekly 2.5h",
       badge: "T Stream",
     },
     {
-      grade: "Grade 8",
-      tag: "Junior Foundation",
-      focus: "Linear equations, angles & percentages",
+      grade: t("g8"),
+      tag: t("g8Tag"),
+      focus: t("g8Focus"),
       sessions: "Weekly 3.0h",
       badge: "T Stream",
     },
     {
-      grade: "Grade 9",
-      tag: "Junior High",
-      focus: "Simultaneous equations, pythagoras & probability",
+      grade: t("g9"),
+      tag: t("g9Tag"),
+      focus: t("g9Focus"),
       sessions: "Weekly 3.0h",
       badge: "T + TP Options",
     },
     {
-      grade: "Grade 10",
-      tag: "O/L Core Year",
-      focus: "Quadratic equations, circle theorems & logarithms",
+      grade: t("g10"),
+      tag: t("g10Tag"),
+      focus: t("g10Focus"),
       sessions: "Weekly 3.5h + Papers",
       badge: "T & TP Streams",
       highlight: true,
     },
     {
-      grade: "Grade 11",
-      tag: "O/L Target Examination",
-      focus: "Full syllabus revision, speed drills & model papers",
+      grade: t("g11"),
+      tag: t("g11Tag"),
+      focus: t("g11Focus"),
       sessions: "Weekly 4.0h + Intensive Papers",
       badge: "T & TP Streams",
       highlight: true,
     },
     {
-      grade: "Grade 12",
-      tag: "A/L Combined Mathematics",
-      focus: "Pure maths (trigonometry, calculus) & applied (vectors)",
+      grade: t("g12"),
+      tag: t("g12Tag"),
+      focus: t("g12Focus"),
       sessions: "Weekly 5.0h + Papers",
       badge: "A/L Stream",
     },
     {
-      grade: "Grade 13",
-      tag: "A/L Intensive Revision",
-      focus: "Island-rank past paper drilling & diagnostic mastery",
+      grade: t("g13"),
+      tag: t("g13Tag"),
+      focus: t("g13Focus"),
       sessions: "Weekly 6.0h + Papers",
       badge: "A/L Stream",
       highlight: true,
@@ -76,18 +78,17 @@ export function GradesSection() {
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <Reveal direction="down">
           <Badge variant="brand" dot>
-            Curriculum Structure
+            {t("badge")}
           </Badge>
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            Academic pathways (grades 6–13)
+            {t("heading")}
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="text-sm sm:text-base text-[var(--muted)]">
-            Every grade follows an aligned syllabus with weekly exercises,
-            first-principles derivations, and standardized model evaluations.
+            {t("subheading")}
           </p>
         </Reveal>
       </div>

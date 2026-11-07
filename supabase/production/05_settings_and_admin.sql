@@ -33,13 +33,15 @@ begin
     ai_mode,
     ai_confirm_required,
     admin_whatsapp,
-    paid_templates_enabled
+    paid_templates_enabled,
+    parent_chat_enabled
   ) values (
     1,
     false,            -- ai_mode starts false (manual mode safe default)
     true,             -- ai_confirm_required starts true
     sir_whatsapp,
-    false             -- paid_templates_enabled false (zero cost free-window default)
+    false,            -- paid_templates_enabled false (zero cost free-window default)
+    true              -- parent_chat_enabled true (parents can talk to AI assistant)
   )
   on conflict (id) do update set
     admin_whatsapp = excluded.admin_whatsapp;

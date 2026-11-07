@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
@@ -11,30 +12,28 @@ import {
 } from "@phosphor-icons/react";
 
 export function HowItWorks() {
+  const t = useTranslations("HowItWorks");
   const steps = [
     {
       step: "01",
       icon: <IdentificationCard size={24} weight="regular" className="text-[var(--brand)]" />,
-      title: "Register & receive student ID",
-      description:
-        "Sign up with your grade (6–13) and class stream. A permanent atomic ID (e.g. MCG10TP1001) is minted with your chosen 6-digit PIN.",
-      badge: "Fast & secure",
+      title: t("step1Title"),
+      description: t("step1Desc"),
+      badge: t("step1Badge"),
     },
     {
       step: "02",
       icon: <PencilSimpleLine size={24} weight="regular" className="text-[var(--text)]" />,
-      title: "Master theory & sit timed papers",
-      description:
-        "Attend regular lecture sessions in Kurunegala, master rigorous mathematical derivations, and sit standardized model papers under exam conditions.",
-      badge: "Classroom sittings",
+      title: t("step2Title"),
+      description: t("step2Desc"),
+      badge: t("step2Badge"),
     },
     {
       step: "03",
       icon: <ChartLineUp size={24} weight="regular" className="text-emerald-400" />,
-      title: "Diagnose weaknesses & propel marks",
-      description:
-        "Diagnostic feedback highlights your weakest 3 topics, slope improvement, and class standing. Parents receive progress reports directly on WhatsApp.",
-      badge: "Instant telemetry",
+      title: t("step3Title"),
+      description: t("step3Desc"),
+      badge: t("step3Badge"),
     },
   ];
 
@@ -43,17 +42,17 @@ export function HowItWorks() {
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <Reveal direction="down">
           <Badge variant="accent" dot>
-            Three-Step Progression
+            {t("badge")}
           </Badge>
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            How it works
+            {t("heading")}
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="text-sm sm:text-base text-[var(--muted)]">
-            A clear, disciplined path from enrolment to mathematical mastery.
+            {t("subheading")}
           </p>
         </Reveal>
       </div>

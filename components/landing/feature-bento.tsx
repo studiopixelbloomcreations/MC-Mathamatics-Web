@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useTranslations } from "next-intl";
 import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
@@ -15,23 +16,23 @@ import {
 } from "@phosphor-icons/react";
 
 export function FeatureBento() {
+  const t = useTranslations("Features");
   return (
     <section id="features" className="py-[clamp(64px,8vw,128px)] px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto space-y-16">
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <Reveal direction="down">
           <Badge variant="brand" dot>
-            Engineered For Excellence
+            {t("badge")}
           </Badge>
         </Reveal>
         <Reveal delay={0.1}>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight">
-            An intelligent ecosystem for mathematics
+            {t("heading")}
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="text-sm sm:text-base text-[var(--muted)]">
-            Every feature is purpose-built to eliminate guesswork for students,
-            teachers, and parents.
+            {t("subheading")}
           </p>
         </Reveal>
       </div>
@@ -54,12 +55,10 @@ export function FeatureBento() {
                 </Badge>
               </div>
               <h3 className="text-2xl font-bold text-[var(--text)]">
-                Smart analysis &amp; downfall detection
+                {t("card1Title")}
               </h3>
               <p className="text-sm text-[var(--muted)] max-w-lg leading-relaxed">
-                Deterministic calculation engine isolates weakest topics, historical score slopes,
-                and section-by-section mastery. Students see exactly where marks are lost before
-                the real exam.
+                {t("card1Desc")}
               </p>
             </div>
 
@@ -93,11 +92,10 @@ export function FeatureBento() {
                 </Badge>
               </div>
               <h3 className="text-2xl font-bold text-[var(--text)]">
-                Zero-cost WhatsApp progress reports
+                {t("card2Title")}
               </h3>
               <p className="text-sm text-[var(--muted)] leading-relaxed">
-                Parents receive instant, structured exam breakdowns via free WhatsApp
-                inbound messaging without paid API overheads.
+                {t("card2Desc")}
               </p>
             </div>
 

@@ -2,10 +2,12 @@
 
 import * as React from "react";
 import { motion, useInView } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Glass } from "@/components/ui/glass";
 import { ArrowUpRight, CheckCircle, TrendUp } from "@phosphor-icons/react";
 
 export function StatementSection() {
+  const t = useTranslations("Statement");
   const containerRef = React.useRef<HTMLElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.2 });
 
@@ -45,16 +47,13 @@ export function StatementSection() {
           <div className="lg:col-span-7 flex flex-col space-y-8">
             <div className="space-y-4">
               <span className="text-xs uppercase tracking-widest font-mono text-[var(--brand)]">
-                The MC Method
+                {t("badge")}
               </span>
               <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15] text-[var(--text)]">
-                One teacher. One method. Progress you can measure.
+                {t("headline")}
               </h2>
-              {/* TODO: Sir Malinga can edit this statement */}
               <p className="text-base sm:text-lg text-[var(--muted)] leading-relaxed max-w-2xl">
-                Mathematics is not a test of memory; it is a discipline of structured thinking.
-                Every student receives individual diagnostic attention, weekly exam-standard drills,
-                and transparent feedback so improvement becomes inevitable.
+                {t("paragraph")}
               </p>
             </div>
 
@@ -67,10 +66,10 @@ export function StatementSection() {
                 </span>
                 <div className="space-y-1 min-w-0">
                   <h3 className="text-base sm:text-lg font-medium text-[var(--text)]">
-                    Learn
+                    {t("step1Title")}
                   </h3>
                   <p className="text-sm text-[var(--muted)] leading-relaxed">
-                    First-principles concept mastery across grades 6 through 13 with structured class notes.
+                    {t("step1Desc")}
                   </p>
                 </div>
               </div>
@@ -82,10 +81,10 @@ export function StatementSection() {
                 </span>
                 <div className="space-y-1 min-w-0">
                   <h3 className="text-base sm:text-lg font-medium text-[var(--text)]">
-                    Practice
+                    {t("step2Title")}
                   </h3>
                   <p className="text-sm text-[var(--muted)] leading-relaxed">
-                    Weekly timed model papers mirroring real national examination standards and strict marking schemes.
+                    {t("step2Desc")}
                   </p>
                 </div>
               </div>
@@ -97,10 +96,10 @@ export function StatementSection() {
                 </span>
                 <div className="space-y-1 min-w-0">
                   <h3 className="text-base sm:text-lg font-medium text-[var(--text)]">
-                    Improve
+                    {t("step3Title")}
                   </h3>
                   <p className="text-sm text-[var(--muted)] leading-relaxed">
-                    Automated performance diagnostics and personalized progress reports sent directly to parents on WhatsApp.
+                    {t("step3Desc")}
                   </p>
                 </div>
               </div>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Glass } from "@/components/ui/glass";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
@@ -15,6 +16,7 @@ import {
 } from "@phosphor-icons/react";
 
 export function MeetSir() {
+  const t = useTranslations("MeetSir");
   return (
     <section id="meet-sir" className="py-[clamp(64px,8vw,128px)] px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -45,7 +47,7 @@ export function MeetSir() {
               >
                 <div className="flex items-center justify-between">
                   <Badge variant="accent" dot>
-                    Active Educator
+                    {t("activeBadge")}
                   </Badge>
                   <div className="flex items-center gap-1.5 text-xs text-[var(--muted)]">
                     <MapPin size={14} weight="regular" className="text-[var(--brand)]" />
@@ -56,7 +58,7 @@ export function MeetSir() {
                   Malinga C Dissanayake
                 </h3>
                 <p className="text-xs text-[var(--muted)] leading-relaxed">
-                  Specialist in O/L Mathematics &amp; A/L Combined Mathematics.
+                  {t("tagline")}
                 </p>
               </Glass>
             </Glass>
@@ -68,19 +70,13 @@ export function MeetSir() {
           <Reveal direction="left">
             <div className="space-y-4">
               <Badge variant="brand" dot>
-                Pedagogical Leadership
+                {t("badge")}
               </Badge>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
-                Empowering minds.{" "}
-                <span className="font-editorial italic font-normal text-[var(--brand)]">
-                  Demystifying mathematics.
-                </span>
+                {t("heading")}
               </h2>
               <p className="text-base text-[var(--muted)] leading-relaxed">
-                With over a decade of dedicated classroom teaching in Kurunegala,
-                Sir Malinga C Dissanayake has transformed how Sri Lankan students approach
-                mathematics. Rather than rote memorization, his methodology focuses on
-                first-principles derivations, analytical paper analysis, and systematic error correction.
+                {t("bio")}
               </p>
             </div>
           </Reveal>

@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Glass } from "@/components/ui/glass";
 import {
@@ -22,9 +24,13 @@ interface FloatingHeaderProps {
 }
 
 export function FloatingHeader({
-  currentLocale = "en",
+  currentLocale: propLocale,
   isLoggedIn = false,
 }: FloatingHeaderProps) {
+  const activeLocale = useLocale();
+  const currentLocale = propLocale || activeLocale || "en";
+  const t = useTranslations("Common");
+  const router = useRouter();
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
@@ -147,13 +153,13 @@ export function FloatingHeader({
 
   const toggleLocale = () => {
     const nextLocale = currentLocale === "en" ? "si" : "en";
-    const segments = pathname.split("/");
-    if (segments[1] === "en" || segments[1] === "si") {
-      segments[1] = nextLocale;
-      window.location.href = segments.join("/");
-    } else {
-      window.location.href = `/${nextLocale}${pathname}`;
+    // Strip locale prefix if present in pathname to avoid /si/si/...
+    const segments = pathname.split("/").filter(Boolean);
+    if (segments[0] === "en" || segments[0] === "si") {
+      segments.shift();
     }
+    const cleanPath = "/" + segments.join("/");
+    router.replace(cleanPath, { locale: nextLocale });
   };
 
   return (
@@ -189,11 +195,11 @@ export function FloatingHeader({
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-sm tracking-tight text-[var(--text-primary)]">
-              MC Mathematics
+              {t("title")}
             </span>
             {!compact && (
               <span className="text-[10px] text-[var(--text-tertiary)] font-editorial tracking-normal">
-                Maths is the question. MC is the answer.
+                {t("slogan")}
               </span>
             )}
           </div>
@@ -205,25 +211,25 @@ export function FloatingHeader({
             href="/#about"
             className="px-3 py-1.5 rounded-full hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           >
-            Teacher
+            {t("teacher")}
           </Link>
           <Link
             href="/#features"
             className="px-3 py-1.5 rounded-full hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           >
-            Method
+            {t("method")}
           </Link>
           <Link
             href="/#grades"
             className="px-3 py-1.5 rounded-full hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           >
-            Curriculum
+            {t("curriculum")}
           </Link>
           <Link
             href="/#faq"
             className="px-3 py-1.5 rounded-full hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           >
-            FAQ
+            {t("faq")}
           </Link>
         </nav>
 
@@ -302,7 +308,7 @@ export function FloatingHeader({
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--accent)] text-black hover:opacity-90 active:scale-95 transition-all shadow-sm"
             >
               <GraduationCap size={16} weight="bold" />
-              <span>Dashboard</span>
+              <span>{t("dashboard")}</span>
             </Link>
           ) : (
             <Link
@@ -310,7 +316,7 @@ export function FloatingHeader({
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--text-primary)] text-[var(--bg)] hover:opacity-90 active:scale-95 transition-all shadow-sm"
             >
               <SignIn size={16} weight="bold" />
-              <span>Login</span>
+              <span>{t("login")}</span>
             </Link>
           )}
         </div>

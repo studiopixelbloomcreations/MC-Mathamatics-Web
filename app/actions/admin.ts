@@ -9,6 +9,7 @@ import { revalidatePath } from "next/cache";
  */
 export async function getAiModeStatus(): Promise<{
   aiMode: boolean;
+  parentChatEnabled: boolean;
   aiConfirmRequired: boolean;
   adminWhatsapp: string;
   paidTemplatesEnabled: boolean;
@@ -16,13 +17,14 @@ export async function getAiModeStatus(): Promise<{
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("system_settings")
-    .select("ai_mode, ai_confirm_required, admin_whatsapp, paid_templates_enabled")
+    .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp, paid_templates_enabled")
     .eq("id", 1)
     .single();
 
   if (error || !data) {
     return {
       aiMode: false,
+      parentChatEnabled: true,
       aiConfirmRequired: true,
       adminWhatsapp: "+94771234567",
       paidTemplatesEnabled: false,
@@ -31,6 +33,7 @@ export async function getAiModeStatus(): Promise<{
 
   return {
     aiMode: data.ai_mode,
+    parentChatEnabled: data.parent_chat_enabled !== false,
     aiConfirmRequired: data.ai_confirm_required,
     adminWhatsapp: data.admin_whatsapp,
     paidTemplatesEnabled: data.paid_templates_enabled,
@@ -51,8 +54,28 @@ export async function setAiMode(enabled: boolean) {
     throw new Error(`Failed to update AI Mode: ${error.message}`);
   }
 
+  revalidatePath("/admin/ai-mode");
   revalidatePath("/admin");
   return { success: true, aiMode: enabled };
+}
+
+/**
+ * Updates Parent AI Chat toggle in system settings.
+ */
+export async function setParentChatEnabled(enabled: boolean) {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("system_settings")
+    .update({ parent_chat_enabled: enabled, updated_at: new Date().toISOString() })
+    .eq("id", 1);
+
+  if (error) {
+    throw new Error(`Failed to update Parent Chat: ${error.message}`);
+  }
+
+  revalidatePath("/admin/ai-mode");
+  revalidatePath("/admin");
+  return { success: true, parentChatEnabled: enabled };
 }
 
 /**
@@ -89,6 +112,7 @@ async function enforceManualWriteAllowed() {
  */
 export async function getAdminOverviewData() {
   const supabase = createAdminClient();
+  const { getAIStatus } = await import("@/lib/ai/status");
 
   const [
     { count: totalStudents },
@@ -97,6 +121,7 @@ export async function getAdminOverviewData() {
     { count: totalMarksEntered },
     { data: recentLogins },
     systemSettings,
+    aiStatus,
   ] = await Promise.all([
     supabase.from("students").select("*", { count: "exact", head: true }),
     supabase.from("papers").select("*", { count: "exact", head: true }).eq("status", "ongoing"),
@@ -108,6 +133,7 @@ export async function getAdminOverviewData() {
       .order("created_at", { ascending: false })
       .limit(8),
     getAiModeStatus(),
+    getAIStatus(),
   ]);
 
   return {
@@ -118,6 +144,7 @@ export async function getAdminOverviewData() {
       totalMarksEntered: totalMarksEntered || 0,
     },
     systemSettings,
+    aiStatus,
     recentLogins: recentLogins || [],
   };
 }

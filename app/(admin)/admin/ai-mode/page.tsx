@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
-import { getAiModeStatus, setAiMode, getAdminAiActions, undoAiAction } from "@/app/actions/admin";
-import { Bot, RotateCcw, CheckCircle2, AlertCircle, Terminal } from "lucide-react";
+import { getAiModeStatus, setAiMode, setParentChatEnabled, getAdminAiActions, undoAiAction } from "@/app/actions/admin";
+import { runDiagnosticsAction } from "@/app/actions/diagnostics";
+import { Bot, RotateCcw, CheckCircle2, AlertCircle, Terminal, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
 interface AiActionItem {
@@ -19,17 +20,22 @@ interface AiActionItem {
 
 export default function AdminAiModePage() {
   const [aiMode, setAiModeState] = useState(false);
+  const [parentChatEnabled, setParentChatState] = useState(true);
+  const [aiHealthStatus, setAiHealthStatus] = useState<string>("ok");
   const [actions, setActions] = useState<AiActionItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   const loadData = async () => {
     try {
-      const [status, actionsList] = await Promise.all([
+      const [status, actionsList, diag] = await Promise.all([
         getAiModeStatus(),
         getAdminAiActions(),
+        runDiagnosticsAction(),
       ]);
       setAiModeState(status.aiMode);
+      setParentChatState(status.parentChatEnabled);
+      setAiHealthStatus(diag.ai.status);
       setActions(actionsList as unknown as AiActionItem[]);
     } catch (err) {
       console.error(err);
@@ -56,6 +62,28 @@ export default function AdminAiModePage() {
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to toggle AI Mode";
+      setMessage({ text: msg, type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleParentChat = async () => {
+    const nextVal = !parentChatEnabled;
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      await setParentChatEnabled(nextVal);
+      setParentChatState(nextVal);
+      setMessage({
+        text: nextVal
+          ? "💬 Parent AI Chat is now ENABLED. Parents can converse with the AI assistant on WhatsApp."
+          : "Parent AI Chat is now PAUSED. Parents will receive automated offline fallback buttons for marks & reports.",
+        type: "success",
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to toggle Parent Chat";
       setMessage({ text: msg, type: "error" });
     } finally {
       setLoading(false);
@@ -104,34 +132,52 @@ export default function AdminAiModePage() {
         </div>
       )}
 
-      {/* Main AI Mode Toggle Card */}
-      <GlassCard className="p-6 border-blue-500/30 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                {aiMode && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                )}
-                <span
-                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                    aiMode ? "bg-blue-500" : "bg-neutral-600"
-                  }`}
-                ></span>
-              </span>
-              <span className="text-xs uppercase font-mono tracking-wider text-blue-500 font-bold">
-                Autonomous State Control
+      {/* Status Indicators & Control Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Card 1: AI Mode Toggle (Sir's autonomous write actions) */}
+        <GlassCard className="p-6 border-blue-500/30 space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  {aiMode && (
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
+                  )}
+                  <span
+                    className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                      aiMode ? "bg-blue-500" : "bg-neutral-600"
+                    }`}
+                  ></span>
+                </span>
+                <span className="text-xs uppercase font-mono tracking-wider text-blue-500 font-bold">
+                  Autonomous State Control
+                </span>
+              </div>
+
+              {/* Status Badge */}
+              <span
+                className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
+                  aiHealthStatus === "ok"
+                    ? "bg-blue-600/20 text-blue-300 border-blue-500/30"
+                    : "bg-blue-950 text-blue-200 border-blue-800"
+                }`}
+              >
+                {aiHealthStatus === "ok" ? "AI ENGINE READY" : "AI UNHEALTHY"}
               </span>
             </div>
-            <h2 className="text-xl font-bold text-foreground">
-              Turn on AI Mode (WhatsApp Voice & Text Control)
+
+            <h2 className="text-lg font-bold text-foreground">
+              Sir&apos;s AI Mode (Voice &amp; Text Write Actions)
             </h2>
-            <p className="text-xs text-muted-foreground max-w-xl leading-relaxed">
-              When active, Sir can send voice notes or text on WhatsApp to enter marks, post bulletins, and dispatch attendance. <strong>All manual edit screens become read-only</strong> (server-side 409 enforcement) to prevent conflicting concurrent writes.
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              When active, Sir can send voice notes or text on WhatsApp to enter marks, post bulletins, and dispatch attendance. Manual edit screens become read-only (server-side 409 enforcement).
             </p>
           </div>
 
-          <div className="flex items-center gap-3 self-start sm:self-auto">
+          <div className="flex items-center justify-between pt-3 border-t border-white/5">
+            <span className="text-xs font-mono font-bold text-foreground">
+              {aiMode ? "AI MODE ACTIVE" : "AI MODE OFF"}
+            </span>
             <button
               onClick={handleToggleAiMode}
               disabled={loading}
@@ -145,21 +191,58 @@ export default function AdminAiModePage() {
                 }`}
               />
             </button>
-            <span className="text-xs font-mono font-bold text-foreground">
-              {aiMode ? "AI MODE ACTIVE" : "AI MODE OFF"}
-            </span>
           </div>
-        </div>
+        </GlassCard>
 
-        <div className="pt-2 flex flex-wrap items-center gap-3">
-          <Link href="/admin/ai-simulator">
-            <Button size="sm" variant="outline" className="text-xs h-8 gap-1.5 border-purple-500/30 text-purple-300">
-              <Terminal className="w-3.5 h-3.5" />
-              Open WhatsApp Simulator
-            </Button>
-          </Link>
-        </div>
-      </GlassCard>
+        {/* Card 2: Parent AI Chat Toggle */}
+        <GlassCard className="p-6 border-blue-500/30 space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-blue-500" />
+                <span className="text-xs uppercase font-mono tracking-wider text-blue-500 font-bold">
+                  Parent Inbound Assistant
+                </span>
+              </div>
+              <span
+                className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
+                  parentChatEnabled
+                    ? "bg-blue-600/20 text-blue-300 border-blue-500/30"
+                    : "bg-white/5 text-[var(--muted)] border-white/10"
+                }`}
+              >
+                {parentChatEnabled ? "PARENT CHAT ON" : "PARENT CHAT PAUSED"}
+              </span>
+            </div>
+
+            <h2 className="text-lg font-bold text-foreground">
+              Parent AI Chatbot
+            </h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              When enabled, registered parents can chat naturally with the AI assistant. When turned off, parents immediately receive automated offline replies with buttons to fetch their child&apos;s marks and report.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between pt-3 border-t border-white/5">
+            <span className="text-xs font-mono font-bold text-foreground">
+              {parentChatEnabled ? "PARENT CHAT ACTIVE" : "PARENT CHAT OFF"}
+            </span>
+            <button
+              onClick={handleToggleParentChat}
+              disabled={loading}
+              className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors focus:outline-none ${
+                parentChatEnabled ? "bg-blue-600" : "bg-white/10"
+              }`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                  parentChatEnabled ? "translate-x-8" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+        </GlassCard>
+      </div>
 
       {/* AI Action Audit & 24h Undo Feed */}
       <GlassCard className="p-6 space-y-4">

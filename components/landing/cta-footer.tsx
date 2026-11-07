@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Glass } from "@/components/ui/glass";
 import { Reveal } from "@/components/ui/reveal";
@@ -16,6 +17,7 @@ import {
 } from "@phosphor-icons/react";
 
 export function CTAFooter() {
+  const t = useTranslations("CTA");
   return (
     <footer className="relative z-10 border-t border-[var(--border)] bg-[var(--surface)] pt-20 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1280px] mx-auto space-y-20">
@@ -27,28 +29,24 @@ export function CTAFooter() {
           >
             <div className="max-w-2xl mx-auto space-y-6 relative z-10">
               <span className="text-xs uppercase font-mono tracking-widest text-[var(--brand)] font-semibold">
-                Begin Your Journey Today
+                {t("badge")}
               </span>
               <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[var(--text)]">
-                Maths is the question.{" "}
-                <span className="font-editorial italic font-normal text-[var(--brand)]">
-                  MC is the answer.
-                </span>
+                {t("heading")}
               </h2>
               <p className="text-sm sm:text-base text-[var(--muted)] leading-relaxed">
-                Join hundreds of Kurunegala students mastering pure mathematical
-                logic. Generate your atomic Student ID and start tracking your progress now.
+                {t("subheading")}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
                 <Link href="/signup">
                   <Button size="lg" variant="primary" magnetic className="gap-2">
-                    <span>Join the class</span>
+                    <span>{t("join")}</span>
                     <Sparkle size={18} weight="fill" />
                   </Button>
                 </Link>
                 <Link href="/login">
                   <Button size="lg" variant="secondary" className="gap-2">
-                    <span>Student portal login</span>
+                    <span>{t("login")}</span>
                     <ArrowRight size={18} weight="bold" />
                   </Button>
                 </Link>

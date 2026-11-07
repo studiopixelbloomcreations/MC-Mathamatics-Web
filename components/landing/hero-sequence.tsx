@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,8 @@ import { MathFormula } from "@/components/ui/math-formula";
 import { ArrowRight, Sparkle, CaretDown } from "@phosphor-icons/react";
 
 export function HeroSequence() {
+  const t = useTranslations("Hero");
+  const common = useTranslations("Common");
   const containerRef = React.useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = React.useState(false);
@@ -87,28 +90,27 @@ export function HeroSequence() {
           {/* Slogan */}
           <div className="space-y-2">
             <p className="text-xl sm:text-2xl font-medium tracking-tight text-[var(--muted)]">
-              Maths is the question.
+              {t("q1")}
             </p>
             <h1 className="text-4xl sm:text-5xl font-normal tracking-tight text-[var(--brand)] font-editorial italic">
-              MC is the answer.
+              {t("a1")}
             </h1>
           </div>
 
           <p className="text-sm sm:text-base text-[var(--muted)] max-w-lg mx-auto leading-relaxed">
-            Kurunegala&apos;s premier mathematics academy. Transforming O/L and A/L
-            mathematics into measurable excellence with instant diagnostic feedback.
+            {t("subtitle")}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link href="/signup">
               <Button size="lg" variant="primary" className="gap-2">
-                <span>Join the class</span>
+                <span>{t("joinClass")}</span>
                 <Sparkle size={18} weight="fill" />
               </Button>
             </Link>
             <Link href="/login">
               <Button size="lg" variant="ghost" className="gap-2">
-                <span>Student login</span>
+                <span>{t("studentLogin")}</span>
                 <ArrowRight size={18} weight="bold" />
               </Button>
             </Link>
@@ -204,7 +206,7 @@ export function HeroSequence() {
               style={{ opacity: questionOpacity }}
               className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-[var(--text)]"
             >
-              Maths is the <span className="text-[var(--brand)]">question.</span>
+              {t("q1")}
             </motion.h1>
 
             {/* Step 2: "MC is the answer." with Instrument Serif */}
@@ -212,14 +214,13 @@ export function HeroSequence() {
               style={{ opacity: answerOpacity, y: answerY }}
               className="absolute text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.1] text-[var(--brand)] font-editorial italic"
             >
-              MC is the answer.
+              {t("a1")}
             </motion.h1>
           </div>
 
           {/* Subtext description */}
           <p className="text-sm sm:text-base md:text-lg text-[var(--muted)] max-w-xl mx-auto leading-relaxed">
-            Kurunegala&apos;s premier mathematics academy. Transforming O/L and A/L
-            mathematics into measurable excellence with instant diagnostic feedback.
+            {t("subtitle")}
           </p>
 
           {/* CTAs */}
@@ -229,13 +230,13 @@ export function HeroSequence() {
           >
             <Link href="/signup">
               <Button size="lg" variant="primary" magnetic className="gap-2">
-                <span>Join the class</span>
+                <span>{t("joinClass")}</span>
                 <Sparkle size={18} weight="fill" />
               </Button>
             </Link>
             <Link href="/login">
               <Button size="lg" variant="ghost" className="gap-2">
-                <span>Student login</span>
+                <span>{t("studentLogin")}</span>
                 <ArrowRight size={18} weight="bold" />
               </Button>
             </Link>
@@ -249,7 +250,7 @@ export function HeroSequence() {
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-6 flex flex-col items-center gap-1.5 text-xs text-[var(--muted)] select-none pointer-events-none"
         >
-          <span>Scroll to uncover the answer</span>
+          <span>{t("scrollPrompt")}</span>
           <CaretDown size={14} weight="bold" className="text-[var(--brand)]" />
         </motion.div>
       </div>
