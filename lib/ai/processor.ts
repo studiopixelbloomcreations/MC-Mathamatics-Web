@@ -191,31 +191,6 @@ export async function processPendingInboundMessages(): Promise<number> {
       processedCount++;
     }
   }
-          tool_calls: toolCalls,
-          result: { results },
-          status: "executed",
-        });
-
-        await whatsapp.sendText(
-          adminPhone,
-          `⚡ Action Executed Automatically:\n${results.join("\n")}`
-        );
-      }
-
-      await supabase
-        .from("inbound_messages")
-        .update({ status: "processed" })
-        .eq("wa_message_id", msg.wa_message_id);
-      processedCount++;
-    } catch (err: unknown) {
-      console.error("[AI Processor] Execution error:", err);
-      await supabase
-        .from("inbound_messages")
-        .update({ status: "failed" })
-        .eq("wa_message_id", msg.wa_message_id);
-      processedCount++;
-    }
-  }
 
   return processedCount;
 }
