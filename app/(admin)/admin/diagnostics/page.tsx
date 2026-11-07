@@ -487,6 +487,62 @@ export default function DiagnosticsPage() {
           </div>
         </div>
       </Glass>
+
+      {/* Live Inbound Messages Feed (What WhatsApp Actually Delivered) */}
+      <Glass className="p-6 rounded-3xl border border-[var(--border)]">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <WhatsappLogo size={20} weight="fill" className="text-emerald-400" />
+            <h3 className="text-base font-bold text-[var(--text)]">
+              Live Inbound Messages Feed
+            </h3>
+          </div>
+          <span className="text-[11px] font-mono text-[var(--muted)]">
+            Last 10 Webhook Deliveries to Database
+          </span>
+        </div>
+
+        {report?.recentInboundMessages && report.recentInboundMessages.length > 0 ? (
+          <div className="space-y-2">
+            {report.recentInboundMessages.map((msg, i) => (
+              <div
+                key={msg.wa_message_id || i}
+                className="p-3 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-2 text-xs font-mono"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-blue-400 font-bold">{msg.from_number}</span>
+                  <span className="text-[var(--text)] font-sans">
+                    "{msg.body || "<Empty / Media>"}"
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge
+                    variant={
+                      msg.status === "processed"
+                        ? "good"
+                        : msg.status === "failed"
+                        ? "bad"
+                        : "warn"
+                    }
+                  >
+                    {msg.status}
+                  </Badge>
+                  <span className="text-[10px] text-[var(--muted)]">
+                    {new Date(msg.received_at).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-xs font-mono text-[var(--muted)] border border-dashed border-[var(--border)] rounded-2xl">
+            No incoming WhatsApp messages recorded in database yet.
+            <div className="mt-1 text-[11px] text-amber-400">
+              Tip: If you send messages on WhatsApp and they don't appear here, Meta hasn't subscribed to the "messages" webhook topic yet.
+            </div>
+          </div>
+        )}
+      </Glass>
     </div>
   );
 }

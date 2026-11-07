@@ -22,6 +22,13 @@ export interface DiagnosticsReport {
   overallHealthy: boolean;
   totalStudents: number;
   fallbackEvents: FallbackEvent[];
+  recentInboundMessages?: Array<{
+    wa_message_id: string;
+    from_number: string;
+    body: string | null;
+    status: string;
+    received_at: string;
+  }>;
 }
 
 export interface DryRunResult {
@@ -215,6 +222,29 @@ export async function runDiagnosticsAction(): Promise<DiagnosticsReport> {
   const overallHealthy =
     dbItem.status === "ok" && aiItem.status === "ok" && waItem.status === "ok";
 
+  // Fetch recent inbound messages from Supabase to inspect webhook reception
+  let recentInbound: Array<{
+    wa_message_id: string;
+    from_number: string;
+    body: string | null;
+    status: string;
+    received_at: string;
+  }> = [];
+
+  try {
+    const supabase = createAdminClient();
+    const { data: inboundData } = await supabase
+      .from("inbound_messages")
+      .select("wa_message_id, from_number, body, status, received_at")
+      .order("received_at", { ascending: false })
+      .limit(10);
+    if (inboundData) {
+      recentInbound = inboundData;
+    }
+  } catch (e) {
+    // Ignore if table query fails
+  }
+
   return {
     database: dbItem,
     ai: aiItem,
@@ -222,6 +252,7 @@ export async function runDiagnosticsAction(): Promise<DiagnosticsReport> {
     overallHealthy,
     totalStudents,
     fallbackEvents: getRecentFallbackEvents(),
+    recentInboundMessages: recentInbound,
   };
 }
 
