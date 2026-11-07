@@ -6,9 +6,9 @@ export function LandingJsonLd() {
     "@graph": [
       {
         "@type": "EducationalOrganization",
-        "@id": "https://mcmaths.lk/#organization",
+        "@id": "https://mc-mathamatics-web.vercel.app/#organization",
         "name": "MC Mathematics",
-        "url": "https://mcmaths.lk",
+        "url": "https://mc-mathamatics-web.vercel.app",
         "slogan": "Maths is the question. MC is the answer.",
         "description": "Premier mathematics academy in Kurunegala, Sri Lanka led by Malinga C Dissanayake.",
         "founder": {
@@ -25,9 +25,9 @@ export function LandingJsonLd() {
       },
       {
         "@type": "LocalBusiness",
-        "@id": "https://mcmaths.lk/#localbusiness",
+        "@id": "https://mc-mathamatics-web.vercel.app/#localbusiness",
         "name": "MC Mathematics Kurunegala",
-        "image": "https://mcmaths.lk/og-image.png",
+        "image": "https://mc-mathamatics-web.vercel.app/og-image.png",
         "telephone": "+94771234567",
         "priceRange": "$$",
         "address": {
@@ -42,7 +42,7 @@ export function LandingJsonLd() {
         "name": "Combined Mathematics (A/L) & Mathematics (O/L)",
         "description": "Comprehensive mathematics curriculum with timed paper examinations and automated diagnostic analysis.",
         "provider": {
-          "@id": "https://mcmaths.lk/#organization",
+          "@id": "https://mc-mathamatics-web.vercel.app/#organization",
         },
       },
     ],

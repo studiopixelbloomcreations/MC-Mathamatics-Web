@@ -40,7 +40,7 @@ export async function handleParentMessage(
     console.warn(`[Parent Bot] Rejected unregistered inbound from: ${normalizedFrom}`);
     await whatsapp.sendText(
       normalizedFrom,
-      "Welcome to MC Mathematics. This WhatsApp number is not registered for any active student. If your child recently joined, please register at https://mcmaths.lk/signup or contact Sir's administration."
+      "Welcome to MC Mathematics. This WhatsApp number is not registered for any active student. If your child recently joined, please register at https://mc-mathamatics-web.vercel.app/signup or contact Sir's administration."
     );
 
     return {
@@ -103,7 +103,7 @@ export async function handleParentMessage(
       })
       .eq("id", targetStudent.id);
 
-    const welcomeMsg = `👋 Welcome to MC Mathematics!\nYou are now connected to ${targetStudent.full_name}'s progress updates (${targetStudent.unique_id}).\n\n📊 Open ${targetStudent.full_name.split(" ")[0]}'s dashboard:\nhttps://mcmaths.lk/dashboard\n\nTap below to receive the latest analytical progress report 👇`;
+    const welcomeMsg = `👋 Welcome to MC Mathematics!\nYou are now connected to ${targetStudent.full_name}'s progress updates (${targetStudent.unique_id}).\n\n📊 Open ${targetStudent.full_name.split(" ")[0]}'s dashboard:\nhttps://mc-mathamatics-web.vercel.app/dashboard\n\nTap below to receive the latest analytical progress report 👇`;
 
     await whatsapp.sendInteractiveButtons(normalizedFrom, welcomeMsg, [
       { id: `REPORT:${targetStudent.id}`, title: "📄 Get Full Report" },
@@ -152,7 +152,7 @@ export async function handleParentMessage(
 
     await whatsapp.sendText(
       normalizedFrom,
-      `🔑 MC Mathematics PIN Assistance:\n\nA password reset request was received for ${targetStudent.full_name} (${targetStudent.unique_id}).\nSir's administration has been notified. You can also view credentials directly in your dashboard Parental Controls.\n\nDashboard: https://mcmaths.lk/dashboard`
+      `🔑 MC Mathematics PIN Assistance:\n\nA password reset request was received for ${targetStudent.full_name} (${targetStudent.unique_id}).\nSir's administration has been notified. You can also view credentials directly in your dashboard Parental Controls.\n\nDashboard: https://mc-mathamatics-web.vercel.app/dashboard`
     );
 
     return { handled: true, replySent: true, logStatus: "pin_requested" };
@@ -176,7 +176,7 @@ export async function handleParentMessage(
   // Default Fallback Menu
   await whatsapp.sendText(
     normalizedFrom,
-    `Hello! MC Mathematics automated parent service for ${targetStudent.full_name} (${targetStudent.unique_id}).\n\nCommands:\n• Send REPORT to view latest results\n• Send STOP to pause notifications\n• Or open dashboard: https://mcmaths.lk/dashboard`
+    `Hello! MC Mathematics automated parent service for ${targetStudent.full_name} (${targetStudent.unique_id}).\n\nCommands:\n• Send REPORT to view latest results\n• Send STOP to pause notifications\n• Or open dashboard: https://mc-mathamatics-web.vercel.app/dashboard`
   );
 
   return { handled: true, replySent: true, logStatus: "menu_dispatched" };
@@ -192,7 +192,7 @@ function formatWhatsAppReport(
   if (!metrics || metrics.paperCount === 0) {
     return `📊 MC MATHEMATICS — PROGRESS REPORT\nStudent: ${student.full_name} (${student.unique_id})\nGrade ${student.grade} · ${
       student.class_type === "TP" ? "Theory + Paper" : "Theory Only"
-    }\n\nStatus: Registered for upcoming paper assessments.\nNo marked papers recorded yet.\n\nOpen student dashboard:\nhttps://mcmaths.lk/dashboard`;
+    }\n\nStatus: Registered for upcoming paper assessments.\nNo marked papers recorded yet.\n\nOpen student dashboard:\nhttps://mc-mathamatics-web.vercel.app/dashboard`;
   }
 
   const latestPaper = metrics.paperHistory[metrics.paperHistory.length - 1];
@@ -220,5 +220,5 @@ Sir's recommended focus:
 2. ${action2}
 
 Full interactive charts and past papers:
-https://mcmaths.lk/dashboard`;
+https://mc-mathamatics-web.vercel.app/dashboard`;
 }

@@ -38,7 +38,7 @@ export async function smartSendParentReport(studentId: string): Promise<{
     const firstName = student.full_name.split(" ")[0];
     const scoreText = metrics ? `Latest score: ${metrics.latestPercentage}%` : "New assessment recorded.";
 
-    const text = `📊 New Mark Update for ${firstName} (${student.unique_id})!\n${scoreText}\n\nView full interactive breakdown on student dashboard:\nhttps://mcmaths.lk/dashboard`;
+    const text = `📊 New Mark Update for ${firstName} (${student.unique_id})!\n${scoreText}\n\nView full interactive breakdown on student dashboard:\nhttps://mc-mathamatics-web.vercel.app/dashboard`;
 
     const res = await whatsapp.sendText(student.parent_whatsapp, text);
     if (res.success) {

@@ -227,13 +227,13 @@ export default function DiagnosticsPage() {
                 Meta Callback URL
               </span>
               <span className="text-xs font-mono text-[var(--text)] block truncate max-w-xs">
-                https://mcmaths.lk/api/whatsapp/webhook
+                https://mc-mathamatics-web.vercel.app/api/whatsapp/webhook
               </span>
             </div>
             <button
               onClick={() =>
                 copyToClipboard(
-                  "https://mcmaths.lk/api/whatsapp/webhook",
+                  "https://mc-mathamatics-web.vercel.app/api/whatsapp/webhook",
                   "webhook-url"
                 )
               }
