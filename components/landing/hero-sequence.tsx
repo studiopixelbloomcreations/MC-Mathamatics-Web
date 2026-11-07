@@ -109,7 +109,7 @@ export function HeroSequence() {
               style={
                 shouldReduceMotion
                   ? { opacity: 1 }
-                  : { opacity: questionOpacity, scale: questionMarkScale }
+                  : { opacity: questionMarkOpacity, scale: questionMarkScale }
               }
               className="absolute inset-0 flex items-center justify-center font-serif text-7xl sm:text-8xl font-black text-[var(--brand)] drop-shadow-[0_0_35px_rgba(108,92,231,0.6)] select-none animate-pulse"
             >

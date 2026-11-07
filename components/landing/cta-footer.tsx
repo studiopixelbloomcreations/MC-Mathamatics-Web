@@ -5,7 +5,7 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Reveal } from "@/components/ui/reveal";
-import { ArrowRight, Sparkles, MessageCircle, MapPin, Phone, Mail, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, MessageCircle, MapPin, Phone, ShieldCheck } from "lucide-react";
 
 export function CTAFooter() {
   return (

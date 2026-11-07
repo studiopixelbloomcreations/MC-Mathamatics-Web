@@ -83,13 +83,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (magnetic) {
       return (
         <motion.button
-          ref={ref as any}
+          ref={ref as React.Ref<HTMLButtonElement>}
           style={{ x: springX, y: springY }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           disabled={disabled || isLoading}
           className={cn(buttonVariants({ variant, size, className }))}
-          {...(props as any)}
+          {...(props as React.ComponentPropsWithoutRef<typeof motion.button>)}
         >
           {isLoading && (
             <svg

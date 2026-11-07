@@ -2,6 +2,10 @@ export function formatStudentId(grade: number, classType: "T" | "TP", serial: nu
   return `MCG${grade}${classType}${serial}`;
 }
 
+export function getStudentIdPrefix(grade: number, classType: "T" | "TP"): string {
+  return `MCG${grade}${classType}`;
+}
+
 export function parseStudentId(id: string): {
   valid: boolean;
   grade?: number;
@@ -9,7 +13,7 @@ export function parseStudentId(id: string): {
   serial?: number;
 } {
   const normalized = id.trim().toUpperCase();
-  const match = normalized.match(/^MCG(6|7|8|9|10|11|12|13)(T|TP)(\d{4,})$/);
+  const match = normalized.match(/^MCG(0?[6-9]|1[0-3])(TP|T)(\d{4,})$/);
   if (!match) return { valid: false };
 
   return {
@@ -18,4 +22,8 @@ export function parseStudentId(id: string): {
     classType: match[2] as "T" | "TP",
     serial: parseInt(match[3], 10),
   };
+}
+
+export function syntheticEmailFromId(uniqueId: string): string {
+  return `${uniqueId.trim().toLowerCase()}@students.mcmaths.lk`;
 }

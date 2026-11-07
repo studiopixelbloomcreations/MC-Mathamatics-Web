@@ -18,18 +18,17 @@ import { AnimatedRing } from "@/components/ui/animated-ring";
 import { Reveal } from "@/components/ui/reveal";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { ArrowLeft, Sparkles, Check, Send, ShieldCheck, Zap } from "lucide-react";
+import { ArrowLeft, Sparkles, ShieldCheck, Zap } from "lucide-react";
 
 export default function DesignSystemPage() {
   const t = useTranslations("DesignSystem");
   const common = useTranslations("Common");
-  const { toast, success, error, warning, info } = useToast();
+  const { success, error, warning, info } = useToast();
 
   const [pinValue, setPinValue] = React.useState("");
   const [selectedGrade, setSelectedGrade] = React.useState("grade-11");
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState("overview");
-  const [ringProgress, setRingProgress] = React.useState(84);
 
   const gradeOptions = [
     { value: "grade-10", label: "Grade 10 (O/L Foundation)", description: "Theory + Papers" },
@@ -177,7 +176,7 @@ export default function DesignSystemPage() {
                 </p>
               </div>
               <div className="flex items-center justify-between pt-6">
-                <AnimatedRing value={ringProgress} size={90} strokeWidth={8} color="var(--accent)" />
+                <AnimatedRing value={84} size={90} strokeWidth={8} color="var(--accent)" />
                 <div className="space-y-1 text-right">
                   <div className="text-xs text-[var(--muted)]">Rank Percentile</div>
                   <div className="font-mono font-bold text-lg text-[var(--good)]">Top 12%</div>

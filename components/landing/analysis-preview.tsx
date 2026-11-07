@@ -18,7 +18,7 @@ import {
   Radar,
   Legend,
 } from "recharts";
-import { ArrowUpRight, TrendingUp, AlertCircle, Award } from "lucide-react";
+import { AlertCircle, Award } from "lucide-react";
 
 const trendData = [
   { paper: "P 08", student: 64, classAvg: 58 },

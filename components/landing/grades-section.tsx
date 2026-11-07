@@ -6,7 +6,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
-import { ArrowRight, BookOpen, Clock, Calendar } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 
 export function GradesSection() {
   const grades = [

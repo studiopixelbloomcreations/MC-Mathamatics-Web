@@ -9,7 +9,6 @@ import {
   BarChart3,
   MessageSquare,
   CalendarCheck,
-  Bell,
   Lock,
   Sparkles,
   ArrowUpRight,

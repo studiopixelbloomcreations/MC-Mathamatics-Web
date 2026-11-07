@@ -3,7 +3,6 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
