@@ -1,0 +1,17 @@
+{
+  "name": "MC Mathematics",
+  "short_name": "MC Maths",
+  "description": "e-Learning & Progress Tracking Platform for Malinga C Dissanayake Mathematics",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

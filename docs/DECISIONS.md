@@ -25,3 +25,10 @@ This document records key architectural and design choices made during developme
 - **Browser Credential Autofill:** Post-signup ID card screen embeds a credential form with `autocomplete="username"` and `autocomplete="new-password"` so browsers offer to save credentials natively.
 - **Brute-Force Protection:** Rate limiting locks accounts for 15 minutes after 5 consecutive failed login attempts, tracked in `login_log`.
 - **Free WhatsApp Activation:** Direct link to `https://wa.me/<AI_NUMBER>?text=START%20<ID>` invites the parent to initiate the chat, opening Meta's free 24-hour messaging window.
+
+## 6. Student Dashboard & Parental Control Gate
+- **Decision:** Built the full Student Dashboard (`/dashboard/*`) including Desktop Sidebar, Mobile Bottom Tab Bar, and dedicated sub-pages (`/papers`, `/attendance`, `/special-notes`, `/announcements`, `/parental-controls`).
+- **Server-Side Parental Lock Enforcement:** When `parental_settings.locked` is active, scheduled (e.g. 22:00-06:00), or timed, the server halts evaluation and returns zero academic data (no marks, no papers, no attendance, no notes). The client renders `<LockedScreen>` requiring the 6-digit parent PIN to unlock.
+- **Dynamic Report Button (A4-8):** Implemented `<SendReportButton>` with 3 dynamic states ("Send me the report" -> "Report ready, tap to send" when `report_pending` -> "Report Sent ✓ (time)"). Links to `https://wa.me/<AI_NUMBER>?text=REPORT%20<ID>` to ensure zero messaging costs.
+- **Supabase Realtime:** Built `<RealtimeListener>` to listen to PostgreSQL changes on `marks`, `special_notes`, and `announcements`, popping live toasts and refreshing data without full reload.
+- **PWA & Web Push:** Added `public/manifest.json` and service worker `public/sw.js` with background push handlers and `<PushNotificationToggle>` storing VAPID subscriptions in `push_subscriptions`.
