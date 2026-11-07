@@ -174,15 +174,25 @@ export async function getAIStatus(options?: { bypassCache?: boolean }): Promise<
   let parentChatEnabled = true;
   try {
     const supabase = createAdminClient();
-    const { data: settings } = await supabase
+    const { data: fullSettings, error: fullErr } = await supabase
       .from("system_settings")
       .select("ai_mode, parent_chat_enabled")
       .eq("id", 1)
       .maybeSingle();
 
-    if (settings) {
-      aiMode = Boolean(settings.ai_mode);
-      parentChatEnabled = settings.parent_chat_enabled !== false; // defaults to true
+    if (!fullErr && fullSettings) {
+      aiMode = Boolean(fullSettings.ai_mode);
+      parentChatEnabled = fullSettings.parent_chat_enabled !== false;
+    } else {
+      const { data: baseSettings } = await supabase
+        .from("system_settings")
+        .select("ai_mode")
+        .eq("id", 1)
+        .maybeSingle();
+      if (baseSettings) {
+        aiMode = Boolean(baseSettings.ai_mode);
+        parentChatEnabled = true;
+      }
     }
   } catch (err: unknown) {
     console.error("[getAIStatus] Error fetching system_settings:", err);

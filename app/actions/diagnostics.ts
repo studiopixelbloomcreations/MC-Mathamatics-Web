@@ -52,11 +52,32 @@ export async function runDiagnosticsAction(): Promise<DiagnosticsReport> {
       .from("students")
       .select("id", { count: "exact", head: true });
 
-    const { data: settings, error: setErr } = await supabase
+    // Defensive check: select base columns first so missing optional columns don't break health check
+    let settings: { id?: number; ai_mode?: boolean; parent_chat_enabled?: boolean } | null = null;
+    let setErr: any = null;
+
+    const { data: fullSettings, error: fullSetErr } = await supabase
       .from("system_settings")
       .select("id, ai_mode, parent_chat_enabled")
       .eq("id", 1)
-      .single();
+      .maybeSingle();
+
+    if (!fullSetErr && fullSettings) {
+      settings = fullSettings;
+    } else {
+      // Fallback query without parent_chat_enabled
+      const { data: baseSettings, error: baseSetErr } = await supabase
+        .from("system_settings")
+        .select("id, ai_mode")
+        .eq("id", 1)
+        .maybeSingle();
+
+      if (!baseSetErr && baseSettings) {
+        settings = { ...baseSettings, parent_chat_enabled: true };
+      } else {
+        setErr = fullSetErr || baseSetErr;
+      }
+    }
 
     const dbLatency = Math.round(performance.now() - dbStart);
 

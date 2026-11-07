@@ -15,28 +15,47 @@ export async function getAiModeStatus(): Promise<{
   paidTemplatesEnabled: boolean;
 }> {
   const supabase = createAdminClient();
+
+  // Try fetching all columns including parent_chat_enabled
   const { data, error } = await supabase
     .from("system_settings")
     .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp, paid_templates_enabled")
     .eq("id", 1)
     .single();
 
-  if (error || !data) {
+  if (!error && data) {
     return {
-      aiMode: false,
+      aiMode: Boolean(data.ai_mode),
+      parentChatEnabled: data.parent_chat_enabled !== false,
+      aiConfirmRequired: Boolean(data.ai_confirm_required),
+      adminWhatsapp: data.admin_whatsapp || "+94771234567",
+      paidTemplatesEnabled: Boolean(data.paid_templates_enabled),
+    };
+  }
+
+  // If column parent_chat_enabled is missing or failed, fall back to base columns
+  const { data: fallbackData } = await supabase
+    .from("system_settings")
+    .select("ai_mode, ai_confirm_required, admin_whatsapp, paid_templates_enabled")
+    .eq("id", 1)
+    .single();
+
+  if (fallbackData) {
+    return {
+      aiMode: Boolean(fallbackData.ai_mode),
       parentChatEnabled: true,
-      aiConfirmRequired: true,
-      adminWhatsapp: "+94771234567",
-      paidTemplatesEnabled: false,
+      aiConfirmRequired: Boolean(fallbackData.ai_confirm_required),
+      adminWhatsapp: fallbackData.admin_whatsapp || "+94771234567",
+      paidTemplatesEnabled: Boolean(fallbackData.paid_templates_enabled),
     };
   }
 
   return {
-    aiMode: data.ai_mode,
-    parentChatEnabled: data.parent_chat_enabled !== false,
-    aiConfirmRequired: data.ai_confirm_required,
-    adminWhatsapp: data.admin_whatsapp,
-    paidTemplatesEnabled: data.paid_templates_enabled,
+    aiMode: false,
+    parentChatEnabled: true,
+    aiConfirmRequired: true,
+    adminWhatsapp: "+94771234567",
+    paidTemplatesEnabled: false,
   };
 }
 
