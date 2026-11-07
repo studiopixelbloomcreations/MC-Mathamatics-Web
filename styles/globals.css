@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
 
 :root {
   /* Light Theme (Default fallback) */
@@ -52,6 +53,20 @@ body {
   border: 1px solid var(--border);
 }
 
+/* Infinite Marquee */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+
 /* Reduced motion respect */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -59,5 +74,9 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+    overflow-x: auto !important;
   }
 }

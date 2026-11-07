@@ -1,11 +1,16 @@
 import { setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/routing";
-import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Reveal } from "@/components/ui/reveal";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { Navbar } from "@/components/landing/navbar";
+import { HeroSequence } from "@/components/landing/hero-sequence";
+import { TrustStrip } from "@/components/landing/trust-strip";
+import { MeetSir } from "@/components/landing/meet-sir";
+import { FeatureBento } from "@/components/landing/feature-bento";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { AnalysisPreview } from "@/components/landing/analysis-preview";
+import { GradesSection } from "@/components/landing/grades-section";
+import { TestimonialsMarquee } from "@/components/landing/testimonials-marquee";
+import { FAQAccordion } from "@/components/landing/faq-accordion";
+import { CTAFooter } from "@/components/landing/cta-footer";
+import { LandingJsonLd } from "@/components/landing/json-ld";
 
 export default async function HomePage({
   params,
@@ -16,62 +21,40 @@ export default async function HomePage({
   setRequestLocale(locale);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
-      <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-6 max-w-6xl mx-auto backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-xl font-extrabold tracking-wider text-[var(--accent)]">
-            MC
-          </span>
-          <span className="text-xs tracking-widest text-[var(--muted)] uppercase">
-            Mathematics
-          </span>
-        </div>
-        <div className="flex items-center gap-3">
-          <LanguageSwitcher />
-          <ThemeToggle />
-        </div>
-      </header>
+    <>
+      <LandingJsonLd />
+      <Navbar />
+      <main className="flex min-h-screen flex-col overflow-x-hidden">
+        {/* Section 1: Hero Sequence with Morphing Monogram & Slogan */}
+        <HeroSequence />
 
-      <div className="max-w-3xl space-y-8 mt-16">
-        <Reveal direction="down" delay={0.1}>
-          <Badge variant="accent" dot>
-            Next-Gen E-Learning Platform
-          </Badge>
-        </Reveal>
+        {/* Section 2: Trust Strip & Metrics */}
+        <TrustStrip />
 
-        <Reveal delay={0.2}>
-          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight">
-            Maths is the question.{" "}
-            <span className="text-[var(--accent)] font-serif italic">
-              MC is the answer.
-            </span>
-          </h1>
-        </Reveal>
+        {/* Section 3: Meet Sir (Malinga C Dissanayake) */}
+        <MeetSir />
 
-        <Reveal delay={0.3}>
-          <p className="text-base sm:text-lg text-[var(--muted)] max-w-xl mx-auto">
-            The elite mathematics progress-tracking and e-learning system for
-            Malinga C Dissanayake (Kurunegala, Sri Lanka).
-          </p>
-        </Reveal>
+        {/* Section 4: Bento Feature Grid */}
+        <FeatureBento />
 
-        <Reveal delay={0.4}>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-            <Link href="/design-system">
-              <Button size="lg" variant="accent" magnetic>
-                Explore Design System
-                <Sparkles className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button size="lg" variant="outline" magnetic>
-                Student Login
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </Reveal>
-      </div>
-    </main>
+        {/* Section 5: How It Works (3-Step Timeline) */}
+        <HowItWorks />
+
+        {/* Section 6: Live Analysis Diagnostic Preview */}
+        <AnalysisPreview />
+
+        {/* Section 7: Classes by Academic Grade (6–13) */}
+        <GradesSection />
+
+        {/* Section 8: Testimonials Marquee */}
+        <TestimonialsMarquee />
+
+        {/* Section 9: FAQ Accordion */}
+        <FAQAccordion />
+
+        {/* Section 10: Final CTA Band & Footer */}
+        <CTAFooter />
+      </main>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://mcmaths.lk"),
   title: "MC Mathematics | Malinga C Dissanayake",
   description: "Maths is the question. MC is the answer. Elite e-learning platform in Kurunegala, Sri Lanka.",
 };
