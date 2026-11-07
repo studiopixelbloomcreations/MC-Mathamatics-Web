@@ -6,33 +6,20 @@ import { Badge } from "@/components/ui/badge";
 import { Reveal } from "@/components/ui/reveal";
 import { Quotes } from "@phosphor-icons/react";
 
-export function TestimonialsMarquee() {
-  const reviews = [
-    {
-      name: "Kasun Jayawardena",
-      role: "Grade 11 Student (O/L 2025)",
-      school: "Maliyadeva College, Kurunegala",
-      text: "Before joining Sir Malinga's class, I scored 48 in my term tests. His section-wise diagnostic paper feedback showed me my trigonometry errors. In the final exam I scored 94 (A grade).",
-    },
-    {
-      name: "Mrs. Nilanthi Perera",
-      role: "Parent of Grade 10 Student",
-      school: "Holy Family Convent, Kurunegala",
-      text: "The free WhatsApp reports are a blessing. After every paper sitting, I receive a message on my phone with Kamal's mark, rank band, and areas to work on without paying any extra fee.",
-    },
-    {
-      name: "Dineth Wickramasinghe",
-      role: "Grade 13 A/L Combined Maths",
-      school: "St. Anne's College, Kurunegala",
-      text: "Combined Maths was intimidating until Sir explained vectors and calculus from pure logic. The timed paper class with anonymous topper scores motivated me to push into the top 5%.",
-    },
-    {
-      name: "Sithmi Fernando",
-      role: "Grade 11 Student",
-      school: "Maliyadeva Balika Vidyalaya",
-      text: "The online dashboard with the unique ID and PIN means I can practice and review past papers at any time. Sir's personal notes on my dashboard kept me focused.",
-    },
-  ];
+export function TestimonialsMarquee({
+  reviews = [],
+}: {
+  reviews?: Array<{
+    name: string;
+    role: string;
+    school?: string;
+    text: string;
+  }>;
+}) {
+  // If there are no real testimonials entered by Sir with consent, do NOT render fake ones.
+  if (!reviews || reviews.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-[clamp(64px,8vw,128px)] px-4 sm:px-6 lg:px-8 max-w-[1280px] mx-auto space-y-16">

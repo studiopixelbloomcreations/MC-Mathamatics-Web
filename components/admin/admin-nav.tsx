@@ -50,13 +50,7 @@ export function AdminNav({ aiMode }: { aiMode: boolean }) {
         : "bg-white/5 text-[var(--muted)]",
     },
     { href: "/admin/reports", label: "Parent Reports", icon: PaperPlaneTilt },
-    {
-      href: "/admin/ai-simulator",
-      label: "AI Simulator",
-      icon: TerminalWindow,
-      badge: "Dev",
-      badgeClass: "bg-white/10 text-zinc-300 border-white/10",
-    },
+    { href: "/admin/content", label: "Site Content", icon: FileText },
   ];
 
   return (

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
-import { normalizeSriLankanPhone } from "@/lib/whatsapp/phone";
+import { normalizeSriLankanPhone, normalizeAnyPhone } from "@/lib/whatsapp/phone";
 import { handleParentMessage } from "@/lib/whatsapp/parent-bot";
 import { processPendingInboundMessages } from "@/lib/ai/processor";
 import crypto from "crypto";
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "acknowledged" });
   }
 
-  const fromNumber = normalizeSriLankanPhone(String(message.from || ""));
+  const fromNumber = normalizeAnyPhone(String(message.from || ""));
   if (!fromNumber) {
     return NextResponse.json({ error: "Invalid sender phone" }, { status: 400 });
   }

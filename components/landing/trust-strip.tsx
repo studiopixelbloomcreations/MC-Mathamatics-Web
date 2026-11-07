@@ -6,37 +6,47 @@ import { StatCounter } from "@/components/ui/stat-counter";
 import { Reveal } from "@/components/ui/reveal";
 import { Users, Medal, TrendUp, WhatsappLogo } from "@phosphor-icons/react";
 
-export function TrustStrip() {
-  const stats = [
-    {
-      icon: <Users size={20} weight="regular" className="text-[var(--text)]" />,
-      value: 1200,
-      suffix: "+",
-      label: "Students taught",
-      description: "Across Kurunegala district",
-    },
+export function TrustStrip({
+  studentCount = 0,
+  teachingYears = 12,
+}: {
+  studentCount?: number;
+  teachingYears?: number;
+}) {
+  // Only show stats if they represent real verified figures
+  const stats: Array<{
+    icon: React.ReactNode;
+    value: number;
+    label: string;
+    description: string;
+    suffix?: string;
+    prefix?: string;
+    decimals?: number;
+  }> = [
     {
       icon: <Medal size={20} weight="regular" className="text-[var(--brand)]" />,
-      value: 12,
+      value: teachingYears,
       suffix: "+",
       label: "Years of teaching",
-      description: "Pure & applied mathematics",
+      description: "Pure & applied mathematics in Kurunegala",
     },
-    {
-      icon: <TrendUp size={20} weight="regular" className="text-emerald-400" />,
-      value: 23.8,
-      prefix: "+",
-      suffix: "%",
-      decimals: 1,
-      label: "Average score gain",
-      description: "Within first 5 paper sessions",
-    },
+    ...(studentCount >= 10
+      ? [
+          {
+            icon: <Users size={20} weight="regular" className="text-[var(--text)]" />,
+            value: studentCount,
+            suffix: "+",
+            label: "Enrolled students",
+            description: "Active mathematics candidates",
+          },
+        ]
+      : []),
     {
       icon: <WhatsappLogo size={20} weight="fill" className="text-emerald-400" />,
       value: 0,
-      prefix: "$",
+      prefix: "Rs. ",
       label: "Zero message fee",
-      description: "Free-first WhatsApp parent bot",
+      description: "Direct WhatsApp parent reports",
     },
   ];
 

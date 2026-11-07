@@ -166,16 +166,11 @@ export async function registerStudentAction(
     };
   } catch (err: unknown) {
     console.error("Sign-up unexpected error:", err);
-    // Graceful fallback for demo/mock preview if credentials aren't set in local env
-    const mockId = `${prefix}1001`;
+    const msg = err instanceof Error ? err.message : "Failed to complete student registration. Please try again or contact administration.";
     return {
-      success: true,
-      data: {
-        uniqueId: mockId,
-        pin: data.pin,
-        fullName: data.fullName,
-        parentWhatsapp: normalizedWhatsapp,
-      },
+      success: false,
+      error: "internal_error",
+      message: msg,
     };
   }
 }

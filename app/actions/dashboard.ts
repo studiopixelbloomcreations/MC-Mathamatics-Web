@@ -159,42 +159,7 @@ export async function getStudentDashboardData(): Promise<StudentDashboardData> {
     .single();
 
   if (studentError || !student) {
-    // Fallback Mock Profile for offline dev if seed was not applied
-    return {
-      locked: false,
-      student: {
-        id: studentUserId,
-        uniqueId: "MCG10TP1001",
-        fullName: "Kavindu Perera (Demo)",
-        grade: 10,
-        classType: "TP",
-        parentWhatsapp: "+94779998877",
-        reportPending: true,
-        parentWaVerified: true,
-      },
-      metrics: {
-        latestResult: {
-          paperTitle: "Paper 01 - Algebraic Expressions",
-          marks: 88.5,
-          totalMarks: 100,
-          percentage: 88.5,
-          date: new Date().toISOString(),
-        },
-        averageScore: 84.2,
-        rankBand: "Top 10%",
-        attendancePercentage: 94.5,
-        attendanceStreak: 12,
-        focusAreas: [
-          { topic: "Quadratic Roots", tip: "Review discriminant formulas (b² - 4ac) before Paper 02." },
-          { topic: "Geometry Theorems", tip: "Practice tangent chord angle proofs." },
-          { topic: "Circle Perimeters", tip: "Check radius vs diameter units in structured questions." },
-        ],
-      },
-      papers: { ongoing: [], finished: [], recentlyDone: [] },
-      attendance: { summary: { percentage: 95, present: 10, absent: 1, late: 0, excused: 0, total: 11 }, records: [] },
-      specialNotes: [],
-      announcements: [],
-    };
+    throw new Error("Student record not found. Please log in with your valid Student ID and PIN.");
   }
 
   // 2. Fetch Parental Settings

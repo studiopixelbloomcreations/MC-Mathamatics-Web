@@ -9,27 +9,21 @@ import {
   DiagnosticsReport,
   DiagnosticItem,
 } from "@/app/actions/diagnostics";
-import { seedFakeStudentsAction } from "@/app/actions/seed";
 import {
   CheckCircle,
   XCircle,
-  WarningCircle,
   ArrowClockwise,
   Database,
   Robot,
   WhatsappLogo,
-  Sparkle,
   Copy,
   Check,
-  GraduationCap,
   Pulse,
 } from "@phosphor-icons/react";
 
 export default function DiagnosticsPage() {
   const [report, setReport] = useState<DiagnosticsReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [seeding, setSeeding] = useState(false);
-  const [seedStatus, setSeedStatus] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const fetchDiagnostics = async () => {
@@ -47,21 +41,6 @@ export default function DiagnosticsPage() {
   useEffect(() => {
     fetchDiagnostics();
   }, []);
-
-  const handleSeed = async () => {
-    setSeeding(true);
-    setSeedStatus(null);
-    try {
-      const res = await seedFakeStudentsAction();
-      setSeedStatus(res.message);
-      await fetchDiagnostics();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setSeedStatus(`Failed: ${msg}`);
-    } finally {
-      setSeeding(false);
-    }
-  };
 
   const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -193,35 +172,8 @@ export default function DiagnosticsPage() {
             />
             <span>Re-run Diagnostics</span>
           </Button>
-
-          <Button
-            variant="primary"
-            size="md"
-            onClick={handleSeed}
-            disabled={seeding}
-            className="gap-2 text-xs"
-          >
-            <Sparkle size={16} weight="fill" />
-            <span>{seeding ? "Seeding..." : "Seed 12 Fake Students"}</span>
-          </Button>
         </div>
       </Glass>
-
-      {/* Seed Status Alert */}
-      {seedStatus && (
-        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckCircle size={18} weight="fill" className="text-emerald-400 shrink-0" />
-            <span>{seedStatus}</span>
-          </div>
-          <button
-            onClick={() => setSeedStatus(null)}
-            className="text-[var(--muted)] hover:text-white"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
 
       {/* 2. Core 3 Systems Status Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -317,85 +269,6 @@ export default function DiagnosticsPage() {
               )}
             </button>
           </div>
-        </div>
-      </Glass>
-
-      {/* 4. 12 Fake Students Testing Directory */}
-      <Glass tint="subtle" className="p-6 sm:p-8 rounded-3xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <GraduationCap size={20} weight="regular" className="text-[var(--brand)]" />
-            <div>
-              <h3 className="text-base font-bold text-[var(--text)]">
-                12 Fake Students Testing Directory
-              </h3>
-              <p className="text-xs text-[var(--muted)]">
-                Log in at <code className="text-[var(--brand)]">/login</code> with any ID and default PIN <code className="text-[var(--brand)]">123456</code>.
-              </p>
-            </div>
-          </div>
-          <span className="text-xs font-mono text-[var(--muted)] [font-feature-settings:'tnum'_1]">
-            Grades 9–11 • 4 Students Per Grade
-          </span>
-        </div>
-
-        {/* Directory Table */}
-        <div className="overflow-x-auto pt-2">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--border)] text-[var(--muted)] font-mono text-[11px]">
-                <th className="py-3 px-3">Grade</th>
-                <th className="py-3 px-3">Student ID</th>
-                <th className="py-3 px-3">Full Name</th>
-                <th className="py-3 px-3">Stream</th>
-                <th className="py-3 px-3">PIN</th>
-                <th className="py-3 px-3">Parent WhatsApp</th>
-                <th className="py-3 px-3 text-right">Quick Copy</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--border)]">
-              {fakeStudentCredentials.map((s) => (
-                <tr
-                  key={s.id}
-                  className="hover:bg-[var(--surface-elevated)] transition-colors"
-                >
-                  <td className="py-3 px-3 font-mono font-semibold text-[var(--brand)]">
-                    Grade {s.grade}
-                  </td>
-                  <td className="py-3 px-3 font-mono font-bold text-[var(--text)] select-all [font-feature-settings:'tnum'_1]">
-                    {s.id}
-                  </td>
-                  <td className="py-3 px-3 font-medium text-[var(--text)]">
-                    {s.name}
-                  </td>
-                  <td className="py-3 px-3">
-                    <span className="px-2 py-0.5 rounded-md border border-[var(--border)] text-[10px] font-mono">
-                      {s.type === "TP" ? "Theory + Paper" : "Theory Only"}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 font-mono text-emerald-400">
-                    {s.pin}
-                  </td>
-                  <td className="py-3 px-3 font-mono text-[var(--muted)] [font-feature-settings:'tnum'_1]">
-                    {s.parent}
-                  </td>
-                  <td className="py-3 px-3 text-right">
-                    <button
-                      onClick={() => copyToClipboard(s.id, s.id)}
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-[var(--muted)] hover:text-white transition-colors"
-                      title="Copy ID"
-                    >
-                      {copiedKey === s.id ? (
-                        <Check size={14} weight="bold" className="text-emerald-400" />
-                      ) : (
-                        <Copy size={14} weight="regular" />
-                      )}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </Glass>
     </div>

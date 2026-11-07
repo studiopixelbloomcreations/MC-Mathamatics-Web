@@ -32,3 +32,9 @@ This document records key architectural and design choices made during developme
 - **Dynamic Report Button (A4-8):** Implemented `<SendReportButton>` with 3 dynamic states ("Send me the report" -> "Report ready, tap to send" when `report_pending` -> "Report Sent ✓ (time)"). Links to `https://wa.me/<AI_NUMBER>?text=REPORT%20<ID>` to ensure zero messaging costs.
 - **Supabase Realtime:** Built `<RealtimeListener>` to listen to PostgreSQL changes on `marks`, `special_notes`, and `announcements`, popping live toasts and refreshing data without full reload.
 - **PWA & Web Push:** Added `public/manifest.json` and service worker `public/sw.js` with background push handlers and `<PushNotificationToggle>` storing VAPID subscriptions in `push_subscriptions`.
+
+## 7. Production Hardening & Live Go-Live
+- **Decision:** Remove all mock fallbacks, synthetic test student generators, and dev-only routes (`/admin/ai-simulator`).
+- **Real Aggregate Telemetry:** Stats counters and testimonials now bind to real database queries via `site_content` or are hidden when below statistical threshold.
+- **WhatsApp Live Number Configuration:** Supports `+1 555 144 4070` as current Meta test line via `NEXT_PUBLIC_WHATSAPP_NUMBER` / `NEXT_PUBLIC_AI_NUMBER` without hardcoding in source code.
+- **Legal Compliance:** Integrated full bilingual Privacy Policy (`/privacy`), Terms of Service (`/terms`), and Parental Consent flows complying with Sri Lanka's Personal Data Protection Act (PDPA No. 9 of 2022).
