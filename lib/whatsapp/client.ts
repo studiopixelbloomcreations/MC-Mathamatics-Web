@@ -20,7 +20,7 @@ export class WhatsAppClient {
   private apiVersion = "v21.0";
 
   constructor() {
-    this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+    this.accessToken = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
     this.phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   }
 
