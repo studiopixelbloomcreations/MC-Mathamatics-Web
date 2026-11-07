@@ -8,29 +8,32 @@ export function normalizeSriLankanPhone(input: string): string | null {
   // Strip all non-numeric characters except leading '+'
   const cleaned = input.trim().replace(/[\s\-\(\)\.]/g, "");
 
-  let normalized: string;
-
-  if (cleaned.startsWith("+94")) {
-    normalized = cleaned;
-  } else if (cleaned.startsWith("0094")) {
-    normalized = "+" + cleaned.slice(2);
-  } else if (cleaned.startsWith("94")) {
-    normalized = "+" + cleaned;
-  } else if (cleaned.startsWith("0")) {
-    normalized = "+94" + cleaned.slice(1);
-  } else if (cleaned.length === 9) {
-    // E.g., user entered 771234567 without leading 0
-    normalized = "+94" + cleaned;
-  } else {
-    return null;
+  // If already full international number without +, add +
+  if (/^\d{10,15}$/.test(cleaned)) {
+    // If starts with 0 (Sri Lanka local format 07xxxxxxxx)
+    if (cleaned.startsWith("0") && cleaned.length === 10) {
+      return "+94" + cleaned.slice(1);
+    }
+    // If starts with 94 (Sri Lanka without plus 947xxxxxxxx)
+    if (cleaned.startsWith("94") && cleaned.length === 11) {
+      return "+" + cleaned;
+    }
+    // If 9 digits (7xxxxxxxx)
+    if (cleaned.length === 9) {
+      return "+94" + cleaned;
+    }
+    // Any other international number from Meta (e.g. 1xxxxxxxxxx, 44xxxxxxxxx, etc.)
+    return "+" + cleaned;
   }
 
-  // Sri Lanka E.164 format: +94 followed by 9 digits (total 12 characters)
-  if (!/^\+94\d{9}$/.test(normalized)) {
-    return null;
+  if (cleaned.startsWith("+")) {
+    const digitsOnly = cleaned.slice(1);
+    if (/^\d{9,15}$/.test(digitsOnly)) {
+      return cleaned;
+    }
   }
 
-  return normalized;
+  return null;
 }
 
 export function isValidSriLankanPhone(input: string): boolean {

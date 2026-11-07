@@ -121,7 +121,11 @@ export async function POST(req: NextRequest) {
       await processPendingInboundMessages();
     } else {
       // Parent number -> Process parent bot rule execution straight away!
-      await handleParentMessage(fromNumber, textBody);
+      const parentResult = await handleParentMessage(fromNumber, textBody);
+      // If not recognized as a registered parent or if AI mode is enabled, run AI processor
+      if (settings?.ai_mode && (!parentResult.handled || parentResult.logStatus === "blocked_unregistered")) {
+        await processPendingInboundMessages();
+      }
     }
   } catch (err: unknown) {
     console.error("[Webhook] Immediate processing error:", err);

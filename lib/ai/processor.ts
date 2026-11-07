@@ -37,11 +37,12 @@ export async function processPendingInboundMessages(): Promise<number> {
 
   for (const msg of pendingMessages) {
     const rawText = msg.body?.trim() || "";
+    const senderNumber = msg.from_number || adminPhone;
 
     // If AI Mode is OFF
     if (!settings?.ai_mode) {
       await whatsapp.sendText(
-        adminPhone,
+        senderNumber,
         "⚠️ AI Mode is currently OFF. Turn it on in the admin panel to use WhatsApp autonomous control."
       );
       await supabase
@@ -78,7 +79,7 @@ export async function processPendingInboundMessages(): Promise<number> {
             .update({ status: "executed" })
             .eq("id", pendingAction.id);
 
-          await whatsapp.sendText(adminPhone, `✅ Confirmed & Executed:\n${results.join("\n")}`);
+          await whatsapp.sendText(senderNumber, `✅ Confirmed & Executed:\n${results.join("\n")}`);
         } else {
           // Cancel
           await supabase
@@ -86,7 +87,7 @@ export async function processPendingInboundMessages(): Promise<number> {
             .update({ status: "cancelled" })
             .eq("id", pendingAction.id);
 
-          await whatsapp.sendText(adminPhone, "🚫 In-flight action was cancelled.");
+          await whatsapp.sendText(senderNumber, "🚫 In-flight action was cancelled.");
         }
 
         await supabase
@@ -115,7 +116,7 @@ export async function processPendingInboundMessages(): Promise<number> {
           .join("\n");
 
         await whatsapp.sendText(
-          adminPhone,
+          senderNumber,
           `❌ Could not process message:\n${errors}\n\nPlease verify student IDs and try again.`
         );
 
@@ -140,7 +141,7 @@ export async function processPendingInboundMessages(): Promise<number> {
         });
 
         await whatsapp.sendInteractiveButtons(
-          adminPhone,
+          senderNumber,
           `📋 AI Action Preview:\n\n${previews}\n\nExecute these changes?`,
           [
             { id: "1", title: "1. Confirm & Save" },
@@ -158,6 +159,38 @@ export async function processPendingInboundMessages(): Promise<number> {
         await supabase.from("ai_actions").insert({
           wa_message_id: msg.wa_message_id,
           raw_text: rawText,
+          tool_calls: toolCalls,
+          result: { results },
+          status: "executed",
+        });
+
+        await whatsapp.sendText(
+          senderNumber,
+          `⚡ Auto-Executed via AI Mode:\n${results.join("\n")}`
+        );
+      }
+
+      await supabase
+        .from("inbound_messages")
+        .update({ status: "processed" })
+        .eq("wa_message_id", msg.wa_message_id);
+      processedCount++;
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error("[AI Processor] Processing error:", errorMsg);
+
+      await whatsapp.sendText(
+        senderNumber,
+        `⚠️ AI Processing Notice:\n${errorMsg}`
+      );
+
+      await supabase
+        .from("inbound_messages")
+        .update({ status: "failed" })
+        .eq("wa_message_id", msg.wa_message_id);
+      processedCount++;
+    }
+  }
           tool_calls: toolCalls,
           result: { results },
           status: "executed",

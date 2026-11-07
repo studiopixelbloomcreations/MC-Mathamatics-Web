@@ -374,7 +374,7 @@ export async function createStudentSpecialNote(data: {
     .from("special_notes")
     .insert({
       student_id: data.studentId,
-      note: data.note.trim(),
+      body: data.note.trim(),
     })
     .select()
     .single();

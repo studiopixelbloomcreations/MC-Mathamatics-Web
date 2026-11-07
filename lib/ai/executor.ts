@@ -84,7 +84,7 @@ export async function executeToolCall(
           .from("special_notes")
           .insert({
             student_id: studentId,
-            note: text,
+            body: text,
           })
           .select("id")
           .single();
