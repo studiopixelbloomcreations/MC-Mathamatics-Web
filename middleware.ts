@@ -21,21 +21,26 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Handle host-based routing
+  // Handle host-based routing (e.g. admin.mcmaths.lk)
   if (isAdminHost) {
-    // Rewrite requests on admin subdomain to the /admin route group
     if (!pathname.startsWith("/admin")) {
       const url = req.nextUrl.clone();
       url.pathname = `/admin${pathname}`;
-      return NextResponse.rewrite(url);
+      const res = NextResponse.rewrite(url);
+      res.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return res;
     }
-    return NextResponse.next();
+    const res = NextResponse.next();
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return res;
   }
 
-  // Allow /admin on vercel.app domains, dev, or when explicitly allowed
+  // Allow /admin on vercel.app domains, dev, or when explicitly accessed
   if (pathname.startsWith("/admin")) {
     if (isVercel || isDev) {
-      return NextResponse.next();
+      const res = NextResponse.next();
+      res.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return res;
     }
     return new NextResponse("Not Found", { status: 404 });
   }
