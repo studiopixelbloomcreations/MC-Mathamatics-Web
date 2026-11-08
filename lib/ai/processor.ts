@@ -2,7 +2,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { NvidiaNimProvider } from "@/lib/ai/nvidia-nim";
 import { validateToolCall } from "@/lib/ai/validator";
 import { executeToolCall } from "@/lib/ai/executor";
-import { whatsapp } from "@/lib/whatsapp/client";
+import { getChannelAdapter } from "@/lib/channels/router";
+import { ChannelType } from "@/lib/channels/types";
 import {
   getAIStatus,
   recordFallbackEvent,
@@ -10,19 +11,22 @@ import {
 } from "@/lib/ai/status";
 
 /**
- * Processes pending inbound messages from Sir immediately.
- * Executes tool calls, sends previews or confirmation messages via WhatsApp.
+ * Processes pending inbound messages from Sir or Parent immediately.
+ * Executes tool calls, sends previews or confirmation messages via the active channel.
  * Implements strict status-based feedback and handles offline/error states gracefully.
  */
-export async function processPendingInboundMessages(): Promise<number> {
+export async function processPendingInboundMessages(targetChannel: ChannelType = "whatsapp_meta"): Promise<number> {
   const supabase = createAdminClient();
 
   // 1. Fetch system settings
   const { data: settings } = await supabase
     .from("system_settings")
-    .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp")
+    .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp, admin_telegram_id, active_channel")
     .eq("id", 1)
     .single();
+
+  const activeChannel: ChannelType = (settings as any)?.active_channel || targetChannel;
+  const channelAdapter = getChannelAdapter(activeChannel);
 
   const adminPhone = settings?.admin_whatsapp || "+94771234567";
 
@@ -43,12 +47,17 @@ export async function processPendingInboundMessages(): Promise<number> {
 
   for (const msg of pendingMessages) {
     const rawText = msg.body?.trim() || "";
-    const senderNumber = msg.from_number || adminPhone;
+    // If msg has reply_target, use it; otherwise fallback to from_number or adminPhone
+    const senderNumber = (msg.raw as any)?.replyTarget || msg.from_number || adminPhone;
+
+    // Detect channel for this specific message if specified in raw payload
+    const msgChannel: ChannelType = (msg.raw as any)?.channel || activeChannel;
+    const adapter = getChannelAdapter(msgChannel);
 
     try {
       // Check status: If AI is not configured, rate limited, or unavailable
       if (aiStatus.status === "not_configured") {
-        await whatsapp.sendText(
+        await adapter.send(
           senderNumber,
           "NVIDIA_API_KEY is missing in the server settings."
         );
@@ -62,7 +71,7 @@ export async function processPendingInboundMessages(): Promise<number> {
       }
 
       if (aiStatus.status === "rate_limited") {
-        await whatsapp.sendText(
+        await adapter.send(
           senderNumber,
           "The AI is busy (rate limit). Try again in a minute."
         );
@@ -76,7 +85,7 @@ export async function processPendingInboundMessages(): Promise<number> {
       }
 
       if (aiStatus.status === "ai_unavailable") {
-        await whatsapp.sendText(
+        await adapter.send(
           senderNumber,
           "The AI service is not responding (model error). Check /admin/diagnostics."
         );
@@ -122,14 +131,14 @@ export async function processPendingInboundMessages(): Promise<number> {
               .update({ status: "executed" })
               .eq("id", pendingAction.id);
 
-            await whatsapp.sendText(senderNumber, `✅ Confirmed & Executed:\n${results.join("\n")}`);
+            await adapter.send(senderNumber, `✅ Confirmed & Executed:\n${results.join("\n")}`);
           } else {
             await supabase
               .from("ai_actions")
               .update({ status: "cancelled" })
               .eq("id", pendingAction.id);
 
-            await whatsapp.sendText(senderNumber, "🚫 In-flight action was cancelled.");
+            await adapter.send(senderNumber, "🚫 In-flight action was cancelled.");
           }
 
           await supabase
@@ -151,7 +160,7 @@ export async function processPendingInboundMessages(): Promise<number> {
 
       // When AI Mode is OFF:
       if (!settings?.ai_mode && hasWriteTools) {
-        await whatsapp.sendText(
+        await adapter.send(
           senderNumber,
           "AI Mode is off, so I can't change marks, notes or announcements. Turn it on in the admin panel. I can still answer questions."
         );
@@ -167,12 +176,12 @@ export async function processPendingInboundMessages(): Promise<number> {
       // If no write tools or read-only/question/greeting: Answer directly or proceed
       const isClarification = toolCalls.length === 1 && toolCalls[0].tool === "ask_clarification";
       if (!hasWriteTools && (toolCalls.length === 0 || isClarification)) {
-        const conversationalSystemPrompt = `You are the friendly, intelligent WhatsApp AI Assistant for MC Mathematics (Sir Malinga C Dissanayake).
+        const conversationalSystemPrompt = `You are the friendly, intelligent AI Assistant for MC Mathematics (Sir Malinga C Dissanayake).
 You help Sir (and parents) manage mathematics classes, explain marks, answer student progress questions, and provide helpful guidance in natural English or Sinhala.
 Be helpful, respectful, concise, and professional. If the user is Sir saying hi or asking questions, greet him warmly and let him know you are ready to record marks, notes, attendance, or announcements.`;
 
         const textAnswer = await aiProvider.generateText(rawText, conversationalSystemPrompt);
-        await whatsapp.sendText(senderNumber, textAnswer);
+        await adapter.send(senderNumber, textAnswer);
         await supabase
           .from("inbound_messages")
           .update({ status: "processed" })
@@ -193,7 +202,7 @@ Be helpful, respectful, concise, and professional. If the user is Sir saying hi 
           .map((p) => `• ${p.error}`)
           .join("\n");
 
-        await whatsapp.sendText(
+        await adapter.send(
           senderNumber,
           `❌ Could not process message:\n${errors}\n\nPlease verify student IDs and try again.`
         );
@@ -218,13 +227,15 @@ Be helpful, respectful, concise, and professional. If the user is Sir saying hi 
           status: "previewed",
         });
 
-        await whatsapp.sendInteractiveButtons(
+        await adapter.send(
           senderNumber,
           `📋 AI Action Preview:\n\n${previews}\n\nExecute these changes?`,
-          [
-            { id: "1", title: "1. Confirm & Save" },
-            { id: "2", title: "2. Cancel" },
-          ]
+          {
+            buttons: [
+              { id: "1", title: "1. Confirm & Save" },
+              { id: "2", title: "2. Cancel" },
+            ],
+          }
         );
       } else {
         // Direct execution without preview
@@ -242,7 +253,7 @@ Be helpful, respectful, concise, and professional. If the user is Sir saying hi 
           status: "executed",
         });
 
-        await whatsapp.sendText(
+        await adapter.send(
           senderNumber,
           `⚡ Auto-Executed via AI Mode:\n${results.join("\n")}`
         );
@@ -254,22 +265,17 @@ Be helpful, respectful, concise, and professional. If the user is Sir saying hi 
         .eq("wa_message_id", msg.wa_message_id);
       processedCount++;
     } catch (err: unknown) {
-      // NEVER GO SILENT: Send polite apology and log error
-      const errorMsg = err instanceof Error ? err.message : String(err);
-      console.error("[AI Processor] Processing error:", errorMsg);
-
-      await whatsapp.sendText(
-        senderNumber,
-        "Sorry, I encountered an internal error while processing that instruction. Sir's administration console has logged the event."
-      );
-
-      recordFallbackEvent(senderNumber, `Internal processing exception: ${errorMsg}`, "ai_unavailable");
-
+      console.error("[processPendingInboundMessages] Error:", err);
+      try {
+        await adapter.send(
+          senderNumber,
+          "An error occurred while processing your request. Please try again or check /admin/diagnostics."
+        );
+      } catch {}
       await supabase
         .from("inbound_messages")
         .update({ status: "failed" })
         .eq("wa_message_id", msg.wa_message_id);
-      processedCount++;
     }
   }
 

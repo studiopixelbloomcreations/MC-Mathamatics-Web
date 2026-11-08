@@ -3,8 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
-import { getAiModeStatus, setPaidTemplatesEnabled, getAdminReportDeliveries } from "@/app/actions/admin";
-import { Send, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
+import {
+  getAiModeStatus,
+  setPaidTemplatesEnabled,
+  getAdminReportDeliveries,
+  getAdminStudents,
+  getParentReportText,
+  markReportAsSent,
+} from "@/app/actions/admin";
+import { Send, CheckCircle2, AlertTriangle, RefreshCw, Smartphone, ExternalLink, Check } from "lucide-react";
 
 interface DeliveryItem {
   id: string;
@@ -16,20 +23,36 @@ interface DeliveryItem {
   students?: { full_name: string; unique_id: string; parent_whatsapp: string };
 }
 
+interface StudentItem {
+  id: string;
+  unique_id: string;
+  full_name: string;
+  grade: number;
+  class_type: string;
+  parent_whatsapp: string;
+  report_pending: boolean;
+}
+
 export default function AdminReportsPage() {
   const [deliveries, setDeliveries] = useState<DeliveryItem[]>([]);
+  const [students, setStudents] = useState<StudentItem[]>([]);
+  const [selectedGrade, setSelectedGrade] = useState<string>("all");
   const [paidTemplates, setPaidTemplates] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sendingStudentId, setSendingStudentId] = useState<string | null>(null);
+  const [sentStudentIds, setSentStudentIds] = useState<Record<string, boolean>>({});
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   const loadData = async () => {
     try {
-      const [status, deliveryData] = await Promise.all([
+      const [status, deliveryData, studentList] = await Promise.all([
         getAiModeStatus(),
         getAdminReportDeliveries(),
+        getAdminStudents(),
       ]);
       setPaidTemplates(status.paidTemplatesEnabled);
       setDeliveries(deliveryData as unknown as DeliveryItem[]);
+      setStudents(studentList as unknown as StudentItem[]);
     } catch (err) {
       console.error(err);
     }
@@ -38,6 +61,39 @@ export default function AdminReportsPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const handleSendViaWaMe = async (student: StudentItem) => {
+    setSendingStudentId(student.id);
+    try {
+      const reportText = await getParentReportText(student.id);
+      // Digits only for wa.me
+      const phoneDigits = student.parent_whatsapp.replace(/\D/g, "");
+      const waUrl = `https://wa.me/${phoneDigits}?text=${encodeURIComponent(reportText)}`;
+
+      // Open WhatsApp in new tab / app
+      window.open(waUrl, "_blank");
+
+      // Auto-mark as sent
+      await markReportAsSent(student.id, "wa.me");
+      setSentStudentIds((prev) => ({ ...prev, [student.id]: true }));
+      setMessage({
+        text: `Opened WhatsApp report for ${student.full_name} (${student.unique_id}) and logged as sent.`,
+        type: "success",
+      });
+    } catch (err: unknown) {
+      setMessage({
+        text: err instanceof Error ? err.message : "Failed to open wa.me link",
+        type: "error",
+      });
+    } finally {
+      setSendingStudentId(null);
+    }
+  };
+
+  const filteredStudents = students.filter((s) => {
+    if (selectedGrade === "all") return true;
+    return String(s.grade) === selectedGrade;
+  });
 
   const handleTogglePaidTemplates = async () => {
     const nextVal = !paidTemplates;
@@ -132,6 +188,109 @@ export default function AdminReportsPage() {
             </span>
           </div>
         )}
+      </GlassCard>
+
+      {/* wa.me One-Tap Sending Section */}
+      <GlassCard className="p-6 border-emerald-500/30 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs uppercase font-mono tracking-wider text-emerald-400 font-semibold">
+                One-Tap Direct Sending (wa.me)
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground">
+              Send Stored Report via Your WhatsApp
+            </h3>
+            <p className="text-xs text-muted-foreground max-w-xl leading-relaxed">
+              Open WhatsApp directly on your phone or web browser pre-filled with the student's complete analytical report in their language (Sinhala or English). Zero API or Meta setup needed.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono text-muted-foreground">Filter Grade:</span>
+            <select
+              value={selectedGrade}
+              onChange={(e) => setSelectedGrade(e.target.value)}
+              className="bg-background/80 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none"
+            >
+              <option value="all">All Grades</option>
+              <option value="6">Grade 6</option>
+              <option value="7">Grade 7</option>
+              <option value="8">Grade 8</option>
+              <option value="9">Grade 9</option>
+              <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
+              <option value="12">Grade 12</option>
+              <option value="13">Grade 13</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto max-h-80 overflow-y-auto">
+          <table className="w-full text-xs text-left">
+            <thead>
+              <tr className="border-b border-white/10 text-muted-foreground uppercase text-[10px] sticky top-0 bg-background/90 backdrop-blur-md">
+                <th className="py-2 px-3">Student</th>
+                <th className="py-2 px-3">Grade</th>
+                <th className="py-2 px-3">Parent Number</th>
+                <th className="py-2 px-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 font-mono">
+              {filteredStudents.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-6 text-center text-muted-foreground font-sans">
+                    No students found for this grade.
+                  </td>
+                </tr>
+              ) : (
+                filteredStudents.map((s) => {
+                  const isSent = sentStudentIds[s.id];
+                  return (
+                    <tr key={s.id} className="hover:bg-white/[0.02]">
+                      <td className="py-2.5 px-3 font-sans text-foreground">
+                        <span className="font-mono text-blue-500 font-bold mr-1.5">
+                          {s.unique_id}
+                        </span>
+                        {s.full_name}
+                      </td>
+                      <td className="py-2.5 px-3 text-muted-foreground">
+                        Grade {s.grade} ({s.class_type})
+                      </td>
+                      <td className="py-2.5 px-3 text-muted-foreground">
+                        {s.parent_whatsapp}
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        <Button
+                          size="sm"
+                          onClick={() => handleSendViaWaMe(s)}
+                          disabled={sendingStudentId === s.id}
+                          className={`h-7 px-3 text-xs gap-1.5 font-sans ${
+                            isSent
+                              ? "bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600/40"
+                              : "bg-emerald-600 hover:bg-emerald-500 text-white"
+                          }`}
+                        >
+                          {isSent ? (
+                            <>
+                              <Check className="w-3.5 h-3.5" /> Sent
+                            </>
+                          ) : (
+                            <>
+                              <ExternalLink className="w-3.5 h-3.5" /> Send via my WhatsApp
+                            </>
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </GlassCard>
 
       {/* Delivery Audit Table */}

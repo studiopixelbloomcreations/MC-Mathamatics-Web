@@ -13,13 +13,15 @@ export async function getAiModeStatus(): Promise<{
   aiConfirmRequired: boolean;
   adminWhatsapp: string;
   paidTemplatesEnabled: boolean;
+  activeChannel?: string;
+  adminTelegramId?: string;
 }> {
   const supabase = createAdminClient();
 
-  // Try fetching all columns including parent_chat_enabled
+  // Try fetching all columns including active_channel, admin_telegram_id
   const { data, error } = await supabase
     .from("system_settings")
-    .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp, paid_templates_enabled")
+    .select("ai_mode, parent_chat_enabled, ai_confirm_required, admin_whatsapp, paid_templates_enabled, active_channel, admin_telegram_id")
     .eq("id", 1)
     .single();
 
@@ -30,10 +32,12 @@ export async function getAiModeStatus(): Promise<{
       aiConfirmRequired: Boolean(data.ai_confirm_required),
       adminWhatsapp: data.admin_whatsapp || "+94771234567",
       paidTemplatesEnabled: Boolean(data.paid_templates_enabled),
+      activeChannel: (data as any).active_channel || "telegram",
+      adminTelegramId: (data as any).admin_telegram_id || "",
     };
   }
 
-  // If column parent_chat_enabled is missing or failed, fall back to base columns
+  // If new columns are missing, fall back safely
   const { data: fallbackData } = await supabase
     .from("system_settings")
     .select("ai_mode, ai_confirm_required, admin_whatsapp, paid_templates_enabled")
@@ -47,6 +51,8 @@ export async function getAiModeStatus(): Promise<{
       aiConfirmRequired: Boolean(fallbackData.ai_confirm_required),
       adminWhatsapp: fallbackData.admin_whatsapp || "+94771234567",
       paidTemplatesEnabled: Boolean(fallbackData.paid_templates_enabled),
+      activeChannel: "telegram",
+      adminTelegramId: "",
     };
   }
 
@@ -56,6 +62,8 @@ export async function getAiModeStatus(): Promise<{
     aiConfirmRequired: true,
     adminWhatsapp: "+94771234567",
     paidTemplatesEnabled: false,
+    activeChannel: "telegram",
+    adminTelegramId: "",
   };
 }
 
@@ -100,20 +108,38 @@ export async function setParentChatEnabled(enabled: boolean) {
 /**
  * Updates Paid Templates toggle in system settings.
  */
-export async function setAdminWhatsapp(phone: string) {
+export async function setAdminTelegramId(telegramId: string) {
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("system_settings")
-    .update({ admin_whatsapp: phone, updated_at: new Date().toISOString() })
+    .update({ admin_telegram_id: telegramId, updated_at: new Date().toISOString() })
     .eq("id", 1);
 
   if (error) {
-    throw new Error(`Failed to update Sir's WhatsApp: ${error.message}`);
+    throw new Error(`Failed to update Telegram ID: ${error.message}`);
   }
 
   revalidatePath("/admin/ai-mode");
+  revalidatePath("/admin/channels");
   revalidatePath("/admin");
-  return { success: true, adminWhatsapp: phone };
+  return { success: true, adminTelegramId: telegramId };
+}
+
+export async function setActiveChannel(channel: "telegram" | "whatsapp_meta" | "whatsapp_twilio") {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("system_settings")
+    .update({ active_channel: channel, updated_at: new Date().toISOString() })
+    .eq("id", 1);
+
+  if (error) {
+    throw new Error(`Failed to update Active Channel: ${error.message}`);
+  }
+
+  revalidatePath("/admin/ai-mode");
+  revalidatePath("/admin/channels");
+  revalidatePath("/admin");
+  return { success: true, activeChannel: channel };
 }
 
 /**
@@ -634,4 +660,48 @@ export async function getAdminReportDeliveries() {
     return [];
   }
   return data || [];
+}
+
+export async function markReportAsSent(studentId: string, channel: string = "wa.me") {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("report_deliveries")
+    .insert({
+      student_id: studentId,
+      status: "delivered",
+      wa_message_id: `${channel}_manual_${Date.now()}`,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to log report delivery: ${error.message}`);
+  }
+
+  // Clear report_pending flag on student
+  await supabase
+    .from("students")
+    .update({ report_pending: false })
+    .eq("id", studentId);
+
+  revalidatePath("/admin/reports");
+  return { success: true, delivery: data };
+}
+
+export async function getParentReportText(studentId: string): Promise<string> {
+  const supabase = createAdminClient();
+  const { getStudentAnalysis } = await import("@/lib/analysis/recompute");
+  const { formatWhatsAppReport } = await import("@/lib/whatsapp/parent-bot");
+
+  const { data: student } = await supabase
+    .from("students")
+    .select("id, unique_id, full_name, grade, class_type, parent_whatsapp, report_language")
+    .eq("id", studentId)
+    .single();
+
+  if (!student) throw new Error("Student not found");
+
+  const metrics = await getStudentAnalysis(student.id);
+  const isSinhala = student.report_language === "si";
+  return formatWhatsAppReport(student as any, metrics, isSinhala);
 }

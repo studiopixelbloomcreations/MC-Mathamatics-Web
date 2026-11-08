@@ -248,7 +248,7 @@ export async function handleParentMessage(
 /**
  * Formats report message matching Blueprint A6 specifications.
  */
-function formatWhatsAppReport(
+export function formatWhatsAppReport(
   student: { unique_id: string; full_name: string; grade: number; class_type: string },
   metrics: AnalysisMetrics | null,
   isSinhala: boolean = false
