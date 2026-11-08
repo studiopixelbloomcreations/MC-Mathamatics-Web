@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { WhatsappLogo, Sparkle, CheckCircle, Info } from "@phosphor-icons/react";
+import { PaperPlaneTilt, Sparkle, CheckCircle, Info } from "@phosphor-icons/react";
 import { Modal } from "@/components/ui/modal";
 
 interface SendReportButtonProps {
@@ -28,15 +28,11 @@ export function SendReportButton({
 }: SendReportButtonProps) {
   const [showConnectModal, setShowConnectModal] = useState(false);
 
-  const aiNumber =
-    process.env.NEXT_PUBLIC_AI_NUMBER?.replace(/[^0-9]/g, "") || "94771234567";
+  const telegramBotUsername =
+    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "mc_mathematics_bot";
 
-  const reportUrl = `https://wa.me/${aiNumber}?text=REPORT%20${encodeURIComponent(
-    studentId
-  )}`;
-  const startUrl = `https://wa.me/${aiNumber}?text=START%20${encodeURIComponent(
-    studentId
-  )}`;
+  const startUrl = `https://t.me/${telegramBotUsername}?start=START_${studentId}`;
+  const reportUrl = `https://t.me/${telegramBotUsername}?start=REPORT_${studentId}`;
 
   // Format sent time (e.g., "Sent ✓ (14:30)")
   const sentTimeFormatted = lastReportRequestTime
@@ -47,7 +43,7 @@ export function SendReportButton({
     : null;
 
   let buttonLabel = "Send me the report";
-  let buttonIcon = <WhatsappLogo size={16} weight="fill" />;
+  let buttonIcon = <PaperPlaneTilt size={16} weight="fill" className="text-blue-400" />;
 
   if (sentTimeFormatted) {
     buttonLabel = `Report sent (${sentTimeFormatted})`;
@@ -85,20 +81,19 @@ export function SendReportButton({
         </Button>
       </a>
 
-      {/* Explainer modal for unverified parents */}
+      {/* Explainer modal for connecting to Telegram bot */}
       <Modal
         isOpen={showConnectModal}
         onClose={() => setShowConnectModal(false)}
-        title="Connect Parent WhatsApp (Free)"
-        description="Verify your WhatsApp number to receive free progress cards and diagnostic analysis"
+        title="Connect to Telegram AI Bot (Free)"
+        description="Connect with Sir's Telegram Bot to receive automated instant progress cards and chat about marks"
       >
         <div className="space-y-4 py-3">
-          <div className="flex items-start gap-3 p-3.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 text-xs leading-relaxed">
-            <Info size={20} weight="regular" className="text-emerald-400 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 p-3.5 rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-200 text-xs leading-relaxed">
+            <Info size={20} weight="regular" className="text-blue-400 shrink-0 mt-0.5" />
             <p>
-              To ensure zero message cost, WhatsApp requires parents to initiate the conversation once.
-              Tap below to send <span className="font-mono font-bold text-white [font-feature-settings:'tnum'_1]">START {studentId}</span>.
-              Your student dashboard link and full analysis will arrive immediately for free!
+              Tap below to open Telegram and send <span className="font-mono font-bold text-white [font-feature-settings:'tnum'_1]">START {studentId}</span>.
+              Your student dashboard link and full marks analysis will arrive immediately, and you can chat with the AI assistant about your child's progress!
             </p>
           </div>
 
@@ -118,10 +113,10 @@ export function SendReportButton({
             >
               <Button
                 size="sm"
-                className="bg-[#25D366] hover:bg-[#20ba59] text-black font-semibold gap-2"
+                className="bg-[#24A1DE] hover:bg-[#1f8ec4] text-white font-semibold gap-2"
               >
-                <WhatsappLogo size={16} weight="fill" />
-                <span>Open WhatsApp Now</span>
+                <PaperPlaneTilt size={16} weight="fill" />
+                <span>Open Telegram Bot Now</span>
               </Button>
             </a>
           </div>

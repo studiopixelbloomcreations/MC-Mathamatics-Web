@@ -36,6 +36,21 @@ export async function POST(req: NextRequest) {
   const signature = req.headers.get("x-hub-signature-256") || "";
   const appSecret = process.env.WHATSAPP_APP_SECRET;
 
+  // 0. Check if WhatsApp is disabled
+  const adminClient = createAdminClient();
+  const { data: currentSettings } = await adminClient
+    .from("system_settings")
+    .select("whatsapp_enabled")
+    .eq("id", 1)
+    .single();
+
+  if (currentSettings && (currentSettings as any).whatsapp_enabled === false) {
+    return NextResponse.json({
+      status: "disabled",
+      message: "WhatsApp channel is temporarily paused. Please use our official Telegram bot."
+    }, { status: 200 });
+  }
+
   // 1. Signature Verification (if secret configured)
   if (appSecret) {
     const expectedSig = `sha256=${crypto

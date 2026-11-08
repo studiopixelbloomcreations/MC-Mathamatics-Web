@@ -58,7 +58,25 @@ export async function POST(req: NextRequest) {
     .single();
 
   const adminTelegramId = (settings as any)?.admin_telegram_id || process.env.ADMIN_TELEGRAM_ID;
-  const isSir = Boolean(adminTelegramId && String(inbound.senderId) === String(adminTelegramId));
+  const adminPhone = settings?.admin_whatsapp || "0773696433";
+  const normalizedAdminPhone = adminPhone.replace(/\D/g, "");
+
+  const incomingPhone = (inbound.raw as any)?.phoneNumber ? String((inbound.raw as any)?.phoneNumber).replace(/\D/g, "") : null;
+
+  // Recognized as Sir if Telegram ID matches OR phone matches 0773696433 / 94773696433
+  const isSir = Boolean(
+    (adminTelegramId && String(inbound.senderId) === String(adminTelegramId)) ||
+    (incomingPhone && (incomingPhone.endsWith("773696433") || incomingPhone === normalizedAdminPhone)) ||
+    (inbound.text.includes("0773696433") && (inbound.text.toLowerCase().includes("admin") || inbound.text.toLowerCase().includes("sir")))
+  );
+
+  // Auto-bind Sir's Telegram ID if he messages with admin credential/phone
+  if (isSir && adminTelegramId !== String(inbound.senderId)) {
+    await supabase
+      .from("system_settings")
+      .update({ admin_telegram_id: String(inbound.senderId), updated_at: new Date().toISOString() })
+      .eq("id", 1);
+  }
 
   try {
     if (isSir) {

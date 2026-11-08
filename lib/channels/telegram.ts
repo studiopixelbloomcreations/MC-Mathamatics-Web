@@ -47,6 +47,7 @@ export class TelegramAdapter implements ChannelAdapter {
         const chatId = String(msg.chat?.id || senderId);
         const text = String(msg.text || "");
         const updateId = String(payload.update_id || `msg_${msg.message_id}`);
+        const phoneNumber = msg.contact?.phone_number || msg.from?.phone_number;
 
         return {
           channel: "telegram",
@@ -54,7 +55,10 @@ export class TelegramAdapter implements ChannelAdapter {
           text,
           messageId: updateId,
           replyTarget: chatId,
-          raw: payload,
+          raw: {
+            ...payload,
+            phoneNumber,
+          },
         };
       }
 

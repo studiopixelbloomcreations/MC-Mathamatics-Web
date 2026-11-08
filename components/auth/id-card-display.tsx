@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Copy,
   DownloadSimple,
-  WhatsappLogo,
+  PaperPlaneTilt,
   ArrowRight,
   CheckCircle,
   ShieldCheck,
@@ -66,9 +66,9 @@ export function IdCardDisplay({
     mouseY.set(0);
   };
 
-  const aiNumber =
-    process.env.NEXT_PUBLIC_AI_NUMBER?.replace(/[^0-9]/g, "") || "94771234567";
-  const whatsappUrl = `https://wa.me/${aiNumber}?text=START%20${encodeURIComponent(
+  const telegramBotUsername =
+    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "mc_mathematics_bot";
+  const telegramBotUrl = `https://t.me/${telegramBotUsername}?start=START_${encodeURIComponent(
     uniqueId
   )}`;
 
@@ -316,38 +316,38 @@ export function IdCardDisplay({
         </p>
       </div>
 
-      {/* WhatsApp Activation Block */}
-      <div className="p-6 rounded-3xl border border-emerald-500/20 bg-emerald-950/15 backdrop-blur-xl space-y-4">
+      {/* Telegram Activation Block */}
+      <div className="p-6 rounded-3xl border border-blue-500/20 bg-blue-950/15 backdrop-blur-xl space-y-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-            <WhatsappLogo size={22} weight="fill" />
+          <div className="w-10 h-10 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+            <PaperPlaneTilt size={22} weight="fill" />
           </div>
           <div>
             <h4 className="font-bold text-[var(--text)]">
-              {t("startWhatsAppReports")}
+              Connect to Telegram AI Bot
             </h4>
             <p className="text-xs text-[var(--muted)]">
-              Automated score and attendance progress dispatched directly to parents.
+              Instant automated score cards, diagnostic analysis, and parent chat assistant.
             </p>
           </div>
         </div>
 
         <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
-          {t("whatsAppExplanation")}
+          Tap below to open Telegram and link your child's student ID with our AI bot. You can get instant marks reports and ask questions at any time!
         </p>
 
         <a
-          href={whatsappUrl}
+          href={telegramBotUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex w-full"
         >
           <Button
             size="lg"
-            className="w-full bg-[#25D366] hover:bg-[#20ba59] text-black font-semibold shadow-lg shadow-[#25D366]/20 gap-2 text-sm sm:text-base"
+            className="w-full bg-[#24A1DE] hover:bg-[#1f8ec4] text-white font-semibold shadow-lg shadow-[#24A1DE]/20 gap-2 text-sm sm:text-base"
           >
-            <WhatsappLogo size={20} weight="fill" />
-            <span>Connect WhatsApp Now (Free)</span>
+            <PaperPlaneTilt size={20} weight="fill" />
+            <span>Connect Telegram Bot Now (Free)</span>
           </Button>
         </a>
       </div>

@@ -103,15 +103,43 @@ export async function handleTelegramParentMessage(
     return { handled: true, replySent: true, logStatus: "report_delivered" };
   }
 
-  // 5. If no student matched, give friendly instructions
+  // 5. If matchedStudent exists and parent is chatting conversationally (asking about marks, improvement, syllabus)
+  if (matchedStudent) {
+    const aiStatus = await getAIStatus();
+    if (aiStatus.status === "ok") {
+      const { NvidiaNimProvider } = await import("@/lib/ai/nvidia-nim");
+      const metrics = await getStudentAnalysis(matchedStudent.id);
+      const isSinhala = matchedStudent.report_language === "si";
+
+      const systemPrompt = `You are the friendly, helpful AI Assistant for MC Mathematics (Sir Malinga C Dissanayake).
+You are talking to the parent of ${matchedStudent.full_name} (${matchedStudent.unique_id}, Grade ${matchedStudent.grade}).
+Student performance data:
+- Cumulative Average: ${metrics?.percentage || 0}%
+- Latest Mark: ${metrics?.latestPercentage ?? "None"}%
+- Trend Direction: ${metrics?.trend?.direction || "stable"}
+- Total Papers: ${metrics?.paperCount || 0}
+- Strengths: ${metrics?.insights?.strengthsSummary || "Consistent effort"}
+- Areas needing work: ${metrics?.insights?.weaknessesSummary || "Regular revision"}
+
+Answer the parent kindly, warmly, and concisely in ${isSinhala ? "Sinhala" : "English"}.
+If they ask what their child's marks are, tell them clearly using the metrics above.
+Encourage the student and reassure the parent.`;
+
+      const aiProvider = new NvidiaNimProvider();
+      const aiReply = await aiProvider.generateText(text, systemPrompt);
+      await telegramAdapter.send(chatId, aiReply);
+      return { handled: true, replySent: true, logStatus: "parent_ai_chat_replied" };
+    }
+  }
+
+  // 6. If no student matched, give friendly instructions
   if (!matchedStudent) {
     await telegramAdapter.send(
       chatId,
-      `Welcome to MC Mathematics Telegram Bot.\n\nIf you are a student or parent, please send:\n*START <StudentID>*\n\nIf you are Sir Malinga, please configure your Telegram User ID in the Admin Panel.`
+      `👋 Welcome to MC Mathematics Telegram Bot.\n\nTo connect to your child's progress, please send:\n*START <StudentID>*\n\nExample:\nSTART MCG10TP1001\n\nIf you are Sir Malinga, please reply with your admin number to unlock administrative AI Mode.`
     );
     return { handled: true, replySent: true, logStatus: "unrecognized_telegram_sender" };
   }
 
-  // Fallback / AI conversation if needed
   return { handled: false, replySent: false, logStatus: "forwarded_to_ai" };
 }
