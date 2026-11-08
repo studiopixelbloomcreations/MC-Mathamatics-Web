@@ -45,7 +45,8 @@ export class TelegramAdapter implements ChannelAdapter {
         const msg = payload.message;
         const senderId = String(msg.from?.id || "");
         const chatId = String(msg.chat?.id || senderId);
-        const text = String(msg.text || "");
+        // Extract caption if user sent a document/PDF or regular text
+        const text = String(msg.text || msg.caption || "");
         const updateId = String(payload.update_id || `msg_${msg.message_id}`);
         const phoneNumber = msg.contact?.phone_number || msg.from?.phone_number;
 
@@ -58,6 +59,7 @@ export class TelegramAdapter implements ChannelAdapter {
           raw: {
             ...payload,
             phoneNumber,
+            document: msg.document,
           },
         };
       }

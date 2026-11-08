@@ -63,11 +63,13 @@ export async function POST(req: NextRequest) {
 
   const incomingPhone = (inbound.raw as any)?.phoneNumber ? String((inbound.raw as any)?.phoneNumber).replace(/\D/g, "") : null;
 
-  // Sir's personal Telegram ID or phone detection
-  // If admin_telegram_id is empty, the first message or any admin command/phone instantly registers Sir
+  // Strict Sir identification:
+  // 1. Matches registered admin_telegram_id
+  // 2. Or phone matches 0773696433
+  // 3. Or sender explicitly typed 0773696433
   const isDirectSirId = adminTelegramId && String(inbound.senderId) === String(adminTelegramId);
   const isPhoneMatch = incomingPhone && (incomingPhone.endsWith("773696433") || incomingPhone === normalizedAdminPhone);
-  const isExplicitAdminTrigger = inbound.text.includes("0773696433") || inbound.text.toLowerCase().startsWith("admin") || !adminTelegramId;
+  const isExplicitAdminTrigger = inbound.text.includes("0773696433");
 
   const isSir = Boolean(isDirectSirId || isPhoneMatch || isExplicitAdminTrigger);
 
@@ -81,14 +83,11 @@ export async function POST(req: NextRequest) {
 
   try {
     if (isSir) {
-      // Sir's message -> Run AI Mode command or conversational chatbot immediately
-      await processPendingInboundMessages("telegram");
+      // Sir's message -> Run AI Mode command or conversational chatbot for Sir's chat only
+      await processPendingInboundMessages("telegram", inbound.messageId);
     } else {
-      // Parent interaction -> Run Telegram parent handler
-      const parentResult = await handleTelegramParentMessage(inbound.replyTarget, inbound.text);
-      if (!parentResult.handled) {
-        await processPendingInboundMessages("telegram");
-      }
+      // Parent interaction -> Run Telegram parent handler for this specific parent chat
+      await handleTelegramParentMessage(inbound.replyTarget, inbound.text);
     }
   } catch (err) {
     console.error("[Telegram Webhook] Error during processing:", err);

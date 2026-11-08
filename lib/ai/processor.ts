@@ -15,7 +15,10 @@ import {
  * Executes tool calls, sends previews or confirmation messages via the active channel.
  * Implements strict status-based feedback and handles offline/error states gracefully.
  */
-export async function processPendingInboundMessages(targetChannel: ChannelType = "whatsapp_meta"): Promise<number> {
+export async function processPendingInboundMessages(
+  targetChannel: ChannelType = "whatsapp_meta",
+  specificMessageId?: string
+): Promise<number> {
   const supabase = createAdminClient();
 
   // 1. Fetch system settings
@@ -30,13 +33,19 @@ export async function processPendingInboundMessages(targetChannel: ChannelType =
 
   const adminPhone = settings?.admin_whatsapp || "+94771234567";
 
-  // 2. Fetch pending unprocessed inbound messages
-  const { data: pendingMessages } = await supabase
+  // 2. Fetch target unprocessed inbound message(s)
+  let query = supabase
     .from("inbound_messages")
     .select("*")
-    .eq("status", "received")
-    .order("received_at", { ascending: true })
-    .limit(5);
+    .eq("status", "received");
+
+  if (specificMessageId) {
+    query = query.eq("wa_message_id", specificMessageId);
+  } else {
+    query = query.order("received_at", { ascending: true }).limit(5);
+  }
+
+  const { data: pendingMessages } = await query;
 
   if (!pendingMessages || pendingMessages.length === 0) {
     return 0;
