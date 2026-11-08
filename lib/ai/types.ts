@@ -17,6 +17,7 @@ export type ToolName =
   | "run_analysis"
   | "send_parent_report"
   | "publish_paper"
+  | "broadcast_reports"
   | "reset_pin"
   | "ask_clarification";
 
@@ -24,6 +25,12 @@ export interface ParsedToolCall {
   tool: ToolName;
   args: Record<string, unknown>;
 }
+
+export const BroadcastReportsSchema = z.object({
+  grade: z.number().min(6).max(13).optional(),
+  class_type: z.enum(["T", "TP", "both"]).default("both"),
+  paper_title: z.string().optional(),
+});
 
 export const PublishPaperSchema = z.object({
   title: z.string().min(1, "Paper title is required"),

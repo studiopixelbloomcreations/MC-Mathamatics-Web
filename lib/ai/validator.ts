@@ -8,6 +8,7 @@ import {
   RunAnalysisSchema,
   AskClarificationSchema,
   PublishPaperSchema,
+  BroadcastReportsSchema,
   ResetPinSchema,
 } from "./types";
 
@@ -256,6 +257,27 @@ export async function validateToolCall(
         tool: toolCall.tool,
         args: parsed.data,
         previewSummary: `Publish paper "${parsed.data.title}" to ${target}`,
+      };
+    }
+
+    case "broadcast_reports": {
+      const parsed = BroadcastReportsSchema.safeParse(toolCall.args);
+      if (!parsed.success) {
+        return {
+          valid: false,
+          tool: toolCall.tool,
+          args: toolCall.args,
+          error: "Invalid broadcast parameters",
+          previewSummary: "Invalid broadcast parameters",
+        };
+      }
+
+      const grade = parsed.data.grade || 10;
+      return {
+        valid: true,
+        tool: toolCall.tool,
+        args: parsed.data,
+        previewSummary: `Compute analysis, refresh dashboards & dispatch progress reports for all Grade ${grade} students (${parsed.data.class_type})`,
       };
     }
 

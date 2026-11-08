@@ -182,6 +182,22 @@ export async function executeToolCall(
         break;
       }
 
+      case "broadcast_reports": {
+        const { grade, class_type } = plan.args as any;
+        let query = supabase.from("students").select("id, unique_id, full_name, report_language, parent_whatsapp");
+        if (grade) query = query.eq("grade", Number(grade));
+        if (class_type && class_type !== "both") query = query.eq("class_type", class_type);
+
+        const { data: students } = await query;
+        if (students && students.length > 0) {
+          const { recomputeStudentAnalysis } = await import("@/lib/analysis/recompute");
+          for (const s of students) {
+            await recomputeStudentAnalysis(s.id);
+          }
+        }
+        break;
+      }
+
       case "reset_pin": {
         const studentId = plan.studentDbId!;
         const newPin = (plan.args.new_pin as string) || "123456";
