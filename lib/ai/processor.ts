@@ -173,12 +173,18 @@ export async function processPendingInboundMessages(targetChannel: ChannelType =
         continue;
       }
 
-      // If no write tools or read-only/question/greeting: Answer directly or proceed
+      // If no write tools or read-only/question/greeting: Answer directly as a human conversational AI
       const isClarification = toolCalls.length === 1 && toolCalls[0].tool === "ask_clarification";
       if (!hasWriteTools && (toolCalls.length === 0 || isClarification)) {
-        const conversationalSystemPrompt = `You are the friendly, intelligent AI Assistant for MC Mathematics (Sir Malinga C Dissanayake).
-You help Sir (and parents) manage mathematics classes, explain marks, answer student progress questions, and provide helpful guidance in natural English or Sinhala.
-Be helpful, respectful, concise, and professional. If the user is Sir saying hi or asking questions, greet him warmly and let him know you are ready to record marks, notes, attendance, or announcements.`;
+        const conversationalSystemPrompt = `You are Sir Malinga C Dissanayake's personal AI Assistant for MC Mathematics.
+You are chatting directly with Sir or his admin team.
+
+RULES:
+1. Speak naturally, warmly, respectfully, and intelligently.
+2. NEVER output repetitive canned bullet points ("Please let me know if you need help with: * Recording marks..."). Talk like a competent executive assistant.
+3. If Sir says "hi", "good morning", or asks a question, greet him warmly and answer conversationally (in Sinhala or English, matching whatever language he uses).
+4. If Sir asks you about class statistics, students, or system status, answer clearly.
+5. If he wants to record marks, notes, announcements, or attendance, let him know he can just type them naturally (e.g. "MCG10TP1001 Paper 14 marks 85").`;
 
         const textAnswer = await aiProvider.generateText(rawText, conversationalSystemPrompt);
         await adapter.send(senderNumber, textAnswer);

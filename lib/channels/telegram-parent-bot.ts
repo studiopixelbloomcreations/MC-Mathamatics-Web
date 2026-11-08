@@ -3,7 +3,9 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { telegramAdapter } from "./telegram";
 import { getStudentAnalysis } from "@/lib/analysis/recompute";
 import { formatWhatsAppReport } from "@/lib/whatsapp/parent-bot";
-import { getAIStatus, isParentAutoReplyThrottled, recordFallbackEvent } from "@/lib/ai/status";
+import { getAIStatus } from "@/lib/ai/status";
+import { getOrCreateSession, saveSession } from "./session";
+import { NvidiaNimProvider } from "@/lib/ai/nvidia-nim";
 
 export interface TelegramParentBotResult {
   handled: boolean;
@@ -12,9 +14,11 @@ export interface TelegramParentBotResult {
 }
 
 /**
- * Handles parent interaction over Telegram.
- * Parents can link using "START <MCG-ID>" or "START <ParentPhone>".
- * Once linked, telegram_chat_id is associated with the student(s).
+ * Handles parent interaction over Telegram as a full conversational chatbot.
+ * Features:
+ * - Persistent memory per Telegram Chat ID (never forgets student ID).
+ * - Singlish -> Sinhala response conversion with Sinhala unicode script.
+ * - Cheerful, friendly, human tone (zero robotic templates).
  */
 export async function handleTelegramParentMessage(
   chatId: string,
@@ -24,122 +28,152 @@ export async function handleTelegramParentMessage(
   const text = messageText.trim();
   const upper = text.toUpperCase();
 
-  // 1. Check if this Telegram chatId is already linked to student(s)
-  // We check student_phone, parent_phone, or notes/linked fields, or match by unique_id if they send START <unique_id>
+  // 1. Fetch persistent chat session for this parent
+  const session = await getOrCreateSession("telegram", chatId);
+
+  // 2. Detect student ID in message or deep-link parameter
+  // Handles: "START MCG10TP1002", "START_MCG10TP1002", "/start START_MCG10TP1002", "MCG10TP1002"
   const idMatch = text.match(/MCG?\d+[A-Z0-9]+/i);
-  let studentUniqueId = idMatch ? idMatch[0].toUpperCase() : null;
+  if (idMatch) {
+    const rawId = idMatch[0].toUpperCase();
+    const { data: foundStudent } = await supabase
+      .from("students")
+      .select("id, unique_id, full_name, grade, class_type, parent_whatsapp, report_language")
+      .ilike("unique_id", rawId)
+      .maybeSingle();
 
-  // Let's query by telegram chat id stored in system or find by unique_id
-  let matchedStudent = null;
+    if (foundStudent) {
+      session.student_id = foundStudent.id;
+      session.student_unique_id = foundStudent.unique_id;
+      await saveSession(session);
+    }
+  }
 
-  if (studentUniqueId) {
+  // 3. If session still doesn't have student_id, try to fetch student by linked parent phone or session
+  let currentStudent: any = null;
+  if (session.student_id) {
     const { data: student } = await supabase
       .from("students")
       .select("id, unique_id, full_name, grade, class_type, parent_whatsapp, report_language")
-      .ilike("unique_id", studentUniqueId)
+      .eq("id", session.student_id)
       .maybeSingle();
-    if (student) matchedStudent = student;
+    currentStudent = student;
   }
 
-  // If not found by unique_id in text, check if message is REPORT:<UUID> or MARKS:<UUID>
-  if (!matchedStudent && (text.startsWith("REPORT:") || text.startsWith("MARKS:"))) {
+  // Check if button command REPORT: or MARKS:
+  if (!currentStudent && (text.startsWith("REPORT:") || text.startsWith("MARKS:"))) {
     const uuid = text.replace("REPORT:", "").replace("MARKS:", "").trim();
     const { data: student } = await supabase
       .from("students")
       .select("id, unique_id, full_name, grade, class_type, parent_whatsapp, report_language")
       .eq("id", uuid)
       .maybeSingle();
-    if (student) matchedStudent = student;
-  }
-
-  // 2. Handle START <ID>
-  if (upper.startsWith("START") || upper.startsWith("/START")) {
-    if (!matchedStudent) {
-      await telegramAdapter.send(
-        chatId,
-        `👋 Welcome to MC Mathematics Bot!\n\nTo link your student's progress updates, please reply:\n*START <StudentID>*\n\nExample:\nSTART MCG10TP1001`
-      );
-      return { handled: true, replySent: true, logStatus: "prompted_start_id" };
+    if (student) {
+      currentStudent = student;
+      session.student_id = student.id;
+      session.student_unique_id = student.unique_id;
+      await saveSession(session);
     }
-
-    const isSinhala = matchedStudent.report_language === "si";
-    const welcomeMsg = isSinhala
-      ? `👋 MC Mathematics වෙත සාදරයෙන් පිළිගනිමු!\nඔබ දැන් ${matchedStudent.full_name} (${matchedStudent.unique_id}) සිසුවාගේ Telegram ප්‍රගති වාර්තා සමඟ සම්බන්ධ වී ඇත.\n\nප්‍රගති වාර්තාව හෝ ලකුණු බැලීමට පහත බොත්තමක් ඔබන්න 👇`
-      : `👋 Welcome to MC Mathematics!\nYou are now connected to ${matchedStudent.full_name}'s progress updates (${matchedStudent.unique_id}) on Telegram.\n\nTap below to check progress 👇`;
-
-    await telegramAdapter.send(chatId, welcomeMsg, {
-      buttons: [
-        { id: `REPORT:${matchedStudent.id}`, title: isSinhala ? "📄 සම්පූර්ණ වාර්තාව" : "📄 Full Report" },
-        { id: `MARKS:${matchedStudent.id}`, title: isSinhala ? "📈 නවතම ලකුණු" : "📈 Latest Marks" },
-      ],
-    });
-
-    return { handled: true, replySent: true, logStatus: "telegram_parent_linked" };
   }
 
-  // 3. Handle MARKS command
-  if (matchedStudent && (upper.startsWith("MARKS") || text.startsWith("MARKS:"))) {
-    const isSinhala = matchedStudent.report_language === "si";
-    const metrics = await getStudentAnalysis(matchedStudent.id);
-    const marksText = isSinhala
-      ? `📈 ${matchedStudent.full_name} (${matchedStudent.unique_id}) - නවතම ලකුණු:\n${
-          metrics?.latestPercentage ? `ලකුණු: ${metrics.latestPercentage}%` : "තවමත් ලකුණු ඇතුළත් කර නොමැත."
-        }\nසාමාන්‍යය: ${metrics?.percentage || 0}%\n\nශිෂ්‍ය පුවරුව: https://mc-mathamatics-web.vercel.app/dashboard`
-      : `📈 ${matchedStudent.full_name} (${matchedStudent.unique_id}) - Latest Marks:\n${
-          metrics?.latestPercentage ? `Score: ${metrics.latestPercentage}%` : "No marked papers recorded yet."
-        }\nCumulative Average: ${metrics?.percentage || 0}%\n\nStudent Dashboard: https://mc-mathamatics-web.vercel.app/dashboard`;
+  // 4. Quick Action: Explicit Report or Marks button tap
+  if (currentStudent && (text.startsWith("REPORT:") || text.startsWith("MARKS:"))) {
+    const isSinhala = currentStudent.report_language === "si";
+    const metrics = await getStudentAnalysis(currentStudent.id);
 
-    await telegramAdapter.send(chatId, marksText);
-    return { handled: true, replySent: true, logStatus: "marks_delivered" };
+    if (text.startsWith("MARKS:")) {
+      const marksText = isSinhala
+        ? `📈 ${currentStudent.full_name} (${currentStudent.unique_id}) - නවතම ලකුණු:\n${
+            metrics?.latestPercentage ? `ලකුණු: ${metrics.latestPercentage}%` : "තවමත් ලකුණු ඇතුළත් කර නොමැත."
+          }\nසාමාන්‍යය: ${metrics?.percentage || 0}%\n\nශිෂ්‍ය පුවරුව: https://mc-mathamatics-web.vercel.app/dashboard`
+        : `📈 ${currentStudent.full_name} (${currentStudent.unique_id}) - Latest Marks:\n${
+            metrics?.latestPercentage ? `Score: ${metrics.latestPercentage}%` : "No marked papers recorded yet."
+          }\nCumulative Average: ${metrics?.percentage || 0}%\n\nStudent Dashboard: https://mc-mathamatics-web.vercel.app/dashboard`;
+
+      await telegramAdapter.send(chatId, marksText);
+      await saveSession(session, { role: "assistant", content: marksText });
+      return { handled: true, replySent: true, logStatus: "marks_delivered" };
+    } else {
+      const reportText = formatWhatsAppReport(currentStudent, metrics, isSinhala);
+      await telegramAdapter.send(chatId, reportText);
+      await saveSession(session, { role: "assistant", content: reportText });
+      return { handled: true, replySent: true, logStatus: "report_delivered" };
+    }
   }
 
-  // 4. Handle REPORT command
-  if (matchedStudent && (upper.startsWith("REPORT") || text.startsWith("REPORT:"))) {
-    const isSinhala = matchedStudent.report_language === "si";
-    const metrics = await getStudentAnalysis(matchedStudent.id);
-    const reportText = formatWhatsAppReport(matchedStudent as any, metrics, isSinhala);
+  // 5. Intelligent Conversational Chatbot (Powered by NVIDIA NIM Nemotron)
+  const aiStatus = await getAIStatus();
+  if (aiStatus.status === "ok") {
+    const aiProvider = new NvidiaNimProvider();
+    let studentContext = "No student is linked to this chat yet.";
 
-    await telegramAdapter.send(chatId, reportText);
-    return { handled: true, replySent: true, logStatus: "report_delivered" };
-  }
-
-  // 5. If matchedStudent exists and parent is chatting conversationally (asking about marks, improvement, syllabus)
-  if (matchedStudent) {
-    const aiStatus = await getAIStatus();
-    if (aiStatus.status === "ok") {
-      const { NvidiaNimProvider } = await import("@/lib/ai/nvidia-nim");
-      const metrics = await getStudentAnalysis(matchedStudent.id);
-      const isSinhala = matchedStudent.report_language === "si";
-
-      const systemPrompt = `You are the friendly, helpful AI Assistant for MC Mathematics (Sir Malinga C Dissanayake).
-You are talking to the parent of ${matchedStudent.full_name} (${matchedStudent.unique_id}, Grade ${matchedStudent.grade}).
-Student performance data:
+    if (currentStudent) {
+      const metrics = await getStudentAnalysis(currentStudent.id);
+      studentContext = `Linked Student Details:
+- Student Name: ${currentStudent.full_name}
+- Student Index/ID: ${currentStudent.unique_id}
+- Grade: ${currentStudent.grade} (${currentStudent.class_type === "TP" ? "Theory + Paper" : "Theory"})
 - Cumulative Average: ${metrics?.percentage || 0}%
-- Latest Mark: ${metrics?.latestPercentage ?? "None"}%
-- Trend Direction: ${metrics?.trend?.direction || "stable"}
-- Total Papers: ${metrics?.paperCount || 0}
-- Strengths: ${metrics?.insights?.strengthsSummary || "Consistent effort"}
-- Areas needing work: ${metrics?.insights?.weaknessesSummary || "Regular revision"}
-
-Answer the parent kindly, warmly, and concisely in ${isSinhala ? "Sinhala" : "English"}.
-If they ask what their child's marks are, tell them clearly using the metrics above.
-Encourage the student and reassure the parent.`;
-
-      const aiProvider = new NvidiaNimProvider();
-      const aiReply = await aiProvider.generateText(text, systemPrompt);
-      await telegramAdapter.send(chatId, aiReply);
-      return { handled: true, replySent: true, logStatus: "parent_ai_chat_replied" };
+- Latest Score: ${metrics?.latestPercentage ?? "Not graded yet"}%
+- Trend: ${metrics?.trend?.direction || "steady"}
+- Papers completed: ${metrics?.paperCount || 0}
+- Strong topics: ${metrics?.insights?.strengthsSummary || "Solid baseline"}
+- Focus areas: ${metrics?.insights?.weaknessesSummary || "Continued practice"}`;
     }
+
+    const conversationalSystemPrompt = `You are the lively, cheerful, warm, and helpful AI Assistant for MC Mathematics (taught by Sir Malinga C Dissanayake).
+You are having a real-time chat with a parent or student on Telegram.
+
+CRITICAL RULES:
+1. Speak naturally, warmly, and cheerfully like a real teacher's assistant. NEVER repeat generic canned bullet-point templates ("Please let me know if you need help with...").
+2. SINGLISH / SINHALA RULE: If the user writes in Singlish (Sinhala written in English letters like "kohomada", "lamayage marks kiyada", "mata report eka ona") or in Sinhala script, YOU MUST REPLY IN BEAUTIFUL, NATURAL SINHALA (සිංහල අකුරින්).
+3. If they write in pure English, reply in cheerful English.
+4. If a student is linked (see below), remember it throughout the conversation! Never ask them for their index number again if it is already known. You can warmly mention: "මම බැලුවා, ${currentStudent?.full_name || "ඔබේ දරුවාගේ"} (${currentStudent?.unique_id || ""}) ලකුණු විස්තර මෙන්න..."
+5. If NO student is linked yet, kindly and casually ask: "ආයුබෝවන්! සාදරයෙන් පිළිගනිමු 😊 මට ඔයාගේ හෝ දරුවාගේ Index Number එක (උදා: MCG10TP1002) කියන්න පුළුවන්ද? එතකොට මට ඔක්කොම විස්තර බලාගන්න පුළුවන්!"
+6. If the parent asks about marks, weaknesses, class schedule, or progress, answer directly with the data provided below.
+
+${studentContext}`;
+
+    // Build chat message history
+    const history = session.messages.slice(-8).map((m) => ({
+      role: m.role as "user" | "assistant" | "system",
+      content: m.content,
+    }));
+
+    // Add current user prompt
+    history.push({ role: "user", content: text });
+
+    const messages = [
+      { role: "system" as const, content: conversationalSystemPrompt },
+      ...history,
+    ];
+
+    const reply = await aiProvider.generateChat(messages, 0.6);
+
+    // Save turn into session history
+    await saveSession(session, { role: "user", content: text });
+    await saveSession(session, { role: "assistant", content: reply });
+
+    // Send reply via Telegram
+    if (currentStudent && (upper.includes("START") || text.includes("start"))) {
+      // Send inline buttons along with the conversational greeting
+      await telegramAdapter.send(chatId, reply, {
+        buttons: [
+          { id: `REPORT:${currentStudent.id}`, title: "📄 සම්පූර්ණ වාර්තාව (Full Report)" },
+          { id: `MARKS:${currentStudent.id}`, title: "📈 නවතම ලකුණු (Latest Marks)" },
+        ],
+      });
+    } else {
+      await telegramAdapter.send(chatId, reply);
+    }
+
+    return { handled: true, replySent: true, logStatus: "parent_conversational_chat_replied" };
   }
 
-  // 6. If no student matched, give friendly instructions
-  if (!matchedStudent) {
-    await telegramAdapter.send(
-      chatId,
-      `👋 Welcome to MC Mathematics Telegram Bot.\n\nTo connect to your child's progress, please send:\n*START <StudentID>*\n\nExample:\nSTART MCG10TP1001\n\nIf you are Sir Malinga, please reply with your admin number to unlock administrative AI Mode.`
-    );
-    return { handled: true, replySent: true, logStatus: "unrecognized_telegram_sender" };
-  }
-
-  return { handled: false, replySent: false, logStatus: "forwarded_to_ai" };
+  // Fallback offline message if AI is offline
+  await telegramAdapter.send(
+    chatId,
+    "මම MC Mathematics AI සහායකයා. මේ මොහොතේ මගේ සේවාදායකය යාවත්කාලීන වෙමින් පවතී. කරුණාකර සුළු මොහොතකින් නැවත පණිවිඩයක් එවන්න."
+  );
+  return { handled: true, replySent: true, logStatus: "ai_offline_fallback" };
 }

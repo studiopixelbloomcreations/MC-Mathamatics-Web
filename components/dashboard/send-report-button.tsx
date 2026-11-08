@@ -28,11 +28,12 @@ export function SendReportButton({
 }: SendReportButtonProps) {
   const [showConnectModal, setShowConnectModal] = useState(false);
 
-  const telegramBotUsername =
-    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "mc_mathematics_bot";
+  const rawUsername =
+    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "MCMathamaticsBot";
+  const cleanUsername = rawUsername.replace(/^@/, "");
 
-  const startUrl = `https://t.me/${telegramBotUsername}?start=START_${studentId}`;
-  const reportUrl = `https://t.me/${telegramBotUsername}?start=REPORT_${studentId}`;
+  const startUrl = `https://t.me/${cleanUsername}?start=START_${studentId}`;
+  const reportUrl = `https://t.me/${cleanUsername}?start=REPORT_${studentId}`;
 
   // Format sent time (e.g., "Sent ✓ (14:30)")
   const sentTimeFormatted = lastReportRequestTime

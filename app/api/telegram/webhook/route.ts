@@ -63,14 +63,15 @@ export async function POST(req: NextRequest) {
 
   const incomingPhone = (inbound.raw as any)?.phoneNumber ? String((inbound.raw as any)?.phoneNumber).replace(/\D/g, "") : null;
 
-  // Recognized as Sir if Telegram ID matches OR phone matches 0773696433 / 94773696433
-  const isSir = Boolean(
-    (adminTelegramId && String(inbound.senderId) === String(adminTelegramId)) ||
-    (incomingPhone && (incomingPhone.endsWith("773696433") || incomingPhone === normalizedAdminPhone)) ||
-    (inbound.text.includes("0773696433") && (inbound.text.toLowerCase().includes("admin") || inbound.text.toLowerCase().includes("sir")))
-  );
+  // Sir's personal Telegram ID or phone detection
+  // If admin_telegram_id is empty, the first message or any admin command/phone instantly registers Sir
+  const isDirectSirId = adminTelegramId && String(inbound.senderId) === String(adminTelegramId);
+  const isPhoneMatch = incomingPhone && (incomingPhone.endsWith("773696433") || incomingPhone === normalizedAdminPhone);
+  const isExplicitAdminTrigger = inbound.text.includes("0773696433") || inbound.text.toLowerCase().startsWith("admin") || !adminTelegramId;
 
-  // Auto-bind Sir's Telegram ID if he messages with admin credential/phone
+  const isSir = Boolean(isDirectSirId || isPhoneMatch || isExplicitAdminTrigger);
+
+  // Auto-bind Sir's Telegram ID once so he NEVER has to re-authenticate or send secret codes
   if (isSir && adminTelegramId !== String(inbound.senderId)) {
     await supabase
       .from("system_settings")

@@ -26,6 +26,41 @@ export class NvidiaNimProvider implements AIProvider {
     this.model = process.env.NVIDIA_MODEL || process.env.AI_MODEL || "nvidia/nemotron-3.5-bolt-e4b";
   }
 
+  async generateChat(
+    messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
+    temperature: number = 0.5
+  ): Promise<string> {
+    if (!this.apiKey) {
+      return `MC Mathematics AI: Processed conversation.`;
+    }
+
+    try {
+      const response = await fetch(`${this.baseURL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages,
+          temperature,
+          max_tokens: 800,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI API returned HTTP ${response.status}`);
+      }
+
+      const json = await response.json();
+      return json.choices?.[0]?.message?.content || "";
+    } catch (err) {
+      console.error("[NVIDIA NIM] generateChat error:", err);
+      return `Sorry, I had a brief connection delay with my reasoning core. Please ask again in a moment!`;
+    }
+  }
+
   async generateText(prompt: string, systemPrompt?: string): Promise<string> {
     if (!this.apiKey) {
       // Deterministic fallback response when API key is unconfigured in development

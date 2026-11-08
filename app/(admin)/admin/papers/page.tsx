@@ -195,6 +195,27 @@ export default function AdminPapersPage() {
                 className="mt-1 font-mono"
               />
             </div>
+
+            <div className="lg:col-span-2">
+              <label className="text-xs font-semibold text-muted-foreground uppercase flex items-center gap-1.5">
+                <span>Upload Paper PDF / Document</span>
+                <span className="text-[10px] text-muted-foreground font-normal">(Optional)</span>
+              </label>
+              <Input
+                type="file"
+                accept=".pdf,.png,.jpg,.jpeg"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setMessage({
+                      text: `Selected document: ${file.name} (${Math.round(file.size / 1024)} KB). Ready to attach to paper record.`,
+                      type: "success",
+                    });
+                  }
+                }}
+                className="mt-1 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer"
+              />
+            </div>
           </div>
 
           {/* Topic Sections */}

@@ -66,9 +66,10 @@ export function IdCardDisplay({
     mouseY.set(0);
   };
 
-  const telegramBotUsername =
-    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "mc_mathematics_bot";
-  const telegramBotUrl = `https://t.me/${telegramBotUsername}?start=START_${encodeURIComponent(
+  const rawUsername =
+    process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || "MCMathamaticsBot";
+  const cleanUsername = rawUsername.replace(/^@/, "");
+  const telegramBotUrl = `https://t.me/${cleanUsername}?start=START_${encodeURIComponent(
     uniqueId
   )}`;
 
