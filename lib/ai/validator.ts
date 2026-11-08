@@ -7,6 +7,8 @@ import {
   MarkAttendanceSchema,
   RunAnalysisSchema,
   AskClarificationSchema,
+  PublishPaperSchema,
+  ResetPinSchema,
 } from "./types";
 
 export interface ValidatedExecutionPlan {
@@ -230,6 +232,68 @@ export async function validateToolCall(
         args: parsed.data,
         studentDbId: student.id,
         previewSummary: `${toolCall.tool === "run_analysis" ? "Run diagnostic analysis" : "Send WhatsApp parent report"} for ${student.full_name} (${student.unique_id})`,
+      };
+    }
+
+    case "publish_paper": {
+      const parsed = PublishPaperSchema.safeParse(toolCall.args);
+      if (!parsed.success) {
+        return {
+          valid: false,
+          tool: toolCall.tool,
+          args: toolCall.args,
+          error: parsed.error.issues.map((i) => i.message).join(", "),
+          previewSummary: "Invalid paper details",
+        };
+      }
+
+      const target = parsed.data.target_student
+        ? `student ${parsed.data.target_student}`
+        : `Grade ${parsed.data.grade} (${parsed.data.class_type})`;
+
+      return {
+        valid: true,
+        tool: toolCall.tool,
+        args: parsed.data,
+        previewSummary: `Publish paper "${parsed.data.title}" to ${target}`,
+      };
+    }
+
+    case "reset_pin": {
+      const parsed = ResetPinSchema.safeParse(toolCall.args);
+      if (!parsed.success) {
+        return {
+          valid: false,
+          tool: toolCall.tool,
+          args: toolCall.args,
+          error: "Valid student ID is required",
+          previewSummary: "Invalid PIN reset parameters",
+        };
+      }
+
+      const cleanId = parsed.data.student_id.trim().toUpperCase();
+      const { data: student } = await supabase
+        .from("students")
+        .select("id, unique_id, full_name")
+        .ilike("unique_id", cleanId)
+        .maybeSingle();
+
+      if (!student) {
+        return {
+          valid: false,
+          tool: toolCall.tool,
+          args: toolCall.args,
+          error: `Student ID "${cleanId}" not found.`,
+          previewSummary: `Unknown student ID ${cleanId}`,
+        };
+      }
+
+      return {
+        valid: true,
+        tool: toolCall.tool,
+        args: parsed.data,
+        studentDbId: student.id,
+        previewSummary: `Reset PIN for ${student.full_name} (${student.unique_id})`,
       };
     }
 

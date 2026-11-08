@@ -1,16 +1,42 @@
 import { AIProvider, ParsedToolCall } from "./types";
 
-const SYSTEM_TOOL_PROMPT = `You are the AI Command Dispatcher for MC Mathematics (Sir Malinga C Dissanayake).
-Your job is to read Sir's WhatsApp message and output ONLY a JSON array of tool calls matching the specified schemas.
-Do NOT invent student IDs.
-Available tools:
-1. record_marks(student_id: string, paper_ref: string, marks: number, section_marks?: object)
-2. add_special_note(student_id: string, text: string)
-3. post_announcement(text: string, target: string, pinned?: boolean)
-4. mark_attendance(date: string, session: string, present_ids: string[], absent_ids: string[], late_ids: string[])
-5. run_analysis(student_id: string)
-6. send_parent_report(student_id: string)
-7. ask_clarification(question: string)
+const SYSTEM_TOOL_PROMPT = `You are the executive AI Command Dispatcher for MC Mathematics (Sir Malinga C Dissanayake).
+Your job is to read Sir's natural message and detect any administrative actions requested, outputting ONLY a JSON array of tool calls matching the specified schemas.
+
+Available platform actions/tools:
+1. record_marks:
+   args: { student_id: string, paper_ref: string, marks: number, section_marks?: object }
+   Example: "MCG10TP1001 Paper 14 marks 85", "record 75 marks for MCG10TP1002 in paper 3"
+
+2. publish_paper:
+   args: { title: string, grade: number, class_type: "T" | "TP" | "both", total_marks?: number, target_student?: string }
+   Example: "upload this paper to all grade 10 students", "publish paper 12 for grade 11 TP", "upload paper to MCG10TP1002"
+
+3. add_special_note:
+   args: { student_id: string, text: string }
+   Example: "Add note to MCG10TP1001: Needs more focus on circle geometry theorems"
+
+4. post_announcement:
+   args: { text: string, target: string, pinned?: boolean }
+   Example: "Announcement for Grade 10: Extra class this Saturday at 8am"
+
+5. mark_attendance:
+   args: { date: string, session: string, present_ids: string[], absent_ids: string[], late_ids: string[] }
+   Example: "Attendance: present MCG10TP1001, MCG10TP1002 absent MCG10TP1003"
+
+6. run_analysis:
+   args: { student_id: string }
+   Example: "recompute analysis for MCG10TP1001", "analyze student MCG10TP1001"
+
+7. reset_pin:
+   args: { student_id: string, new_pin?: string }
+   Example: "reset pin for MCG10TP1001 to 654321"
+
+8. send_parent_report:
+   args: { student_id: string }
+   Example: "send parent report to MCG10TP1001"
+
+If Sir's message is a greeting or general conversational query without any specific action to perform, return an empty array: []
 
 Output strictly valid JSON with format: [{ "tool": "tool_name", "args": { ... } }]`;
 
@@ -269,6 +295,30 @@ export class NvidiaNimProvider implements AIProvider {
           present_ids: presentIds,
           absent_ids: absentIds,
           late_ids: [],
+        },
+      });
+      return calls;
+    }
+
+    // Case 5.1: Publish / Upload paper command (e.g. "upload this paper to all grade 10 students", "upload paper to MCG10TP1002")
+    const uploadMatch = trimmed.match(/(?:upload|publish|assign)\s+(?:this\s+)?(?:new\s+)?paper(?:\s+(?:to|for)\s+(.+))?/i);
+    if (uploadMatch) {
+      const targetStr = uploadMatch[1] || "";
+      const gMatch = targetStr.match(/grade\s*(\d+)/i) || trimmed.match(/grade\s*(\d+)/i);
+      const studentMatch = targetStr.match(/(MCG?\d+[A-Z0-9]+)/i) || trimmed.match(/(MCG?\d+[A-Z0-9]+)/i);
+
+      const grade = gMatch ? Number(gMatch[1]) : 10;
+      const target_student = studentMatch ? studentMatch[1].toUpperCase() : undefined;
+      const class_type = /TP/i.test(trimmed) ? "TP" : /T\b/i.test(trimmed) ? "T" : "both";
+
+      calls.push({
+        tool: "publish_paper",
+        args: {
+          title: `Mathematics Assessment — ${target_student ? target_student : `Grade ${grade}`}`,
+          grade,
+          class_type,
+          total_marks: 100,
+          ...(target_student ? { target_student } : {}),
         },
       });
       return calls;

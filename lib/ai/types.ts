@@ -16,12 +16,27 @@ export type ToolName =
   | "mark_attendance"
   | "run_analysis"
   | "send_parent_report"
+  | "publish_paper"
+  | "reset_pin"
   | "ask_clarification";
 
 export interface ParsedToolCall {
   tool: ToolName;
   args: Record<string, unknown>;
 }
+
+export const PublishPaperSchema = z.object({
+  title: z.string().min(1, "Paper title is required"),
+  grade: z.number().min(6).max(13),
+  class_type: z.enum(["T", "TP", "both"]).default("both"),
+  total_marks: z.number().default(100),
+  target_student: z.string().optional(),
+});
+
+export const ResetPinSchema = z.object({
+  student_id: z.string().min(1, "Student ID is required"),
+  new_pin: z.string().optional(),
+});
 
 export const RecordMarksSchema = z.object({
   student_id: z.string().min(1, "Student ID is required"),

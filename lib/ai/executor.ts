@@ -162,6 +162,34 @@ export async function executeToolCall(
         break;
       }
 
+      case "publish_paper": {
+        const { title, grade, class_type, total_marks } = plan.args as any;
+        const { data: paper } = await supabase
+          .from("papers")
+          .insert({
+            title: title || "New Mathematics Paper",
+            grade: Number(grade) || 10,
+            class_type: class_type === "both" ? null : class_type,
+            total_marks: Number(total_marks) || 100,
+            status: "ongoing",
+          })
+          .select("id")
+          .single();
+
+        if (paper) {
+          undoData.createdPaperId = paper.id;
+        }
+        break;
+      }
+
+      case "reset_pin": {
+        const studentId = plan.studentDbId!;
+        const newPin = (plan.args.new_pin as string) || "123456";
+        const { resetStudentPin } = await import("@/app/actions/admin");
+        await resetStudentPin(studentId, newPin);
+        break;
+      }
+
       case "ask_clarification": {
         // No DB mutation needed
         break;
